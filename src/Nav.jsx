@@ -61,13 +61,13 @@ function NavButton({ page, item, navOpen, setPage, layoutOpen, setLayoutOpen, on
         aria-haspopup={isGroup ? "true" : undefined}
         tabIndex={0}>
         <span className="nav-btn-icon"><Icon name={item.icon} /></span>
-        {navOpen && <span className="nav-btn-label">{item.label}</span>}
-        {isGroup && navOpen && (
+        <span className="nav-btn-label">{item.label}</span>
+        {isGroup && (
           <span className={"nav-parent-chevron " + (layoutOpen ? "open" : "closed")}>
             <Icon name={layoutOpen ? "chevron-down" : "chevron-right"} />
           </span>
         )}
-        {!navOpen && <span className="nav-tooltip">{item.label}</span>}
+        <span className="nav-tooltip">{item.label}</span>
       </button>
     </div>
   );
@@ -84,7 +84,6 @@ function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileM
   const navItems = PAGES.filter(pg => {
     if (pg.noNav) return false;
     if (!showSubs && pg.parentId) {
-      // In collapsed mode, still show sub-items if their parent is open
       if (pg.parentId === "layout" && layoutOpen) return true;
       return false;
     }
@@ -115,14 +114,12 @@ function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileM
 
         {/* Header */}
         <div className="nav-section nav-toggle">
-          {(navOpen || mobile) && (
-            <span className="nav-toggle-label" onClick={() => setPage("home")}
-              role="button" tabIndex={0}
-              onKeyDown={e => (e.key === "Enter" || e.key === " ") && setPage("home")}>
-              HIVE
-            </span>
-          )}
-          {(navOpen || mobile) && " "}
+          <span className="nav-toggle-label"
+            onClick={() => setPage("home")}
+            role="button" tabIndex={0}
+            onKeyDown={e => (e.key === "Enter" || e.key === " ") && setPage("home")}>
+            HIVE
+          </span>
           <span className="nav-menu-icon" onClick={handleToggle}
             role="button" tabIndex={0} aria-label={navOpen ? "Collapse sidebar" : "Expand sidebar"}
             onKeyDown={e => (e.key === "Enter" || e.key === " ") && handleToggle()}>
