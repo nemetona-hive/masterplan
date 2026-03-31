@@ -1,0 +1,81 @@
+"use strict";
+const { useState } = React;
+
+// ── Shared UI primitives ──────────────────────────────────────────────────────
+
+function Icon({ name, className = "" }) {
+  const faClass = ICONS[name] || "fa-solid fa-circle-question";
+  return <i className={[faClass, className].filter(Boolean).join(" ")} style={{ display: "inline-flex", alignItems: "center" }} />;
+}
+
+function NumInput({ id, label, value, onChange, step = 1, min = 1 }) {
+  const [local, setLocal] = React.useState(String(value));
+  React.useEffect(() => { setLocal(String(value)); }, [value]);
+  const commit = () => {
+    const n = Number(local);
+    if (!isNaN(n) && n >= min) onChange(Math.max(min, Math.round(n * 100) / 100));
+    else setLocal(String(value));
+  };
+  return (
+    <label id={id} className="num-wrap">
+      <span className="num-lbl">{label}</span>
+      <div className="num-row">
+        <input className="num-input" type="number" value={local} min={min} step={step}
+          onChange={e => setLocal(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && commit()}
+          onBlur={commit} />
+        <button className="num-btn" onClick={commit}><Icon name="corner-down-left" /></button>
+      </div>
+    </label>
+  );
+}
+
+function SLabel({ children }) {
+  return <div className="slabel">{children}</div>;
+}
+
+// Single collapsible replaces both Section and ControlPanel
+function Collapsible({ id, title, bg, open: openProp, setOpen: setOpenProp, children, variant = "section" }) {
+  const [openLocal, setOpenLocal] = React.useState(true);
+  const open    = setOpenProp ? openProp    : openLocal;
+  const setOpen = setOpenProp ? setOpenProp : setOpenLocal;
+  if (variant === "panel") {
+    return (
+      <div id={id} className="control-panel">
+        <div className="panel-head" onClick={() => setOpen(!open)}>
+          <span className="sys-head-toggle"><Icon name={open ? "chevron-down" : "chevron-right"} /></span>
+          {title}
+        </div>
+        {open && <div className="panel-data">{children}</div>}
+      </div>
+    );
+  }
+  return (
+    <div className="section">
+      <div className="section-head" style={bg ? { background: bg } : undefined} onClick={() => setOpen(!open)}>
+        <span className="sys-head-toggle"><Icon name={open ? "chevron-down" : "chevron-right"} /></span>
+        {title}
+      </div>
+      {open && <div className="section-body">{children}</div>}
+    </div>
+  );
+}
+
+// Convenience aliases for readability at call sites
+const Section      = ({ title, bg, children }) => <Collapsible title={title} bg={bg}>{children}</Collapsible>;
+const ControlPanel = ({ id, title, open, setOpen, children }) => <Collapsible id={id} title={title} open={open} setOpen={setOpen} variant="panel">{children}</Collapsible>;
+
+function Row({ label, value, unit, hi, hoverType, hoveredType, setHoveredType }) {
+  const isHovered = hoverType && hoveredType === hoverType;
+  return (
+    <div className="data-row">
+      <span
+        className={"data-row-lbl" + (hoverType ? " hoverable" : "") + (isHovered ? " hovered" : "")}
+        onMouseEnter={hoverType && setHoveredType ? () => setHoveredType(hoverType) : undefined}
+        onMouseLeave={hoverType && setHoveredType ? () => setHoveredType(null) : undefined}
+      >{label}</span>
+      <span className={hi ? "data-row-val hi" : "data-row-val"}>{value}</span>
+      {unit && <span className="data-row-unit">{unit}</span>}
+    </div>
+  );
+}

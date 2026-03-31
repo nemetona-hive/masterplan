@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MASTER PLAN</title>
+<link href="vendor/fonts/fonts.css" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+
+<link rel="stylesheet" href="vendor/fontawesome.min.css">
+<script src="vendor/react.production.min.js"></script>
+<script src="vendor/react-dom.production.min.js"></script>
+<script>
+/* ============================================================
+ * ICON CONFIGURATION
+ * Edit the Font Awesome class on the right to change any icon.
+ * Format: "fa-solid fa-[name]" or "fa-regular fa-[name]"
+ * Reference: https://fontawesome.com/icons
+ * ============================================================ */
+const ICONS = {
+  // UI Actions
+  "corner-down-left": "fa-solid fa-turn-down",       // Confirm / Enter button
+
+  // Collapse / Expand toggles
+  "chevron-down":     "fa-solid fa-chevron-down",     // Section open
+  "chevron-right":    "fa-solid fa-chevron-right",    // Section closed
+
+  // Navigation sidebar
+  "panel-left-close": "fa-solid fa-kaaba",   // Toggle sidebar
+  "layout-template":  "fa-solid fa-table-cells-large",// Nav: Layout
+  "rows-3":           "fa-solid fa-table-list",       // Nav: Pattern Layouts
+  "columns-2":        "fa-solid fa-columns",          // Nav: Symmetric Layout
+  "square":           "fa-solid fa-square",           // Nav: Area
+
+  // Layout system title icons
+  "s0":               "fa-solid fa-circle-0",         // S0: Symmetric layout
+  "s1":               "fa-solid fa-1",                // S1: Straight layout
+  "s2":               "fa-solid fa-2",                // S2: Shifted layout
+  "s3":               "fa-solid fa-3",                // S3: Stepped layout
+  "s4":               "fa-solid fa-4",                // S4: Long-Short
+
+  // Best layout badge
+  "best-badge":       "fa-solid fa-star-of-david"              // Best layout indicator
+};
+</script>
+</head>
+<body>
+<div id="root"></div>
+<script src="config.js" defer></script>
+<script src="simulation.js" defer></script>
+<script src="components.js" defer></script>
+</body></html>
