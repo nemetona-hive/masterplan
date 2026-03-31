@@ -238,6 +238,8 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 }
 
 .nav-parent-chevron {
+	opacity: 1;
+	transition: opacity 0.1s ease 0.15s, transform 0.2s ease;
 	margin-left: auto;
 	font-size: 0.75em;
 	opacity: 0.5;
@@ -268,12 +270,29 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .nav-btn-label {
 	font-family: var(--mono);
 	font-size: inherit;
+	opacity: 1;
+	transition: opacity 0.1s ease 0.15s;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.nav-collapsed .nav-btn-label {
+	opacity: 0;
+	transition: opacity 0.05s ease;
 }
 
 .nav-btn-icon-only {
 	justify-content: center;
 	padding: 9px 0;
 	gap: 0;
+}
+
+/* Collapsed: shrink invisible label/chevron to zero width so icon stays centered */
+.nav-collapsed .nav-btn-label,
+.nav-collapsed .nav-parent-chevron {
+	width: 0;
+	flex: 0 0 0;
+	min-width: 0;
 }
 
 .nav-btn-icon-only.nav-sub-btn {
@@ -314,6 +333,15 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	color: var(--color-white);
 	opacity: 0.9;
 	cursor: pointer;
+	white-space: nowrap;
+	overflow: hidden;
+	transition: opacity 0.1s ease 0.15s;
+}
+
+.nav-collapsed .nav-toggle-label {
+	opacity: 0;
+	transition: opacity 0.05s ease;
+	pointer-events: none;
 }
 
 .nav-toggle-label:hover {
@@ -335,7 +363,17 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	flex-direction: column;
 	gap: 3px;
 	overflow-y: auto;
+	scrollbar-width: none;
 	transition: width 0.2s ease;
+}
+
+.nav::-webkit-scrollbar {
+	display: none;
+}
+
+/* Prevent sub-item transitions firing during sidebar width change */
+.nav-collapsed .nav-sub-btn {
+	transition: none;
 }
 
 /* Nav layout sections */
@@ -390,14 +428,20 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	z-index: 100;
 }
 
+.nav-tooltip {
+	opacity: 0;
+	pointer-events: none;
+}
+
 .nav-collapsed .nav-btn-wrap:hover .nav-tooltip {
 	opacity: 1;
+	pointer-events: auto;
 }
 
 /* Sub-item slide animation */
 .nav-sub-btn {
 	overflow: hidden;
-	max-height: 44px;
+	max-height: 60px;
 	transition: max-height 0.2s ease, opacity 0.2s ease;
 	opacity: 1;
 }
@@ -499,7 +543,6 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .page-side {
 	flex-shrink: 0;
 	border-right: 1px solid var(--color-darkblue);
-	transition: width 0.2s ease;
 }
 
 /* HEAD */
