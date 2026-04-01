@@ -5,18 +5,30 @@ function isNavPageActive(page, pg) {
   return page === pg.id && !childActive;
 }
 
-function NavButton({ page, item, navOpen, setPage, layoutOpen, setLayoutOpen, onKeyNav }) {
-  const isGroup     = !item.parentId && PAGES.some(pg => pg.parentId === item.id);
+function NavButton({ page, item, navOpen, setPage, openGroups, setOpenGroups, onKeyNav }) {
+  const isGroup     = item.isParent === true;
+  const hasChildren = PAGES.some(pg => pg.parentId === item.id);
+  const isOpen      = isGroup && hasChildren && !!openGroups[item.id];
   const childActive = isGroup && PAGES.some(pg => pg.parentId === item.id && pg.id === page);
   const isActive    = isNavPageActive(page, item);
-  const classes     = ["nav-btn"];
-  if (isActive)      classes.push("active");
+  const isGroupActive = isGroup && hasChildren && isOpen && (page === "home" || childActive);
+
+  const classes = ["nav-btn"];
+  if (isActive || isGroupActive) classes.push("active");
   if (isGroup)       classes.push("nav-parent");
   if (childActive)   classes.push("child-active");
   if (item.parentId) classes.push("nav-sub-btn");
   if (!navOpen)      classes.push("nav-btn-icon-only");
 
-  const handleClick = () => isGroup ? setLayoutOpen(o => !o) : setPage(item.id);
+  const toggleGroup = () => {
+    setOpenGroups(prev => ({ ...prev, [item.id]: !prev[item.id] }));
+    setPage("home");
+  };
+
+  const handleClick = () => {
+    if (isGroup && hasChildren) toggleGroup();
+    else setPage(item.id);
+  };
 
   const handleKeyDown = e => {
     switch (e.key) {
@@ -35,17 +47,17 @@ function NavButton({ page, item, navOpen, setPage, layoutOpen, setLayoutOpen, on
         break;
       case "ArrowRight":
         e.preventDefault();
-        if (isGroup && !layoutOpen) setLayoutOpen(true);
+        if (isGroup && hasChildren && !isOpen) setOpenGroups(prev => ({ ...prev, [item.id]: true }));
         else onKeyNav("next");
         break;
       case "ArrowLeft":
         e.preventDefault();
-        if (isGroup && layoutOpen) setLayoutOpen(false);
+        if (isGroup && hasChildren && isOpen) setOpenGroups(prev => ({ ...prev, [item.id]: false }));
         else onKeyNav("parent");
         break;
       case "Escape":
         e.preventDefault();
-        if (isGroup) setLayoutOpen(false);
+        if (isGroup && hasChildren) setOpenGroups(prev => ({ ...prev, [item.id]: false }));
         break;
     }
   };
@@ -57,14 +69,14 @@ function NavButton({ page, item, navOpen, setPage, layoutOpen, setLayoutOpen, on
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         aria-current={isActive ? "page" : undefined}
-        aria-expanded={isGroup ? layoutOpen : undefined}
-        aria-haspopup={isGroup ? "true" : undefined}
+        aria-expanded={isGroup && hasChildren ? isOpen : undefined}
+        aria-haspopup={isGroup && hasChildren ? "true" : undefined}
         tabIndex={0}>
         <span className="nav-btn-icon"><Icon name={item.icon} /></span>
         <span className="nav-btn-label">{item.label}</span>
-        {isGroup && (
-          <span className={"nav-parent-chevron " + (layoutOpen ? "open" : "closed")}>
-            <Icon name={layoutOpen ? "chevron-down" : "chevron-right"} />
+        {isGroup && hasChildren && (
+          <span className={"nav-parent-chevron " + (isOpen ? "open" : "closed")}>
+            <Icon name={isOpen ? "chevron-down" : "chevron-right"} />
           </span>
         )}
         <span className="nav-tooltip">{item.label}</span>
@@ -76,18 +88,32 @@ function NavButton({ page, item, navOpen, setPage, layoutOpen, setLayoutOpen, on
 function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileMenuOpen }) {
   const mobile = typeof window !== "undefined" && window.innerWidth <= 768;
   const showSubs = mobile ? mobileMenuOpen : navOpen;
-  const [layoutOpen, setLayoutOpen] = React.useState(true);
   const navRef = React.useRef(null);
-  const childActive = PAGES.some(pg => pg.parentId === "layout" && pg.id === page);
-  React.useEffect(() => { if (childActive) setLayoutOpen(true); }, [page]);
+
+  // Per-parent open state — keyed by parent id
+  // Initialize all parents with children as open
+  const initOpenGroups = () => PAGES.reduce((acc, pg) => {
+    if (pg.isParent && PAGES.some(p => p.parentId === pg.id)) acc[pg.id] = true;
+    return acc;
+  }, {});
+  const [openGroups, setOpenGroups] = React.useState(initOpenGroups);
+
+  // Auto-open parent when navigating to a child
+  React.useEffect(() => {
+    const parent = PAGES.find(pg => pg.id === page);
+    if (parent) return;
+    const parentPage = PAGES.find(pg => PAGES.some(p => p.parentId === pg.id && p.id === page));
+    if (parentPage) setOpenGroups(prev => ({ ...prev, [parentPage.id]: true }));
+  }, [page]);
 
   const navItems = PAGES.filter(pg => {
     if (pg.noNav) return false;
     if (!showSubs && pg.parentId) {
-      if (pg.parentId === "layout" && layoutOpen) return true;
-      return false;
+      // In collapsed mode show sub-items only if their parent is open
+      return !!openGroups[pg.parentId];
     }
-    if (pg.parentId === "layout" && !layoutOpen) return false;
+    // In expanded mode hide sub-items if their parent is closed
+    if (pg.parentId && !openGroups[pg.parentId]) return false;
     return true;
   });
 
@@ -133,7 +159,7 @@ function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileM
             <NavButton key={item.id} page={page} item={item}
               navOpen={mobile ? mobileMenuOpen : navOpen}
               setPage={id => { setPage(id); if (mobile) setMobileMenuOpen(false); }}
-              layoutOpen={layoutOpen} setLayoutOpen={setLayoutOpen}
+              openGroups={openGroups} setOpenGroups={setOpenGroups}
               onKeyNav={handleKeyNav} />
           ))}
         </div>
