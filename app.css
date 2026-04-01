@@ -90,6 +90,9 @@ html, body, #root {
 	--nav-fs-icon:    var(--fs-lg);
 	--nav-fs-chevron: var(--fs-sm);
 	--nav-fs-tooltip: var(--fs-sm);
+
+	/* Nav collapsed width */
+	--nav-collapsed-w: 60px;
  }
 	
 @media (min-width: 2560px) and (min-height: 1440px) {
@@ -216,7 +219,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	text-align: left;
 	width: 100%;
 	position: relative;
-	transition: background 0.15s ease, color 0.15s ease;
+	transition: background 0.15s ease, color 0.15s ease, gap 0.2s ease, padding 0.2s ease;
 }
 
 /* â”€â”€ Parent button â€” slightly larger, more prominent â”€â”€ */
@@ -348,15 +351,35 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	transform: rotate(-90deg);
 }
 
-/* â”€â”€ Collapsed state â”€â”€ */
+/* â”€â”€ Collapsed state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+ * Goal: every button shows a perfectly centered icon, same size, same position
+ * Strategy: zero out ALL layout properties that could cause drift
+ * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+/* Base collapsed button â€” full reset to centered icon */
 .nav-btn-icon-only {
 	justify-content: center;
-	padding: 9px 0;
-	gap: 0;
+	align-items: center;
+	padding: 0 !important;
+	gap: 0 !important;
+	width: 100%;
+	height: 40px;
 }
 
+/* Sub-item in collapsed â€” same height as parent, no indent */
 .nav-btn-icon-only.nav-sub-btn {
 	padding-left: 0;
+}
+
+/* Collapsed: hide label, toggle-label, chevron */
+/* Collapsed toggle -- strip container, center icon same as nav buttons */
+.nav-collapsed .nav-toggle {
+	padding: 0 !important;
+	margin-bottom: 4px;
+	border: none;
+	background: transparent;
+	height: 40px;
+	justify-content: center;
 }
 
 .nav-collapsed .nav-btn-label,
@@ -368,10 +391,31 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	transition: max-width 0.2s ease, opacity 0.05s ease;
 }
 
+/* Collapsed sub-item â€” kill padding and transitions */
+/* Collapsed sub-item -- same axis, slightly dimmed to hint hierarchy */
 .nav-collapsed .nav-sub-btn {
+	padding-left: 0;
+	opacity: 0.7;
 	transition: none;
 }
 
+.nav-collapsed .nav-sub-btn:hover,
+.nav-collapsed .nav-sub-btn.active {
+	opacity: 1;
+}
+
+/* Collapsed active â€” outline pill on icon, no dimension change */
+.nav-collapsed .nav-btn.active .nav-btn-icon {
+	outline: 1.5px solid color-mix(in srgb, var(--color-primary) 50%, transparent);
+	outline-offset: 4px;
+	border-radius: 6px;
+}
+
+/* Hide ::before bars â€” no room in collapsed */
+.nav-collapsed .nav-btn.active::before,
+.nav-collapsed .nav-sub-btn.active::before {
+	display: none;
+}
 /* â”€â”€ Tooltip (collapsed only) â”€â”€ */
 .nav-btn-wrap {
 	position: relative;
@@ -457,8 +501,9 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 /* â”€â”€ Nav structure â”€â”€ */
 .nav.nav-collapsed {
-	width: 44px;
-	padding: 14px 8px;
+	width: var(--nav-collapsed-w);
+	padding: 14px 10px;
+	border-right: 1px solid color-mix(in srgb, var(--color-primary) 15%, transparent);
 }
 
 .nav {
