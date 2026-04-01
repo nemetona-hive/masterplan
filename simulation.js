@@ -1,4 +1,4 @@
-const symEdge = (total, step) => {
+﻿const symEdge = (total, step) => {
   if (step <= 0) return { edgeWidth: 0, finalFullCount: 0 };
   let fullCount = Math.floor(total / step);
   let remainder = total - fullCount * step;
@@ -134,8 +134,8 @@ function computeStandard(sh, sysNum, offset, palKey) {
   const { W, H, PPi, PLa, direction, minJ, startOff } = sh;
   if (W <= 0 || H <= 0 || PPi <= 0 || PLa <= 0) return emptyLayoutResult();
   const vSym = direction === "V";
-  const sW = vSym ? H : W, sH = vSym ? W : H;
-  const rows = simulate(sW, sH, PLa, PPi, offset, minJ, sysNum, vSym, startOff);
+  const sW = vSym ? H : W;
+  const rows = simulate(sW, vSym ? W : H, PLa, PPi, offset, minJ, sysNum, vSym, startOff);
   const stats = makeStats(rows);
   const L = SUMMARY_LABELS.s1s2s3;
   return {
@@ -158,8 +158,8 @@ function computeS4(sh) {
   const { W, H, PLa, direction, minJ, s4Long, s4Short } = sh;
   if (W <= 0 || H <= 0 || PLa <= 0 || s4Long <= 0 || s4Short <= 0) return emptyLayoutResult();
   const vSym = direction === "V";
-  const sW = vSym ? H : W, sH = vSym ? W : H;
-  const rows = simulateS4(sW, sH, PLa, s4Long, s4Short, minJ, vSym);
+  const sW = vSym ? H : W;
+  const rows = simulateS4(sW, vSym ? W : H, PLa, s4Long, s4Short, minJ, vSym);
   const stats = makeStats(rows);
   const gaps = nGap(rows);
   const totalGapWidth = gapWidth(rows);
