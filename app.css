@@ -238,13 +238,11 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 }
 
 .nav-parent-chevron {
-	opacity: 1;
-	transition: opacity 0.1s ease 0.15s, transform 0.2s ease;
 	margin-left: auto;
 	font-size: 0.75em;
 	opacity: 0.5;
-	transition: transform 0.2s ease;
 	flex-shrink: 0;
+	transition: opacity 0.1s ease 0.15s, transform 0.2s ease;
 }
 
 .nav-parent-chevron.closed {
@@ -271,9 +269,9 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	font-family: var(--mono);
 	font-size: inherit;
 	opacity: 1;
-	transition: opacity 0.1s ease 0.15s;
 	white-space: nowrap;
 	overflow: hidden;
+	transition: width 0s ease 0.2s, flex 0s ease 0.2s, opacity 0.1s ease 0.15s;
 }
 
 .nav-collapsed .nav-btn-label {
@@ -287,12 +285,16 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	gap: 0;
 }
 
-/* Collapsed: shrink invisible label/chevron to zero width so icon stays centered */
+/* Collapsed: shrink and hide label/chevron */
+.nav-collapsed .nav-toggle-label,
 .nav-collapsed .nav-btn-label,
 .nav-collapsed .nav-parent-chevron {
 	width: 0;
 	flex: 0 0 0;
 	min-width: 0;
+	opacity: 0;
+	overflow: hidden;
+	transition: opacity 0.05s ease;
 }
 
 .nav-btn-icon-only.nav-sub-btn {
@@ -352,7 +354,6 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .nav.nav-collapsed {
 	width: 44px;
 	padding: 14px 8px;
-	overflow: hidden;
 }
 
 .nav {
@@ -426,11 +427,6 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	opacity: 0;
 	transition: opacity 0.15s ease;
 	z-index: 100;
-}
-
-.nav-tooltip {
-	opacity: 0;
-	pointer-events: none;
 }
 
 .nav-collapsed .nav-btn-wrap:hover .nav-tooltip {
@@ -543,6 +539,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .page-side {
 	flex-shrink: 0;
 	border-right: 1px solid var(--color-darkblue);
+	overflow: visible;
 }
 
 /* HEAD */
@@ -1473,3 +1470,4 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 		max-width: 100%;
 	}
 }
+.nav { overflow-x: visible; }
