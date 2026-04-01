@@ -11,6 +11,9 @@ function MainPageContent({ page, setPage, sh, setSh, sym, setSym }) {
   if (page === "home") {
     return <div id="page-home" className="page-main-full"><SheetHome page={page} setPage={setPage} /></div>;
   }
+  if (page === "concrete") {
+    return <div id="main-data" className="main-data"><SheetConcrete /></div>;
+  }
   if (page === "area") {
     return (
       <div id="page-area" className="page-scroll">
