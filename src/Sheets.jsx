@@ -42,6 +42,15 @@ function SheetHome({ page, setPage }) {
   );
 }
 
+function SheetConcrete() {
+  return (
+    <>
+      <div id="data-control" className="data-control" />
+      <div id="data-preview" className="data-preview" />
+    </>
+  );
+}
+
 function SheetArea({ sh }) {
   const { W, H, PPi, PLa } = sh;
   if (W <= 0 || H <= 0 || PPi <= 0 || PLa <= 0) {
