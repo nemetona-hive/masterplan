@@ -1,7 +1,7 @@
 ﻿const PAL_CLASSES = {
   s1: ["color-s1"],
-  s2: ["color-s2l", "color-s2d"],
-  s3: ["color-s3l", "color-s3d"],
+  s2: ["color-s1"],
+  s3: ["color-s1"],
   s4l: ["color-s4l"],
   s4s: ["color-s4s"]
 };
@@ -121,6 +121,7 @@ const DEFAULT_SH = {
   PLa:        300,
   offset:     0.5,
   direction: "H",
+  rowStart:  "bottom",
   minJ:       100,
   startOff:     0,
   s4Long:    2400,
