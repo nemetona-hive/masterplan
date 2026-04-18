@@ -101,6 +101,7 @@ function SheetSymmetricLayout({ sym, setSym }) {
 
 function SheetSurfaceLayout({ sh, setSh }) {
   const { W, H, PPi, PLa, offset, direction, minJ, startOff, s4Long, s4Short } = sh;
+  const rowStart = sh.rowStart || "top";
   const [hoveredType, setHoveredType] = React.useState(null);
   const [materialOpen, setMaterialOpen] = React.useState(true);
   const [surfaceOpen,  setSurfaceOpen]  = React.useState(true);
@@ -164,6 +165,15 @@ function SheetSurfaceLayout({ sh, setSh }) {
               ))}
             </div>
           </div>
+          <div className="ctrl-lbl">
+            <span className="ctrl-sublbl">Row order</span>
+            <div id="ctrl-row-order" className="ctrl-btns">
+              <button className={"ctrl-dir " + (rowStart === "top" ? "on" : "")}
+                onClick={() => setSh(st => ({ ...st, rowStart: "top" }))}>R1 top</button>
+              <button className={"ctrl-dir " + (rowStart === "bottom" ? "on" : "")}
+                onClick={() => setSh(st => ({ ...st, rowStart: "bottom" }))}>R1 bottom</button>
+            </div>
+          </div>
           <NumInput id="input-minJ"     label="Min remainder (mm)"  value={minJ}     onChange={set("minJ")}    step={10} />
           <NumInput id="input-startOff" label="R1 start point (mm)" value={startOff}
             onChange={v => setSh(s => ({ ...s, startOff: Math.min(v, Math.max(1, PPi) - 1) }))} step={10} min={0} />
@@ -178,6 +188,7 @@ function SheetSurfaceLayout({ sh, setSh }) {
             return (
               <LayoutPanel key={id} layout={panel.layout} result={panel.result}
                 hoveredType={hoveredType} setHoveredType={setHoveredType}
+                rowStart={rowStart}
                 isBest={panel.layout.includeInBest && panel.result.valid && panel.result.stats.total === best} />
             );
           })}
