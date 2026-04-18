@@ -100,10 +100,10 @@ function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileM
 
   // Auto-open parent when navigating to a child
   React.useEffect(() => {
-    const parent = PAGES.find(pg => pg.id === page);
-    if (parent) return;
-    const parentPage = PAGES.find(pg => PAGES.some(p => p.parentId === pg.id && p.id === page));
-    if (parentPage) setOpenGroups(prev => ({ ...prev, [parentPage.id]: true }));
+    const currentPage = PAGES.find(pg => pg.id === page);
+    if (currentPage && currentPage.parentId) {
+      setOpenGroups(prev => ({ ...prev, [currentPage.parentId]: true }));
+    }
   }, [page]);
 
   const navItems = PAGES.filter(pg => {
