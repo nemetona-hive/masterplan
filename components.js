@@ -155,6 +155,7 @@ function Row({
     className: "data-row-unit"
   }, unit));
 }
+
 // ── Visualization components ──────────────────────────────────────────────────
 
 const PanelRowVis = React.memo(function PanelRowVis({
@@ -347,6 +348,7 @@ function PreviewSection({
     className: "preview-data"
   }, children));
 }
+
 // ── Layout controls & registry ────────────────────────────────────────────────
 
 function S0Controls({
@@ -455,6 +457,7 @@ var LAYOUT_REGISTRY = ["s1", "s2", "s3", "s4"].map(id => {
     includeInBest: true
   };
 });
+
 // ── Page sheets ───────────────────────────────────────────────────────────────
 
 function SheetHome({
@@ -512,6 +515,98 @@ function SheetConcrete() {
     id: "data-preview",
     className: "data-preview"
   }));
+}
+function SheetNewTool() {
+  const [baseOpen, setBaseOpen] = React.useState(true);
+  const [baseValue, setBaseValue] = React.useState(1000);
+  const PHI = 1.6180339887499;
+  const startValue = baseValue / PHI;
+  const steps = [];
+  let larger = startValue;
+  for (let i = 1; i <= 7; i++) {
+    const smaller = larger / PHI;
+    steps.push({
+      step: i,
+      larger,
+      smaller
+    });
+    larger = smaller;
+  }
+  const fmtInt = v => Math.round(v).toString();
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    id: "data-control",
+    className: "data-control"
+  }, /*#__PURE__*/React.createElement(ControlPanel, {
+    id: "control-base-number",
+    title: "Base Number",
+    open: baseOpen,
+    setOpen: setBaseOpen
+  }, /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-base-number",
+    label: "Value (mm)",
+    value: baseValue,
+    onChange: setBaseValue,
+    step: 10
+  }))), /*#__PURE__*/React.createElement("div", {
+    id: "data-preview",
+    className: "data-preview"
+  }, /*#__PURE__*/React.createElement("div", {
+    id: "panel-golden-ratio",
+    className: "sys-block"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sys-head"
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "sys-title"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "golden-phi",
+    className: "sys-title-icon"
+  }), " Golden Ratio phi"), /*#__PURE__*/React.createElement("span", {
+    className: "sys-head-sub"
+  }, "phi = 1.6180339887499")), /*#__PURE__*/React.createElement("div", {
+    className: "section-pad",
+    style: {
+      padding: "14px",
+      display: "flex",
+      flexDirection: "column",
+      gap: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "data-row"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "data-row-lbl"
+  }, "Value"), /*#__PURE__*/React.createElement("span", {
+    className: "data-row-val hi"
+  }, fmtInt(baseValue)), /*#__PURE__*/React.createElement("span", {
+    className: "data-row-unit"
+  }, "mm")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      border: "1px solid var(--color-gray)",
+      borderRadius: "6px",
+      overflow: "hidden"
+    }
+  }, steps.map((item, idx) => /*#__PURE__*/React.createElement("div", {
+    key: item.step,
+    style: {
+      display: "grid",
+      gridTemplateColumns: "56px 1fr",
+      borderTop: idx === 0 ? "none" : "1px solid var(--color-gray)"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "data-row",
+    style: {
+      borderBottom: "none",
+      borderRight: "1px solid var(--color-gray)"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "data-row-val"
+  }, item.step)), /*#__PURE__*/React.createElement("div", {
+    className: "data-row",
+    style: {
+      borderBottom: "none"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "data-row-val"
+  }, fmtInt(item.larger))))))))));
 }
 function SheetArea({
   sh
@@ -840,6 +935,7 @@ function SheetSurfaceLayout({
     });
   }))));
 }
+
 // ── Navigation ────────────────────────────────────────────────────────────────
 
 function isNavPageActive(page, pg) {
@@ -1040,6 +1136,7 @@ function AppNav({
     "aria-orientation": "vertical"
   })));
 }
+
 // ── App root ──────────────────────────────────────────────────────────────────
 
 // Read page id from URL hash, fallback to "home"
@@ -1070,6 +1167,12 @@ function MainPageContent({
       id: "main-data",
       className: "main-data"
     }, /*#__PURE__*/React.createElement(SheetConcrete, null));
+  }
+  if (page === "golden-ratio") {
+    return /*#__PURE__*/React.createElement("div", {
+      id: "main-data",
+      className: "main-data"
+    }, /*#__PURE__*/React.createElement(SheetNewTool, null));
   }
   if (page === "area") {
     return /*#__PURE__*/React.createElement("div", {
