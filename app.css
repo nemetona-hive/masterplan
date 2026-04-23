@@ -83,6 +83,14 @@ html, body, #root {
 	--fs-md: 13px;
 	--fs-lg: 17px;
 
+	/* Spacing scale */
+	--sp-1: 4px;
+	--sp-2: 8px;
+	--sp-3: 12px;
+	--sp-4: 16px;
+	--sp-5: 20px;
+	--sp-6: 24px;
+
 	/* Nav font sizes -- edit to tune sidebar independently */
 	--nav-fs-header:  var(--fs-lg);
 	--nav-fs-parent:  var(--fs-md);
@@ -750,7 +758,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 }
 
 .section-pad {
-	padding: 14px;
+	padding: var(--sp-3);
 }
 
 /*
@@ -875,10 +883,10 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	width: 384px;
 	flex-shrink: 0;
 	border-right: 1px solid var(--color-gray);
-	padding: 18px 15px;
+	padding: var(--sp-4) var(--sp-3);
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: var(--sp-3);
 	overflow-y: auto;
 }
 
@@ -1137,7 +1145,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 .data-preview {
 	flex: 1;
-	padding: 20px 22px;
+	padding: var(--sp-5);
 	overflow-y: auto;
 }
 
@@ -1168,7 +1176,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 }
 	
 .data-preview .sys-block {
-	margin-bottom: 26px;
+	margin-bottom: var(--sp-5);
 }
 	
 .data-preview .sys-head {
@@ -1577,15 +1585,16 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 		flex-direction: row;
 		align-items: center;
 		gap: 4px;
-		padding: 6px 10px;
+		padding: var(--sp-2) var(--sp-3);
 		overflow-x: auto;
 		overflow-y: hidden;
 		flex-wrap: nowrap;
+		scroll-snap-type: x proximity;
 	}
 
 	.nav.nav-collapsed {
 		width: 100% !important;
-		padding: 6px 10px;
+		padding: var(--sp-2) var(--sp-3);
 	}
 
 	/* nav-items and nav-bottom become horizontal rows */
@@ -1620,6 +1629,9 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 		flex-shrink: 0;
 		width: auto;
 		min-height: 44px;
+		border: 1px solid color-mix(in srgb, var(--color-gray-light) 48%, transparent);
+		background: color-mix(in srgb, var(--color-darkblue) 85%, transparent);
+		scroll-snap-align: start;
 	}
 
 	/* Sub-items indent slightly in horizontal layout */
@@ -1655,8 +1667,8 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	.data-control {
 		width: 100%;
 		border-right: none;
-		border-bottom: 1px solid var(--color-gray-light);
-		padding: 14px 12px;
+		border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--color-gray-light));
+		padding: var(--sp-3);
 		gap: 10px;
 		overflow: visible;
 	}
@@ -1664,11 +1676,20 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	.data-preview {
 		overflow: visible;
 		flex: 0 0 auto;
-		padding: 14px 12px;
+		padding: var(--sp-3);
+		border-top: 1px solid color-mix(in srgb, var(--color-gray-light) 45%, transparent);
+		padding-bottom: calc(var(--sp-3) + env(safe-area-inset-bottom));
 	}
 
 	.data-preview .sys-block {
 		margin-bottom: 18px;
+	}
+
+	.data-preview .gr-row-marker {
+		min-width: 16px;
+		height: 16px;
+		padding: 0 4px;
+		font-size: var(--fs-xs);
 	}
 
 	.data-preview .sys-head {
