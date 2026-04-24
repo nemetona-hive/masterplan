@@ -565,28 +565,28 @@ function SheetNewTool() {
   const link = useLinkedCardHighlight("golden-ratio");
   const [baseItems, setBaseItems] = React.useState([{
     id: "a",
-    value: 1000,
+    value: "",
     suffix: "",
     saved: {
-      value: 1000,
+      value: "",
       suffix: ""
     },
     savedCommitted: false
   }, {
     id: "b",
-    value: 1000,
+    value: "",
     suffix: "",
     saved: {
-      value: 1000,
+      value: "",
       suffix: ""
     },
     savedCommitted: false
   }, {
     id: "c",
-    value: 1000,
+    value: "",
     suffix: "",
     saved: {
-      value: 1000,
+      value: "",
       suffix: ""
     },
     savedCommitted: false
@@ -611,10 +611,30 @@ function SheetNewTool() {
   const resetItem = id => {
     setBaseItems(items => items.map(item => item.id === id ? {
       ...item,
-      value: item.saved.value,
-      suffix: item.saved.suffix,
+      value: "",
+      suffix: "",
       savedCommitted: false
     } : item));
+  };
+  const commitBaseValue = id => {
+    setBaseItems(items => items.map(item => {
+      if (item.id !== id) return item;
+      const raw = String(item.value ?? "").trim().replace(",", ".");
+      if (raw === "") return {
+        ...item,
+        value: ""
+      };
+      const n = Number(raw);
+      if (!Number.isFinite(n) || n < 1) return {
+        ...item,
+        value: ""
+      };
+      const rounded = Math.max(1, Math.round(n * 100) / 100);
+      return {
+        ...item,
+        value: String(rounded)
+      };
+    }));
   };
   const buildSteps = base => {
     const startValue = base / PHI;
@@ -653,24 +673,51 @@ function SheetNewTool() {
       className: `control-panel gr-control-card gr-control-card-${tone}${isStored ? " gr-card-saved" : ""}`
     }, link.bindControl(item.id)), /*#__PURE__*/React.createElement("div", {
       className: "panel-data"
-    }, /*#__PURE__*/React.createElement(NumInput, {
+    }, /*#__PURE__*/React.createElement("label", {
       id: `input-base-number-${item.id}`,
-      label: valueInputLabel,
+      className: "num-wrap"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "num-lbl"
+    }, valueInputLabel), /*#__PURE__*/React.createElement("div", {
+      className: "num-row"
+    }, /*#__PURE__*/React.createElement("input", {
+      id: `input-base-number-field-${item.id}`,
+      className: "num-input",
+      type: "number",
       value: item.value,
-      onChange: v => setItemField(item.id, "value", v),
-      step: 10
-    }), /*#__PURE__*/React.createElement("div", {
+      min: 1,
+      step: 10,
+      onChange: e => setItemField(item.id, "value", e.target.value),
+      onBlur: () => commitBaseValue(item.id)
+    }), /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      className: "num-btn",
+      onClick: () => commitBaseValue(item.id)
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "corner-down-left"
+    })))), /*#__PURE__*/React.createElement("div", {
       className: "ctrl-lbl"
     }, /*#__PURE__*/React.createElement("span", {
       className: "ctrl-sublbl"
-    }, "Custom label"), /*#__PURE__*/React.createElement("input", {
+    }, "Custom label"), /*#__PURE__*/React.createElement("div", {
+      className: "num-row"
+    }, /*#__PURE__*/React.createElement("input", {
       id: `input-base-label-suffix-${item.id}`,
-      className: "num-input ctrl-text-input gr-label-input",
+      className: "num-input gr-label-input",
       type: "text",
       value: item.suffix,
       onChange: e => setItemField(item.id, "suffix", e.target.value),
       placeholder: "e.g. A, L, Start"
-    })), /*#__PURE__*/React.createElement("div", {
+    }), /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      className: "num-btn",
+      onClick: () => {
+        const input = document.getElementById(`input-base-label-suffix-${item.id}`);
+        if (input instanceof HTMLInputElement) input.blur();
+      }
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "corner-down-left"
+    })))), /*#__PURE__*/React.createElement("div", {
       className: "ctrl-lbl"
     }, /*#__PURE__*/React.createElement("span", {
       className: "ctrl-sublbl"
@@ -692,10 +739,12 @@ function SheetNewTool() {
     const tone = getLinkedCardTone(item.id);
     const trimmedSuffix = item.suffix.trim();
     const isStored = item.savedCommitted && item.value === item.saved.value && item.suffix === item.saved.suffix;
+    const numericValue = Number(item.value);
+    const hasValidValue = String(item.value).trim() !== "" && Number.isFinite(numericValue) && numericValue >= 1;
     const valueRowLabel = trimmedSuffix ? /*#__PURE__*/React.createElement(React.Fragment, null, "Value ", /*#__PURE__*/React.createElement("span", {
       className: "num-lbl-raw"
     }, trimmedSuffix)) : "Value";
-    const steps = buildSteps(item.value);
+    const steps = hasValidValue ? buildSteps(numericValue) : [];
     return /*#__PURE__*/React.createElement("div", {
       key: item.id,
       id: `panel-golden-ratio-${item.id}`,
@@ -717,11 +766,11 @@ function SheetNewTool() {
       className: "data-row-lbl"
     }, valueRowLabel), /*#__PURE__*/React.createElement("span", {
       className: "data-row-val hi"
-    }, fmtInt(item.value)), /*#__PURE__*/React.createElement("span", {
+    }, hasValidValue ? fmtInt(numericValue) : "-"), /*#__PURE__*/React.createElement("span", {
       className: "data-row-unit"
     }, "mm"), /*#__PURE__*/React.createElement("span", {
       className: "gr-row-marker"
-    }, getLinkedCardMarker(item.id))), /*#__PURE__*/React.createElement("div", {
+    }, getLinkedCardMarker(item.id))), hasValidValue && /*#__PURE__*/React.createElement("div", {
       className: "gr-steps-wrap"
     }, steps.map((stepItem, stepIdx) => /*#__PURE__*/React.createElement("div", {
       key: stepItem.step,
@@ -1179,7 +1228,10 @@ function AppNav({
   // Per-parent open state — keyed by parent id
   // Initialize all parents with children as open
   const initOpenGroups = () => PAGES.reduce((acc, pg) => {
-    if (pg.isParent && PAGES.some(p => p.parentId === pg.id)) acc[pg.id] = true;
+    if (pg.isParent && PAGES.some(p => p.parentId === pg.id)) {
+      const mobileNow = typeof window !== "undefined" && window.innerWidth <= 768;
+      acc[pg.id] = mobileNow ? false : true;
+    }
     return acc;
   }, {});
   const [openGroups, setOpenGroups] = React.useState(initOpenGroups);
@@ -1196,15 +1248,28 @@ function AppNav({
   }, [page]);
   const navItems = PAGES.filter(pg => {
     if (pg.noNav) return false;
-    if (!showSubs && pg.parentId) {
-      // In collapsed mode show sub-items only if their parent is open
-      return !!openGroups[pg.parentId];
+    if (mobile) {
+      // Mobile closed state: show parent-level items only.
+      if (!mobileMenuOpen) return !pg.parentId;
+      // Mobile open state: show children only when their parent group is open.
+      if (pg.parentId && !openGroups[pg.parentId]) return false;
+      return true;
     }
-    // In expanded mode hide sub-items if their parent is closed
+
+    // Desktop collapsed mode: show sub-items only if their parent group is open.
+    if (!showSubs && pg.parentId) return !!openGroups[pg.parentId];
+    // Desktop expanded mode: hide sub-items when parent is closed.
     if (pg.parentId && !openGroups[pg.parentId]) return false;
     return true;
   });
-  const handleToggle = () => mobile ? setMobileMenuOpen(o => !o) : setNavOpen(o => !o);
+  const handleToggle = () => {
+    if (mobile) {
+      setPage("home");
+      setMobileMenuOpen(false);
+      return;
+    }
+    setNavOpen(o => !o);
+  };
   const handleKeyNav = direction => {
     if (!navRef.current) return;
     const btns = Array.from(navRef.current.querySelectorAll(".nav-btn"));
@@ -1223,11 +1288,18 @@ function AppNav({
   }, /*#__PURE__*/React.createElement("nav", {
     id: "side-navi",
     ref: navRef,
-    className: "nav" + (!mobile && !navOpen ? " nav-collapsed" : ""),
+    className: "nav" + (!mobile && !navOpen ? " nav-collapsed" : "") + (mobile && mobileMenuOpen ? " nav-mobile-open" : ""),
     role: "navigation",
     "aria-label": "Main navigation"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "nav-section nav-toggle"
+    className: "nav-section nav-toggle",
+    onClick: mobile ? () => {
+      setPage("home");
+      setMobileMenuOpen(false);
+    } : undefined,
+    role: mobile ? "button" : undefined,
+    tabIndex: mobile ? 0 : undefined,
+    onKeyDown: mobile ? e => (e.key === "Enter" || e.key === " ") && (setPage("home"), setMobileMenuOpen(false)) : undefined
   }, /*#__PURE__*/React.createElement("span", {
     className: "nav-toggle-label",
     onClick: () => setPage("home"),
@@ -1239,7 +1311,7 @@ function AppNav({
     onClick: handleToggle,
     role: "button",
     tabIndex: 0,
-    "aria-label": navOpen ? "Collapse sidebar" : "Expand sidebar",
+    "aria-label": mobile ? mobileMenuOpen ? "Close menu" : "Open menu" : navOpen ? "Collapse sidebar" : "Expand sidebar",
     onKeyDown: e => (e.key === "Enter" || e.key === " ") && handleToggle()
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "panel-left-close"
@@ -1363,6 +1435,19 @@ function App() {
     };
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
+  }, []);
+
+  // Enter in any input commits by blurring the field (matches NumInput button intent)
+  React.useEffect(() => {
+    const onEnterCommit = e => {
+      if (e.key !== "Enter") return;
+      const target = e.target;
+      if (!(target instanceof HTMLInputElement)) return;
+      e.preventDefault();
+      target.blur();
+    };
+    window.addEventListener("keydown", onEnterCommit, true);
+    return () => window.removeEventListener("keydown", onEnterCommit, true);
   }, []);
   const [sh, setSh] = useState(DEFAULT_SH);
   const [sym, setSym] = useState(DEFAULT_SYM);
