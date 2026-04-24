@@ -85,21 +85,25 @@ function NavButton({ page, item, navOpen, setPage, openGroups, setOpenGroups, on
   );
 }
 
-function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileMenuOpen }) {
-  const mobile = typeof window !== "undefined" && window.innerWidth <= 768;
+function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileMenuOpen, isMobile }) {
+  const mobile = isMobile;  // Use passed prop instead of calculating
   const showSubs = mobile ? mobileMenuOpen : navOpen;
   const navRef = React.useRef(null);
 
   // Per-parent open state — keyed by parent id
   // Initialize all parents with children as open
-  const initOpenGroups = () => PAGES.reduce((acc, pg) => {
+  const initOpenGroups = (isMob) => PAGES.reduce((acc, pg) => {
     if (pg.isParent && PAGES.some(p => p.parentId === pg.id)) {
-      const mobileNow = typeof window !== "undefined" && window.innerWidth <= 768;
-      acc[pg.id] = mobileNow ? false : true;
+      acc[pg.id] = isMob ? false : true;
     }
     return acc;
   }, {});
-  const [openGroups, setOpenGroups] = React.useState(initOpenGroups);
+  const [openGroups, setOpenGroups] = React.useState(() => initOpenGroups(mobile));
+
+  // Reinitialize open groups when switching between mobile and desktop
+  React.useEffect(() => {
+    setOpenGroups(initOpenGroups(mobile));
+  }, [mobile]);
 
   // Auto-open parent when navigating to a child
   React.useEffect(() => {
@@ -128,8 +132,7 @@ function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileM
 
   const handleToggle = () => {
     if (mobile) {
-      setPage("home");
-      setMobileMenuOpen(false);
+      setMobileMenuOpen(o => !o);
       return;
     }
     setNavOpen(o => !o);
@@ -157,10 +160,9 @@ function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileM
         {/* Header */}
         <div
           className="nav-section nav-toggle"
-          onClick={mobile ? () => { setPage("home"); setMobileMenuOpen(false); } : undefined}
           role={mobile ? "button" : undefined}
           tabIndex={mobile ? 0 : undefined}
-          onKeyDown={mobile ? e => (e.key === "Enter" || e.key === " ") && (setPage("home"), setMobileMenuOpen(false)) : undefined}
+          onKeyDown={mobile ? e => (e.key === "Enter" || e.key === " ") && setMobileMenuOpen(o => !o) : undefined}
         >
           <span className="nav-toggle-label"
             onClick={() => setPage("home")}
