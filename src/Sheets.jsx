@@ -55,9 +55,9 @@ function SheetNewTool() {
   const [baseOpen, setBaseOpen] = React.useState(true);
   const link = useLinkedCardHighlight("golden-ratio");
   const [baseItems, setBaseItems] = React.useState([
-    { id: "a", value: 1000, suffix: "", saved: { value: 1000, suffix: "" }, savedCommitted: false },
-    { id: "b", value: 1000, suffix: "", saved: { value: 1000, suffix: "" }, savedCommitted: false },
-    { id: "c", value: 1000, suffix: "", saved: { value: 1000, suffix: "" }, savedCommitted: false }
+    { id: "a", value: "", suffix: "", saved: { value: "", suffix: "" }, savedCommitted: false },
+    { id: "b", value: "", suffix: "", saved: { value: "", suffix: "" }, savedCommitted: false },
+    { id: "c", value: "", suffix: "", saved: { value: "", suffix: "" }, savedCommitted: false }
   ]);
   const PHI = 1.6180339887499;
 
@@ -74,9 +74,21 @@ function SheetNewTool() {
   const resetItem = id => {
     setBaseItems(items => items.map(item => (
       item.id === id
-        ? { ...item, value: item.saved.value, suffix: item.saved.suffix, savedCommitted: false }
+        ? { ...item, value: "", suffix: "", savedCommitted: false }
         : item
     )));
+  };
+
+  const commitBaseValue = id => {
+    setBaseItems(items => items.map(item => {
+      if (item.id !== id) return item;
+      const raw = String(item.value ?? "").trim().replace(",", ".");
+      if (raw === "") return { ...item, value: "" };
+      const n = Number(raw);
+      if (!Number.isFinite(n) || n < 1) return { ...item, value: "" };
+      const rounded = Math.max(1, Math.round(n * 100) / 100);
+      return { ...item, value: String(rounded) };
+    }));
   };
 
   const buildSteps = base => {
@@ -111,23 +123,46 @@ function SheetNewTool() {
                 {...link.bindControl(item.id)}
               >
                 <div className="panel-data">
-                  <NumInput
-                    id={`input-base-number-${item.id}`}
-                    label={valueInputLabel}
-                    value={item.value}
-                    onChange={v => setItemField(item.id, "value", v)}
-                    step={10}
-                  />
+                  <label id={`input-base-number-${item.id}`} className="num-wrap">
+                    <span className="num-lbl">{valueInputLabel}</span>
+                    <div className="num-row">
+                      <input
+                        id={`input-base-number-field-${item.id}`}
+                        className="num-input"
+                        type="number"
+                        value={item.value}
+                        min={1}
+                        step={10}
+                        onChange={e => setItemField(item.id, "value", e.target.value)}
+                        onBlur={() => commitBaseValue(item.id)}
+                      />
+                      <button type="button" className="num-btn" onClick={() => commitBaseValue(item.id)}>
+                        <Icon name="corner-down-left" />
+                      </button>
+                    </div>
+                  </label>
                   <div className="ctrl-lbl">
                     <span className="ctrl-sublbl">Custom label</span>
-                    <input
-                      id={`input-base-label-suffix-${item.id}`}
-                      className="num-input ctrl-text-input gr-label-input"
-                      type="text"
-                      value={item.suffix}
-                      onChange={e => setItemField(item.id, "suffix", e.target.value)}
-                      placeholder="e.g. A, L, Start"
-                    />
+                    <div className="num-row">
+                      <input
+                        id={`input-base-label-suffix-${item.id}`}
+                        className="num-input gr-label-input"
+                        type="text"
+                        value={item.suffix}
+                        onChange={e => setItemField(item.id, "suffix", e.target.value)}
+                        placeholder="e.g. A, L, Start"
+                      />
+                      <button
+                        type="button"
+                        className="num-btn"
+                        onClick={() => {
+                          const input = document.getElementById(`input-base-label-suffix-${item.id}`);
+                          if (input instanceof HTMLInputElement) input.blur();
+                        }}
+                      >
+                        <Icon name="corner-down-left" />
+                      </button>
+                    </div>
                   </div>
                   <div className="ctrl-lbl">
                     <span className="ctrl-sublbl">Entry</span>
@@ -159,10 +194,12 @@ function SheetNewTool() {
           const tone = getLinkedCardTone(item.id);
           const trimmedSuffix = item.suffix.trim();
           const isStored = item.savedCommitted && item.value === item.saved.value && item.suffix === item.saved.suffix;
+          const numericValue = Number(item.value);
+          const hasValidValue = String(item.value).trim() !== "" && Number.isFinite(numericValue) && numericValue >= 1;
           const valueRowLabel = trimmedSuffix
             ? <>Value <span className="num-lbl-raw">{trimmedSuffix}</span></>
             : "Value";
-          const steps = buildSteps(item.value);
+          const steps = hasValidValue ? buildSteps(numericValue) : [];
 
           return (
             <div
@@ -179,18 +216,20 @@ function SheetNewTool() {
               <div className="section-pad gr-section-pad">
                 <div className="data-row">
                   <span className="data-row-lbl">{valueRowLabel}</span>
-                  <span className="data-row-val hi">{fmtInt(item.value)}</span>
+                  <span className="data-row-val hi">{hasValidValue ? fmtInt(numericValue) : "-"}</span>
                   <span className="data-row-unit">mm</span>
                   <span className="gr-row-marker">{getLinkedCardMarker(item.id)}</span>
                 </div>
-                <div className="gr-steps-wrap">
-                  {steps.map((stepItem, stepIdx) => (
-                    <div key={stepItem.step} className={"gr-step-row" + (stepIdx === 0 ? " gr-step-row-first" : "")}>
-                      <div className="data-row gr-step-cell gr-step-cell-index"><span className="data-row-val">{stepItem.step}</span></div>
-                      <div className="data-row gr-step-cell"><span className="data-row-val">{fmtInt(stepItem.larger)}</span></div>
-                    </div>
-                  ))}
-                </div>
+                {hasValidValue && (
+                  <div className="gr-steps-wrap">
+                    {steps.map((stepItem, stepIdx) => (
+                      <div key={stepItem.step} className={"gr-step-row" + (stepIdx === 0 ? " gr-step-row-first" : "")}>
+                        <div className="data-row gr-step-cell gr-step-cell-index"><span className="data-row-val">{stepItem.step}</span></div>
+                        <div className="data-row gr-step-cell"><span className="data-row-val">{fmtInt(stepItem.larger)}</span></div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           );
