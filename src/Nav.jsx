@@ -165,9 +165,9 @@ function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileM
           onKeyDown={mobile ? e => (e.key === "Enter" || e.key === " ") && setMobileMenuOpen(o => !o) : undefined}
         >
           <span className="nav-toggle-label"
-            onClick={() => setPage("home")}
+            onClick={() => { setPage("home"); if (mobile) setMobileMenuOpen(false); }}
             role="button" tabIndex={0}
-            onKeyDown={e => (e.key === "Enter" || e.key === " ") && setPage("home")}>
+            onKeyDown={e => (e.key === "Enter" || e.key === " ") && (setPage("home"), mobile && setMobileMenuOpen(false))}>
             HIVE
           </span>
           <span className="nav-menu-icon" onClick={handleToggle}
