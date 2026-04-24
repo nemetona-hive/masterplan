@@ -70,6 +70,20 @@ function App() {
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
   }, []);
+
+  // Enter in any input commits by blurring the field (matches NumInput button intent)
+  React.useEffect(() => {
+    const onEnterCommit = e => {
+      if (e.key !== "Enter") return;
+      const target = e.target;
+      if (!(target instanceof HTMLInputElement)) return;
+      e.preventDefault();
+      target.blur();
+    };
+    window.addEventListener("keydown", onEnterCommit, true);
+    return () => window.removeEventListener("keydown", onEnterCommit, true);
+  }, []);
+
   const [sh,  setSh]  = useState(DEFAULT_SH);
   const [sym, setSym] = useState(DEFAULT_SYM);
 
