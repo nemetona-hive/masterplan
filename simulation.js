@@ -1,4 +1,4 @@
-﻿const symEdge = (total, step) => {
+﻿﻿const symEdge = (total, step) => {
   if (step <= 0) return { edgeWidth: 0, finalFullCount: 0 };
   let fullCount = Math.floor(total / step);
   let remainder = total - fullCount * step;
@@ -107,7 +107,7 @@ function makeStats(rows) {
 function computeS0(state) {
   const { roomWidth, panelWidth } = state;
   if (roomWidth <= 0 || panelWidth <= 0) return emptyLayoutResult();
-  const { edgeWidth, finalFullCount } = symEdge(roomWidth, panelWidth);
+  const { edgeWidth, finalFullCount } = symEdge(Number(roomWidth), Number(panelWidth));
   const fullPanels = Array.from({ length: Math.max(0, finalFullCount) }, (_, i) => ({ w: panelWidth, type: "full", pid: i }));
   const segs = [{ w: edgeWidth, type: "edge" }, ...fullPanels, { w: edgeWidth, type: "edge" }];
   const totalToBuy = Math.max(0, finalFullCount) + 2;
