@@ -1,4 +1,4 @@
-﻿/*
+﻿﻿/*
  * ============================================================
  * TABLE OF CONTENTS
  * ============================================================
@@ -1715,6 +1715,14 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 		border-bottom: 1px solid var(--color-gray-light);
 		padding: 12px var(--sp-3) 8px;
 		margin-bottom: 0;
+	}
+
+	/* Ensure inputs don't zoom the page on iOS */
+	input[type="number"],
+	input[type="text"],
+	.num-input {
+		font-size: 16px !important;
+		min-height: 44px;
 	}
 
 	.data-control {
