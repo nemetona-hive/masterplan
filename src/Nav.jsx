@@ -93,7 +93,10 @@ function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileM
   // Per-parent open state — keyed by parent id
   // Initialize all parents with children as open
   const initOpenGroups = () => PAGES.reduce((acc, pg) => {
-    if (pg.isParent && PAGES.some(p => p.parentId === pg.id)) acc[pg.id] = true;
+    if (pg.isParent && PAGES.some(p => p.parentId === pg.id)) {
+      const mobileNow = typeof window !== "undefined" && window.innerWidth <= 768;
+      acc[pg.id] = mobileNow ? false : true;
+    }
     return acc;
   }, {});
   const [openGroups, setOpenGroups] = React.useState(initOpenGroups);
@@ -108,16 +111,29 @@ function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileM
 
   const navItems = PAGES.filter(pg => {
     if (pg.noNav) return false;
-    if (!showSubs && pg.parentId) {
-      // In collapsed mode show sub-items only if their parent is open
-      return !!openGroups[pg.parentId];
+    if (mobile) {
+      // Mobile closed state: show parent-level items only.
+      if (!mobileMenuOpen) return !pg.parentId;
+      // Mobile open state: show children only when their parent group is open.
+      if (pg.parentId && !openGroups[pg.parentId]) return false;
+      return true;
     }
-    // In expanded mode hide sub-items if their parent is closed
+
+    // Desktop collapsed mode: show sub-items only if their parent group is open.
+    if (!showSubs && pg.parentId) return !!openGroups[pg.parentId];
+    // Desktop expanded mode: hide sub-items when parent is closed.
     if (pg.parentId && !openGroups[pg.parentId]) return false;
     return true;
   });
 
-  const handleToggle = () => mobile ? setMobileMenuOpen(o => !o) : setNavOpen(o => !o);
+  const handleToggle = () => {
+    if (mobile) {
+      setPage("home");
+      setMobileMenuOpen(false);
+      return;
+    }
+    setNavOpen(o => !o);
+  };
 
   const handleKeyNav = direction => {
     if (!navRef.current) return;
@@ -135,11 +151,17 @@ function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileM
   return (
     <div id="page-side" className="page-side">
       <nav id="side-navi" ref={navRef}
-        className={"nav" + (!mobile && !navOpen ? " nav-collapsed" : "")}
+        className={"nav" + (!mobile && !navOpen ? " nav-collapsed" : "") + (mobile && mobileMenuOpen ? " nav-mobile-open" : "")}
         role="navigation" aria-label="Main navigation">
 
         {/* Header */}
-        <div className="nav-section nav-toggle">
+        <div
+          className="nav-section nav-toggle"
+          onClick={mobile ? () => { setPage("home"); setMobileMenuOpen(false); } : undefined}
+          role={mobile ? "button" : undefined}
+          tabIndex={mobile ? 0 : undefined}
+          onKeyDown={mobile ? e => (e.key === "Enter" || e.key === " ") && (setPage("home"), setMobileMenuOpen(false)) : undefined}
+        >
           <span className="nav-toggle-label"
             onClick={() => setPage("home")}
             role="button" tabIndex={0}
@@ -147,7 +169,7 @@ function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileM
             HIVE
           </span>
           <span className="nav-menu-icon" onClick={handleToggle}
-            role="button" tabIndex={0} aria-label={navOpen ? "Collapse sidebar" : "Expand sidebar"}
+            role="button" tabIndex={0} aria-label={mobile ? (mobileMenuOpen ? "Close menu" : "Open menu") : (navOpen ? "Collapse sidebar" : "Expand sidebar")}
             onKeyDown={e => (e.key === "Enter" || e.key === " ") && handleToggle()}>
             <Icon name="panel-left-close" />
           </span>
