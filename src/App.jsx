@@ -44,8 +44,11 @@ function MainPageContent({ page, setPage, sh, setSh, sym, setSym }) {
 
 function App() {
   const [page, setPageState]                = useState(getHashPage);
-  const isMobile                            = () => typeof window !== "undefined" && window.innerWidth <= 768;
-  const [navOpen, setNavOpen]               = React.useState(!isMobile());
+  
+  // Track mobile state reactively — updates on resize/rotate
+  const getIsMobile = () => typeof window !== "undefined" && window.innerWidth <= 768;
+  const [isMobile, setIsMobile]            = React.useState(getIsMobile);
+  const [navOpen, setNavOpen]               = React.useState(!getIsMobile());
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   // Sync page state with URL hash
@@ -65,10 +68,23 @@ function App() {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
+  // Handle resize and orientation changes
   React.useEffect(() => {
-    const handler = () => { if (!isMobile()) setMobileMenuOpen(false); };
+    const handler = () => {
+      const nowMobile = getIsMobile();
+      setIsMobile(nowMobile);
+      // Close menu when rotating/resizing to desktop
+      if (!nowMobile) {
+        setMobileMenuOpen(false);
+        setNavOpen(true);  // Reset to expanded for desktop
+      }
+    };
     window.addEventListener("resize", handler);
-    return () => window.removeEventListener("resize", handler);
+    window.addEventListener("orientationchange", handler);
+    return () => {
+      window.removeEventListener("resize", handler);
+      window.removeEventListener("orientationchange", handler);
+    };
   }, []);
 
   // Enter in any input commits by blurring the field (matches NumInput button intent)
@@ -110,10 +126,11 @@ function App() {
           <rect className="cls-1" x="235.9" y="56.91" width="174.77" height="1.36" />
         </svg>
       </div>
-      <div id="app-page" className="app-page">
+      <div id="app-page" className={"app-page" + (mobileMenuOpen ? " nav-open" : "")}>
         <AppNav page={page} setPage={setPage} navOpen={navOpen} setNavOpen={setNavOpen}
-          mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
-        <div id="page-main" className="page-main">
+          mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} isMobile={isMobile} />
+        <div id="page-main" className="page-main"
+          onClick={() => mobileMenuOpen && setMobileMenuOpen(false)}>
         <MainPageContent page={page} setPage={setPage} sh={sh} setSh={setSh} sym={sym} setSym={setSym} />
         </div>
       </div>
