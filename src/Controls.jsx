@@ -1,14 +1,5 @@
 // ── Layout controls & registry ────────────────────────────────────────────────
 
-function S0Controls({ state, setState }) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      <NumInput id="input-s0-room"  label="Room width (mm)"  value={state.roomWidth}  onChange={v => setState({ roomWidth: v })}  step={10} />
-      <NumInput id="input-s0-panel" label="Panel width (mm)" value={state.panelWidth} onChange={v => setState({ panelWidth: v })} step={10} />
-    </div>
-  );
-}
-
 function S4Controls({ state, setState }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
