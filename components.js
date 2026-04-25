@@ -468,6 +468,334 @@ var LAYOUT_REGISTRY = ["s1", "s2", "s3", "s4"].map(id => {
   };
 });
 
+// ── Timesheet utilities ───────────────────────────────────────────────────────
+// Pure parse/format helpers — no DOM, no React. Safe to unit-test independently.
+
+function parseTime(raw) {
+  if (!raw || !raw.trim()) return null;
+  let s = raw.trim().replace(',', '.');
+  let m;
+  if (m = s.match(/^(\d{1,2})[:\.](\d{2})$/)) return +m[1] * 60 + +m[2];
+  if (/^\d{3}$/.test(s)) return +s[0] * 60 + +s.slice(1);
+  if (/^\d{4}$/.test(s)) return +s.slice(0, 2) * 60 + +s.slice(2);
+  if (/^\d{1,2}$/.test(s)) return +s * 60;
+  return null;
+}
+function parseLunch(raw) {
+  // ".30" → 30 min (dot-prefix = minutes literal)
+  if (!raw || !raw.trim()) return 0;
+  let s = raw.trim();
+  let m;
+  if (m = s.match(/^\.(\d+)$/)) return +m[1];
+  s = s.replace(',', '.');
+  if (m = s.match(/^(\d{1,2})[:\.](\d{2})$/)) return +m[1] * 60 + +m[2];
+  if (/^\d{3}$/.test(s)) return +s[0] * 60 + +s.slice(1);
+  if (/^\d{4}$/.test(s)) return +s.slice(0, 2) * 60 + +s.slice(2);
+  if (/^\d{1,2}$/.test(s)) return +s * 60;
+  return null;
+}
+function parseSumTime(raw) {
+  if (!raw || !raw.trim()) return null;
+  const m = raw.trim().match(/^(\d+)[:\.](\d{2})$/);
+  return m ? +m[1] * 60 + +m[2] : null;
+}
+function roundMins(mins, to) {
+  return to ? Math.round(mins / to) * to : mins;
+}
+// Formats as H:MM (e.g. 8:05 not 8:5)
+function fmtHHMM(mins) {
+  return Math.floor(mins / 60) + ':' + String(mins % 60).padStart(2, '0');
+}
+// Rounds to nearest quarter hour: .00 / .25 / .50 / .75
+function fmtDecimal(mins) {
+  return (Math.round(mins / 60 * 4) / 4).toFixed(2);
+}
+
+// ── SheetTimesheet ────────────────────────────────────────────────────────────
+
+const LUNCH_PRESETS = [['15 min', '.15'], ['20 min', '.20'], ['30 min', '.30'], ['45 min', '.45'], ['1 h', '1:00']];
+function makeCalcRows() {
+  return [1, 2, 3].map(id => ({
+    id,
+    start: '',
+    end: '',
+    lunch: ''
+  }));
+}
+function makeSumRows() {
+  return [1, 2, 3, 4, 5].map(id => ({
+    id,
+    value: ''
+  }));
+}
+function calcRowResult(row) {
+  const s = parseTime(row.start);
+  const e = parseTime(row.end);
+  const lunch = parseLunch(row.lunch);
+  const hasInput = row.start.trim() || row.end.trim();
+  if (!hasInput) return {
+    dur: '',
+    dec: '',
+    status: 'empty',
+    mins: 0
+  };
+  if (s !== null && e !== null) {
+    if (lunch === null) return {
+      dur: 'invalid lunch',
+      dec: '',
+      status: 'error',
+      mins: 0
+    };
+    let diff = e - s;
+    if (diff < 0) diff += 24 * 60; // overnight support
+    if (lunch > diff) return {
+      dur: 'lunch > work',
+      dec: '',
+      status: 'warn',
+      mins: 0
+    };
+    diff -= lunch;
+    return {
+      dur: fmtHHMM(diff),
+      dec: fmtDecimal(diff),
+      status: 'ok',
+      mins: diff
+    };
+  }
+  const badStart = row.start.trim() && s === null;
+  const badEnd = row.end.trim() && e === null;
+  if (badStart || badEnd) return {
+    dur: 'invalid',
+    dec: '',
+    status: 'error',
+    mins: 0
+  };
+  return {
+    dur: '',
+    dec: '',
+    status: 'partial',
+    mins: 0
+  };
+}
+function SheetTimesheet() {
+  const [activeTab, setActiveTab] = useState('calc');
+  const [calcRows, setCalcRows] = useState(makeCalcRows);
+  const [activeRowId, setActiveRowId] = useState(null);
+  const [sumRows, setSumRows] = useState(makeSumRows);
+  const [copied, setCopied] = useState(false);
+  const nextCalcId = React.useRef(4);
+  const nextSumId = React.useRef(6);
+  const startRefs = React.useRef({});
+
+  // ── Derived ────────────────────────────────────────────────────────────────
+
+  const calcResults = calcRows.map(r => calcRowResult(r));
+  const calcTotalMins = calcResults.reduce((s, r) => s + r.mins, 0);
+  const hasCalcTotal = calcResults.some(r => r.status === 'ok');
+  const sumTotalMins = sumRows.reduce((s, r) => {
+    const v = parseSumTime(r.value);
+    return v !== null ? s + v : s;
+  }, 0);
+  const hasSumTotal = sumRows.some(r => parseSumTime(r.value) !== null);
+  const showTotal = activeTab === 'calc' ? hasCalcTotal : hasSumTotal;
+  const totalMins = activeTab === 'calc' ? calcTotalMins : sumTotalMins;
+
+  // ── Calc actions ───────────────────────────────────────────────────────────
+
+  const addCalcRow = () => {
+    const id = nextCalcId.current++;
+    setCalcRows(prev => [...prev, {
+      id,
+      start: '',
+      end: '',
+      lunch: ''
+    }]);
+    return id;
+  };
+  const removeCalcRow = id => setCalcRows(prev => prev.filter(r => r.id !== id));
+  const updateCalcRow = (id, field, value) => setCalcRows(prev => prev.map(r => r.id === id ? {
+    ...r,
+    [field]: value
+  } : r));
+  const clearCalc = () => {
+    nextCalcId.current = 4;
+    setCalcRows(makeCalcRows());
+    setActiveRowId(null);
+  };
+  const applyLunchPreset = val => {
+    if (activeRowId != null) updateCalcRow(activeRowId, 'lunch', val);
+  };
+
+  // Tab from Lunch → next row Start; auto-adds row if on last
+  const handleLunchTab = (e, rowIdx) => {
+    if (e.key !== 'Tab' || e.shiftKey) return;
+    e.preventDefault();
+    const nextRow = calcRows[rowIdx + 1];
+    if (nextRow) {
+      startRefs.current[nextRow.id]?.focus();
+    } else {
+      const newId = nextCalcId.current++;
+      setCalcRows(prev => [...prev, {
+        id: newId,
+        start: '',
+        end: '',
+        lunch: ''
+      }]);
+      setTimeout(() => startRefs.current[newId]?.focus(), 0);
+    }
+  };
+
+  // ── Sum actions ────────────────────────────────────────────────────────────
+
+  const addSumRow = () => {
+    const id = nextSumId.current++;
+    setSumRows(prev => [...prev, {
+      id,
+      value: ''
+    }]);
+  };
+  const removeSumRow = id => setSumRows(prev => prev.filter(r => r.id !== id));
+  const updateSumRow = (id, value) => setSumRows(prev => prev.map(r => r.id === id ? {
+    ...r,
+    value
+  } : r));
+  const clearSum = () => {
+    nextSumId.current = 6;
+    setSumRows(makeSumRows());
+  };
+
+  // ── Copy ───────────────────────────────────────────────────────────────────
+
+  const handleCopy = () => {
+    if (!hasCalcTotal) return;
+    navigator.clipboard.writeText(fmtDecimal(calcTotalMins)).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    });
+  };
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+
+  return /*#__PURE__*/React.createElement("div", {
+    className: "ts-page"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "ts-body"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "ts-tabs"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "ts-tab" + (activeTab === 'calc' ? " ts-tab--on" : ""),
+    onClick: () => setActiveTab('calc')
+  }, "Calculate hours"), /*#__PURE__*/React.createElement("button", {
+    className: "ts-tab" + (activeTab === 'sum' ? " ts-tab--on" : ""),
+    onClick: () => setActiveTab('sum')
+  }, "Sum hours")), activeTab === 'calc' && /*#__PURE__*/React.createElement("div", {
+    className: "ts-section"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "ts-grid-hd"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "ts-col-lbl"
+  }, "Start"), /*#__PURE__*/React.createElement("span", {
+    className: "ts-col-lbl"
+  }, "End"), /*#__PURE__*/React.createElement("span", {
+    className: "ts-col-lbl"
+  }, "Lunch"), /*#__PURE__*/React.createElement("span", {
+    className: "ts-col-lbl"
+  }, "Duration"), /*#__PURE__*/React.createElement("span", {
+    className: "ts-col-lbl ts-col-dec"
+  }, "Decimal"), /*#__PURE__*/React.createElement("span", null)), calcRows.map((row, idx) => {
+    const res = calcResults[idx];
+    return /*#__PURE__*/React.createElement("div", {
+      key: row.id,
+      className: "ts-grid-row" + (row.id === activeRowId ? " ts-grid-row--active" : "")
+    }, /*#__PURE__*/React.createElement("input", {
+      className: "ts-input",
+      type: "text",
+      placeholder: "9, 9:30, 0930",
+      value: row.start,
+      ref: el => {
+        startRefs.current[row.id] = el;
+      },
+      onFocus: () => setActiveRowId(row.id),
+      onChange: e => updateCalcRow(row.id, 'start', e.target.value)
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "ts-input",
+      type: "text",
+      placeholder: "17, 17:30",
+      value: row.end,
+      onFocus: () => setActiveRowId(row.id),
+      onChange: e => updateCalcRow(row.id, 'end', e.target.value)
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "ts-input",
+      type: "text",
+      placeholder: ".30",
+      value: row.lunch,
+      onFocus: () => setActiveRowId(row.id),
+      onKeyDown: e => handleLunchTab(e, idx),
+      onChange: e => updateCalcRow(row.id, 'lunch', e.target.value)
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "ts-duration" + (res.status === 'error' ? " ts-duration--error" : res.status === 'warn' ? " ts-duration--warn" : "")
+    }, res.dur), /*#__PURE__*/React.createElement("div", {
+      className: "ts-decimal ts-col-dec"
+    }, res.dec), /*#__PURE__*/React.createElement("button", {
+      className: "ts-remove",
+      tabIndex: -1,
+      onClick: () => removeCalcRow(row.id)
+    }, "\xD7"));
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "ts-pills"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "ts-pill-lbl"
+  }, "Lunch:"), LUNCH_PRESETS.map(([label, val]) => /*#__PURE__*/React.createElement("button", {
+    key: val,
+    className: "ts-pill",
+    onClick: () => applyLunchPreset(val)
+  }, label))), /*#__PURE__*/React.createElement("div", {
+    className: "ts-controls"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "ts-btn",
+    onClick: addCalcRow
+  }, "+ Add row"), /*#__PURE__*/React.createElement("button", {
+    className: "ts-btn ts-btn--muted",
+    onClick: clearCalc
+  }, "Clear all"))), activeTab === 'sum' && /*#__PURE__*/React.createElement("div", {
+    className: "ts-section"
+  }, sumRows.map(row => /*#__PURE__*/React.createElement("div", {
+    key: row.id,
+    className: "ts-sum-row"
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "ts-input",
+    type: "text",
+    placeholder: "e.g. 6:35, 8:15",
+    value: row.value,
+    onChange: e => updateSumRow(row.id, e.target.value)
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "ts-remove",
+    tabIndex: -1,
+    onClick: () => removeSumRow(row.id)
+  }, "\xD7"))), /*#__PURE__*/React.createElement("div", {
+    className: "ts-controls"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "ts-btn",
+    onClick: addSumRow
+  }, "+ Add row"), /*#__PURE__*/React.createElement("button", {
+    className: "ts-btn ts-btn--muted",
+    onClick: clearSum
+  }, "Clear all")))), showTotal && /*#__PURE__*/React.createElement("div", {
+    className: "ts-footer"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "ts-total-lbl"
+  }, "Total"), /*#__PURE__*/React.createElement("div", {
+    className: "ts-total-vals"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "ts-total-val"
+  }, fmtHHMM(totalMins)), activeTab === 'calc' && /*#__PURE__*/React.createElement("span", {
+    className: "ts-total-dec"
+  }, "= ", fmtDecimal(totalMins)), activeTab === 'calc' && /*#__PURE__*/React.createElement("button", {
+    className: "ts-copy" + (copied ? " ts-copy--done" : ""),
+    onClick: handleCopy
+  }, copied ? 'Copied!' : 'Copy decimal'))));
+}
+
 // ── Page sheets ───────────────────────────────────────────────────────────────
 
 function SheetHome({
@@ -1316,6 +1644,18 @@ function MainPageContent({
       id: "main-data",
       className: "main-data"
     }, /*#__PURE__*/React.createElement(SheetConcrete, null));
+  }
+  if (page === "timesheet") {
+    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+      id: "main-head",
+      className: "main-head"
+    }, /*#__PURE__*/React.createElement("h2", {
+      className: "title"
+    }, pageMeta?.title), /*#__PURE__*/React.createElement("p", {
+      className: "desc"
+    }, pageMeta?.desc)), /*#__PURE__*/React.createElement("div", {
+      className: "page-main-full"
+    }, /*#__PURE__*/React.createElement(SheetTimesheet, null)));
   }
   if (page === "golden-ratio") {
     return /*#__PURE__*/React.createElement("div", {
