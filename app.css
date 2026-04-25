@@ -1,4 +1,4 @@
-﻿﻿/*
+/*
  * ============================================================
  * TABLE OF CONTENTS
  * ============================================================
@@ -83,14 +83,6 @@ html, body, #root {
 	--fs-md: 13px;
 	--fs-lg: 17px;
 
-	/* Spacing scale */
-	--sp-1: 4px;
-	--sp-2: 8px;
-	--sp-3: 12px;
-	--sp-4: 16px;
-	--sp-5: 20px;
-	--sp-6: 24px;
-
 	/* Nav font sizes -- edit to tune sidebar independently */
 	--nav-fs-header:  var(--fs-lg);
 	--nav-fs-parent:  var(--fs-md);
@@ -107,6 +99,8 @@ html, body, #root {
 	--sp-2: 12px;
 	--sp-3: 16px;
 	--sp-4: 24px;
+	--sp-5: 20px;
+	--sp-6: 24px;
  }
 	
 @media (min-width: 2560px) and (min-height: 1440px) {
@@ -495,6 +489,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	align-items: center;
 	justify-content: space-between;
 	user-select: none;
+	cursor: pointer;
 	padding: 6px 8px;
 	margin-bottom: 8px;
 	border-radius: 8px;
@@ -765,6 +760,13 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 .section-pad {
 	padding: var(--sp-3);
+}
+
+.panel-body {
+	padding: 14px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
 }
 
 /*
@@ -1118,6 +1120,22 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
+}
+
+.gr-preview-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sp-3);
+}
+
+.gr-preview-list > .sys-head {
+	padding-bottom: var(--sp-2);
+	border-bottom: 1px solid var(--color-gray-light);
+	margin-bottom: 0;
+}
+
+.gr-preview-list .sys-block {
+	margin-bottom: 0;
 }
 
 .data-preview .gr-steps-wrap {
@@ -1550,7 +1568,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	text-transform: uppercase;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 500px) {
 	.home-scroll {
 		align-items: flex-start;
 		padding: 24px 16px;
@@ -1566,7 +1584,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
  * ----------------------------------------------------------
  */
 
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 500px) {
 
 	:root {
 		--row-h: 28px;
@@ -1581,11 +1599,18 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 		left: 0;
 	}
 
+	.app-head {
+		position: relative;
+		z-index: 1000;
+	}
+
 	.app-page {
 		flex-direction: column;
 	}
 
 	.page-side {
+		position: relative;
+		z-index: 1000;
 		border-right: none;
 		border-bottom: 1px solid var(--color-gray-light);
 	}
@@ -1827,43 +1852,30 @@ html, .nav, .data-control, .data-preview, .page-scroll {
  * ----------------------------------------------------------
  * LANDSCAPE ORIENTATION
  * ----------------------------------------------------------
- * Force mobile layout on landscape small devices (e.g., Galaxy S25)
- * where width > 768px but device is still small
+ * Overrides for landscape-specific UX on top of the shared
+ * mobile rules already applied by the combined media query above.
  */
 
 @media (max-height: 500px) {
-	.app {
-		height: 100svh;
-		height: 100dvh;
+	/* Logo bar wastes vertical space in landscape — nav HIVE label is enough */
+	.app-head {
+		display: none;
 	}
 
+	/* Tighter nav to leave more room for content */
 	.nav {
-		max-height: 50vh;
-		overflow-y: auto;
+		max-height: 40vh;
+		padding: var(--sp-1) var(--sp-2);
+		gap: 4px;
 	}
 
-	.main-data {
-		flex-direction: column;
-		overflow: visible;
+	.nav-section.nav-toggle {
+		padding: 4px var(--sp-2);
 	}
 
-	.data-control,
-	.data-preview {
-		border-right: none;
-	}
-
-	.data-control {
-		border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--color-gray-light));
-		padding: var(--sp-3);
-		gap: 10px;
-		overflow: visible;
-	}
-
-	.data-preview {
-		flex: 0 0 auto;
-		padding: var(--sp-3);
-		border-top: 1px solid color-mix(in srgb, var(--color-gray-light) 45%, transparent);
-		overflow: visible;
+	.nav-btn {
+		min-height: 36px;
+		padding: 6px 10px;
 	}
 }
 
