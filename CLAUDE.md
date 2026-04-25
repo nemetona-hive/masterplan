@@ -16,7 +16,7 @@ and is available as globals — do NOT import them.
 shared.jsx        → UI primitives (Icon, NumInput, Row, Section, ControlPanel, Collapsible)
 Visualization.jsx → PanelRowVis, PanelSummary, LayoutVisualization, LayoutPanel, PreviewSection
 Controls.jsx      → S2Controls, S4Controls, LAYOUT_REGISTRY
-Sheets.jsx        → SheetHome, SheetArea, SheetSymmetricLayout, SheetSurfaceLayout, SheetConcrete, SheetNewTool
+Sheets.jsx        → SheetHome, SheetSymmetricLayout, SheetSurfaceLayout, SheetConcrete, SheetNewTool
 Nav.jsx           → NavButton, AppNav
 App.jsx           → MainPageContent, App, ReactDOM.createRoot
 ```
@@ -36,6 +36,7 @@ App.jsx           → MainPageContent, App, ReactDOM.createRoot
 | `ICONS` | Map of icon name → FontAwesome class string |
 | `PAL_CLASSES` | Palette class maps for segment coloring (s1, s4l, s4s) |
 | `fmt` | Formatting helpers: fmt.decimals(v,n), fmt.area(v), fmt.decimal(v), fmt.mm(v) |
+| `SUMMARY_LABELS` | Label maps for result summary rows (s0, s1s2s3, s4 keys) |
 | `computeS0` | Symmetric layout compute (takes sym state) |
 | `computeS1/S2/S3/S4` | Surface layout computes (each takes sh state) |
 | `getDescription(id, sh)` | Human-readable description for a layout system |
@@ -79,10 +80,10 @@ Nav items come from `PAGES` global — add new pages in config (outside src/).
 
 | ID | Name | Controls |
 |---|---|---|
-| s0 | Symmetric | roomWidth, panelWidth (in SheetSymmetricLayout) |
-| s1 | Standard | none |
-| s2 | Offset | offset slider (0.1–0.9 × panel length) |
-| s3 | Brick | none |
+| s0 | Symmetric Layout | roomWidth, panelWidth (in SheetSymmetricLayout) |
+| s1 | Straight Layout | none |
+| s2 | Shifted Layout | offset slider (0.1–0.9 × panel length) |
+| s3 | Stepped Layout | none |
 | s4 | Long/Short | s4Long, s4Short (two panel sizes) |
 
 LAYOUT_REGISTRY in Controls.jsx maps s1–s4 to their compute functions and control components.
