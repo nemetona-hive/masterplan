@@ -51,14 +51,9 @@ function SheetConcrete() {
   );
 }
 
-function SheetNewTool() {
+function SheetNewTool({ grItems: baseItems, setGrItems: setBaseItems }) {
   const [baseOpen, setBaseOpen] = React.useState(true);
   const link = useLinkedCardHighlight("golden-ratio");
-  const [baseItems, setBaseItems] = React.useState([
-    { id: "a", value: "", suffix: "", saved: { value: "", suffix: "" }, savedCommitted: false },
-    { id: "b", value: "", suffix: "", saved: { value: "", suffix: "" }, savedCommitted: false },
-    { id: "c", value: "", suffix: "", saved: { value: "", suffix: "" }, savedCommitted: false }
-  ]);
   const PHI = 1.6180339887499;
 
   const setItemField = (id, key, value) => {
@@ -92,13 +87,11 @@ function SheetNewTool() {
   };
 
   const buildSteps = base => {
-    const startValue = base / PHI;
     const rows = [];
-    let larger = startValue;
+    let value = base / PHI;
     for (let i = 1; i <= 7; i++) {
-      const smaller = larger / PHI;
-      rows.push({ step: i, larger, smaller });
-      larger = smaller;
+      rows.push({ step: i, value });
+      value = value / PHI;
     }
     return rows;
   };
@@ -190,6 +183,11 @@ function SheetNewTool() {
         </ControlPanel>
       </div>
       <div id="data-preview" className="data-preview">
+        <div className="gr-preview-list">
+        <div className="sys-head">
+          <h3 className="sys-title"><Icon name="golden-phi" className="sys-title-icon" /> Golden Ratio phi</h3>
+          <span className="sys-head-sub">phi = 1.6180339887499</span>
+        </div>
         {baseItems.map((item, idx) => {
           const tone = getLinkedCardTone(item.id);
           const trimmedSuffix = item.suffix.trim();
@@ -207,12 +205,6 @@ function SheetNewTool() {
               id={`panel-golden-ratio-${item.id}`}
               className={`sys-block gr-preview-card gr-preview-card-${tone}${isStored ? " gr-card-saved" : ""}${link.isActive(item.id) ? " linked-preview-active" : ""}`}
             >
-              {idx === 0 && (
-                <div className="sys-head">
-                  <h3 className="sys-title"><Icon name="golden-phi" className="sys-title-icon" /> Golden Ratio phi</h3>
-                  <span className="sys-head-sub">phi = 1.6180339887499</span>
-                </div>
-              )}
               <div className="section-pad gr-section-pad">
                 <div className="data-row">
                   <span className="data-row-lbl">{valueRowLabel}</span>
@@ -225,7 +217,7 @@ function SheetNewTool() {
                     {steps.map((stepItem, stepIdx) => (
                       <div key={stepItem.step} className={"gr-step-row" + (stepIdx === 0 ? " gr-step-row-first" : "")}>
                         <div className="data-row gr-step-cell gr-step-cell-index"><span className="data-row-val">{stepItem.step}</span></div>
-                        <div className="data-row gr-step-cell"><span className="data-row-val">{fmtInt(stepItem.larger)}</span></div>
+                        <div className="data-row gr-step-cell"><span className="data-row-val">{fmtInt(stepItem.value)}</span></div>
                       </div>
                     ))}
                   </div>
@@ -234,6 +226,7 @@ function SheetNewTool() {
             </div>
           );
         })}
+        </div>
       </div>
     </>
   );
@@ -248,12 +241,12 @@ function SheetArea({ sh }) {
     <div className="page-inner">
       <p className="desc">Linked from Layout page &mdash; change data in Layout view</p>
       <Section title="Surface dimensions" bg="#09101a">
-        <Row label="Surface width"   value={Math.max(0, W)}   unit="mm" />
-        <Row label="Surface height"  value={Math.max(0, H)}   unit="mm" />
-        <Row label="Area"            value={fmt.area(Math.max(0, grossArea))} unit="m&sup2;" hi={true} />
-        <Row label="Panel length"    value={Math.max(0, PPi)} unit="mm" />
-        <Row label="Panel width"     value={Math.max(0, PLa)} unit="mm" />
-        <Row label="Panel area"      value={fmt.decimals(Math.max(0, panelArea), 4)} unit="m&sup2;" />
+        <Row label="Surface width"   value={W}   unit="mm" />
+        <Row label="Surface height"  value={H}   unit="mm" />
+        <Row label="Area"            value={fmt.area(grossArea)} unit="m&sup2;" hi={true} />
+        <Row label="Panel length"    value={PPi} unit="mm" />
+        <Row label="Panel width"     value={PLa} unit="mm" />
+        <Row label="Panel area"      value={fmt.decimals(panelArea, 4)} unit="m&sup2;" />
         <Row label="Panel direction" value={sh.direction} />
       </Section>
     </div>
@@ -312,7 +305,7 @@ function SheetSurfaceLayout({ sh, setSh }) {
   const panelResults      = layoutRegistry.map(layout => ({ layout, result: layout.compute() }));
   const panelResultsById  = panelResults.reduce((acc, p) => { acc[p.layout.id] = p; return acc; }, {});
   const comparableResults = panelResults.filter(p => p.layout.includeInBest && p.result.valid);
-  const best = comparableResults.length ? Math.min(...comparableResults.map(p => p.result.stats.total)) : 0;
+  const best = comparableResults.length ? Math.min(...comparableResults.map(p => p.result.stats.total)) : Infinity;
 
   if (W <= 0 || H <= 0 || PPi <= 0 || PLa <= 0) {
     return (
