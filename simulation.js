@@ -1,4 +1,4 @@
-﻿﻿const symEdge = (total, step) => {
+const symEdge = (total, step) => {
   if (step <= 0) return { edgeWidth: 0, finalFullCount: 0 };
   let fullCount = Math.floor(total / step);
   let remainder = total - fullCount * step;
