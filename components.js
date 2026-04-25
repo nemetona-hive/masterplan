@@ -1054,61 +1054,6 @@ function SheetNewTool({
     }, fmtInt(stepItem.value))))))));
   }))));
 }
-function SheetArea({
-  sh
-}) {
-  const {
-    W,
-    H,
-    PPi,
-    PLa
-  } = sh;
-  if (W <= 0 || H <= 0 || PPi <= 0 || PLa <= 0) {
-    return /*#__PURE__*/React.createElement("div", {
-      className: "page-inner"
-    }, /*#__PURE__*/React.createElement("p", {
-      className: "desc"
-    }, "Select input values - all values must be greater than 0"));
-  }
-  const grossArea = W * H / 1e6,
-    panelArea = PPi * PLa / 1e6;
-  return /*#__PURE__*/React.createElement("div", {
-    className: "page-inner"
-  }, /*#__PURE__*/React.createElement("p", {
-    className: "desc"
-  }, "Linked from Layout page \u2014 change data in Layout view"), /*#__PURE__*/React.createElement(Section, {
-    title: "Surface dimensions",
-    bg: "#09101a"
-  }, /*#__PURE__*/React.createElement(Row, {
-    label: "Surface width",
-    value: W,
-    unit: "mm"
-  }), /*#__PURE__*/React.createElement(Row, {
-    label: "Surface height",
-    value: H,
-    unit: "mm"
-  }), /*#__PURE__*/React.createElement(Row, {
-    label: "Area",
-    value: fmt.area(grossArea),
-    unit: "m\xB2",
-    hi: true
-  }), /*#__PURE__*/React.createElement(Row, {
-    label: "Panel length",
-    value: PPi,
-    unit: "mm"
-  }), /*#__PURE__*/React.createElement(Row, {
-    label: "Panel width",
-    value: PLa,
-    unit: "mm"
-  }), /*#__PURE__*/React.createElement(Row, {
-    label: "Panel area",
-    value: fmt.decimals(panelArea, 4),
-    unit: "m\xB2"
-  }), /*#__PURE__*/React.createElement(Row, {
-    label: "Panel direction",
-    value: sh.direction
-  })));
-}
 function SheetSymmetricLayout({
   sym,
   setSym
@@ -1664,16 +1609,6 @@ function MainPageContent({
     }, /*#__PURE__*/React.createElement(SheetNewTool, {
       grItems: grItems,
       setGrItems: setGrItems
-    }));
-  }
-  if (page === "area") {
-    return /*#__PURE__*/React.createElement("div", {
-      id: "page-area",
-      className: "page-scroll"
-    }, /*#__PURE__*/React.createElement("h2", {
-      className: "title"
-    }, pageMeta?.title || "Area"), /*#__PURE__*/React.createElement(SheetArea, {
-      sh: sh
     }));
   }
   if (pageMeta) {
