@@ -9,6 +9,8 @@ const SOURCES = [
   "src/shared.jsx",
   "src/Visualization.jsx",
   "src/Controls.jsx",
+  "src/utils/timesheet.js",
+  "src/components/Timesheet.jsx",
   "src/Sheets.jsx",
   "src/Nav.jsx",
   "src/App.jsx"
