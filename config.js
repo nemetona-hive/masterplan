@@ -138,6 +138,13 @@ const DEFAULT_SYM = {
   roomWidth:  2500,
   panelWidth:  300
 };
+
+const DEFAULT_GR = [
+  { id: "a", value: "", suffix: "", saved: { value: "", suffix: "" }, savedCommitted: false },
+  { id: "b", value: "", suffix: "", saved: { value: "", suffix: "" }, savedCommitted: false },
+  { id: "c", value: "", suffix: "", saved: { value: "", suffix: "" }, savedCommitted: false }
+];
+
 const SUMMARY_LABELS = {
   s0: {
     fullPanels:    "Number of full panels",
