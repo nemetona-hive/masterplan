@@ -52,9 +52,6 @@
 //  • "Copy decimal" button — copies to clipboard, flashes "Copied!" confirmation
 //  • Hidden when no valid rows exist
 //
-//  SUM HOURS TAB
-//  • Accepts H:MM inputs, sums them into a total
-//
 // ─────────────────────────────────────────────────────────────────────────────
 
 const TIMESHEET_HTML = `
@@ -103,7 +100,6 @@ const TIMESHEET_HTML = `
 <div class="wrap">
   <div class="tabs">
     <button class="tab active" onclick="switchTab('calc')">Calculate hours</button>
-    <button class="tab" onclick="switchTab('sum')">Sum hours</button>
   </div>
 
   <div id="panel-calc" class="panel active">
@@ -145,18 +141,7 @@ const TIMESHEET_HTML = `
     </div>
   </div>
 
-  <div id="panel-sum" class="panel">
-    <div class="section">
-      <div id="sum-rows"></div>
-      <div class="controls">
-        <button onclick="addSumRow()">+ Add row</button>
-        <button onclick="clearSum()" style="color: var(--color-text-secondary);">Clear all</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="sticky-total">
+  <div class="sticky-total">
   <span class="total-label">Total</span>
   <div class="sticky-totals-right">
     <span class="total-value" id="calc-total">—</span>
@@ -167,16 +152,14 @@ const TIMESHEET_HTML = `
 
 <script>
 let calcRowCount = 0;
-let sumRowCount = 0;
 let activeTab = 'calc';
 let lastFocusedLunchId = null;
 
 function switchTab(tab) {
   activeTab = tab;
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['calc','sum'][i] === tab));
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['calc'][i] === tab));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + tab).classList.add('active');
-  updateStickyTotal();
 }
 
 function setActiveRow(id) {
@@ -213,12 +196,6 @@ function parseLunch(raw) {
   if (/^\d{4}$/.test(s)) return +s.slice(0,2) * 60 + +s.slice(2);
   if (/^\d{1,2}$/.test(s)) return +s * 60;
   return null;
-}
-
-function parseSumTime(raw) {
-  if (!raw || !raw.trim()) return null;
-  const m = raw.trim().match(/^(\d+)[:\.](\d{2})$/);
-  return m ? +m[1] * 60 + +m[2] : null;
 }
 
 // ─── FORMATTERS ──────────────────────────────────────────────────────────────
@@ -347,18 +324,12 @@ function updateStickyTotal() {
   const totalEl   = document.getElementById('calc-total');
   const totalDecEl = document.getElementById('calc-total-dec');
   const copyBtn   = document.getElementById('copy-btn');
-  if (activeTab === 'calc') {
-    if (window._calcTotal != null) {
-      totalEl.textContent    = fmtHHMM(window._calcTotal);
-      totalDecEl.textContent = '= ' + fmtDecimal(window._calcTotal);
-      copyBtn.style.display  = '';
-    } else {
-      totalEl.textContent    = '—';
-      totalDecEl.textContent = '';
-      copyBtn.style.display  = 'none';
-    }
+  if (window._calcTotal != null) {
+    totalEl.textContent    = fmtHHMM(window._calcTotal);
+    totalDecEl.textContent = '= ' + fmtDecimal(window._calcTotal);
+    copyBtn.style.display  = '';
   } else {
-    totalEl.textContent    = window._sumTotal != null ? fmtHHMM(window._sumTotal) : '—';
+    totalEl.textContent    = '—';
     totalDecEl.textContent = '';
     copyBtn.style.display  = 'none';
   }
@@ -385,50 +356,13 @@ function clearCalc() {
   updateStickyTotal();
 }
 
-function addSumRow() {
-  const id = ++sumRowCount;
-  const container = document.getElementById('sum-rows');
-  const div = document.createElement('div');
-  div.className = 'sum-row';
-  div.id = 'sum-row-' + id;
-  div.innerHTML = \`
-    <input type="text" id="sum-\${id}" placeholder="e.g. 6:35, 8:15" oninput="updateSumTotal()" />
-    <button class="remove-btn" tabindex="-1" onclick="removeSumRow(\${id})">×</button>
-  \`;
-  container.appendChild(div);
-}
 
-function removeSumRow(id) {
-  const el = document.getElementById('sum-row-' + id);
-  if (el) el.remove();
-  updateSumTotal();
-}
 
-function updateSumTotal() {
-  let totalMins = 0, hasAny = false;
-  document.querySelectorAll('#sum-rows .sum-row').forEach(row => {
-    const id = row.id.replace('sum-row-', '');
-    const el = document.getElementById('sum-' + id);
-    if (!el) return;
-    const v = parseSumTime(el.value);
-    if (v !== null) { totalMins += v; hasAny = true; }
-  });
-  window._sumTotal = hasAny ? totalMins : null;
-  updateStickyTotal();
-}
 
-function clearSum() {
-  document.getElementById('sum-rows').innerHTML = '';
-  sumRowCount = 0;
-  window._sumTotal = null;
-  for (let i = 0; i < 5; i++) addSumRow();
-  updateStickyTotal();
-}
+
 
 window._calcTotal = null;
-window._sumTotal  = null;
 clearCalc();
-clearSum();
 document.getElementById('copy-btn').style.display = 'none';
 <\/script>
 </body>
