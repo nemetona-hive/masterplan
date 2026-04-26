@@ -13,10 +13,6 @@ function makeCalcRows() {
   return [1, 2, 3].map(id => ({ id, start: '', end: '', lunch: '' }));
 }
 
-function makeSumRows() {
-  return [1, 2, 3, 4, 5].map(id => ({ id, value: '' }));
-}
-
 function calcRowResult(row) {
   const s     = parseTime(row.start);
   const e     = parseTime(row.end);
@@ -41,14 +37,11 @@ function calcRowResult(row) {
 }
 
 function SheetTimesheet() {
-  const [activeTab,   setActiveTab]   = useState('calc');
   const [calcRows,    setCalcRows]    = useState(makeCalcRows);
-const [activeRowId, setActiveRowId] = useState(null);
-  const [sumRows,     setSumRows]     = useState(makeSumRows);
+  const [activeRowId, setActiveRowId] = useState(null);
   const [copied,      setCopied]      = useState(false);
 
   const nextCalcId = React.useRef(4);
-  const nextSumId  = React.useRef(6);
   const startRefs  = React.useRef({});
 
   // ── Derived ────────────────────────────────────────────────────────────────
@@ -56,15 +49,6 @@ const [activeRowId, setActiveRowId] = useState(null);
   const calcResults   = calcRows.map(r => calcRowResult(r));
   const calcTotalMins = calcResults.reduce((s, r) => s + r.mins, 0);
   const hasCalcTotal  = calcResults.some(r => r.status === 'ok');
-
-  const sumTotalMins = sumRows.reduce((s, r) => {
-    const v = parseSumTime(r.value);
-    return v !== null ? s + v : s;
-  }, 0);
-  const hasSumTotal = sumRows.some(r => parseSumTime(r.value) !== null);
-
-  const showTotal = activeTab === 'calc' ? hasCalcTotal : hasSumTotal;
-  const totalMins = activeTab === 'calc' ? calcTotalMins : sumTotalMins;
 
   // ── Calc actions ───────────────────────────────────────────────────────────
 
@@ -88,6 +72,15 @@ const [activeRowId, setActiveRowId] = useState(null);
     if (activeRowId != null) updateCalcRow(activeRowId, 'lunch', val);
   };
 
+  // Format time input to HH:MM on blur
+  const formatTimeInput = (id, field, value) => {
+    if (field === 'lunch') return; // lunch uses .MM format, don't convert
+    const parsed = parseTime(value);
+    if (parsed !== null && value.trim()) {
+      updateCalcRow(id, field, fmtHHMM(parsed));
+    }
+  };
+
   // Tab from Lunch → next row Start; auto-adds row if on last
   const handleLunchTab = (e, rowIdx) => {
     if (e.key !== 'Tab' || e.shiftKey) return;
@@ -102,12 +95,6 @@ const [activeRowId, setActiveRowId] = useState(null);
     }
   };
 
-  // ── Sum actions ────────────────────────────────────────────────────────────
-
-  const addSumRow   = () => { const id = nextSumId.current++; setSumRows(prev => [...prev, { id, value: '' }]); };
-  const removeSumRow = id => setSumRows(prev => prev.filter(r => r.id !== id));
-  const updateSumRow = (id, value) => setSumRows(prev => prev.map(r => r.id === id ? { ...r, value } : r));
-  const clearSum    = () => { nextSumId.current = 6; setSumRows(makeSumRows()); };
 
   // ── Copy ───────────────────────────────────────────────────────────────────
 
@@ -127,15 +114,11 @@ const [activeRowId, setActiveRowId] = useState(null);
       <div className="ts-body">
 
         <div className="ts-tabs">
-          <button className={"ts-tab" + (activeTab === 'calc' ? " ts-tab--on" : "")}
-            onClick={() => setActiveTab('calc')}>Calculate hours</button>
-          <button className={"ts-tab" + (activeTab === 'sum'  ? " ts-tab--on" : "")}
-            onClick={() => setActiveTab('sum')}>Sum hours</button>
+          <button className="ts-tab ts-tab--on">Calculate hours</button>
         </div>
 
         {/* ── Calculate tab ────────────────────────────────────────────────── */}
-        {activeTab === 'calc' && (
-          <div className="ts-section">
+        <div className="ts-section">
             <div className="ts-grid-hd">
               <span className="ts-col-lbl">Start</span>
               <span className="ts-col-lbl">End</span>
@@ -154,11 +137,13 @@ const [activeRowId, setActiveRowId] = useState(null);
                     value={row.start}
                     ref={el => { startRefs.current[row.id] = el; }}
                     onFocus={() => setActiveRowId(row.id)}
-                    onChange={e => updateCalcRow(row.id, 'start', e.target.value)} />
+                    onChange={e => updateCalcRow(row.id, 'start', e.target.value)}
+                    onBlur={e => formatTimeInput(row.id, 'start', e.target.value)} />
                   <input className="ts-input" type="text" placeholder="17, 17:30"
                     value={row.end}
                     onFocus={() => setActiveRowId(row.id)}
-                    onChange={e => updateCalcRow(row.id, 'end', e.target.value)} />
+                    onChange={e => updateCalcRow(row.id, 'end', e.target.value)}
+                    onBlur={e => formatTimeInput(row.id, 'end', e.target.value)} />
                   <input className="ts-input" type="text" placeholder=".30"
                     value={row.lunch}
                     onFocus={() => setActiveRowId(row.id)}
@@ -188,48 +173,21 @@ const [activeRowId, setActiveRowId] = useState(null);
               <button className="ts-btn" onClick={addCalcRow}>+ Add row</button>
               <button className="ts-btn ts-btn--muted" onClick={clearCalc}>Clear all</button>
             </div>
-          </div>
-        )}
 
-        {/* ── Sum tab ──────────────────────────────────────────────────────── */}
-        {activeTab === 'sum' && (
-          <div className="ts-section">
-            {sumRows.map(row => (
-              <div key={row.id} className="ts-sum-row">
-                <input className="ts-input" type="text" placeholder="e.g. 6:35, 8:15"
-                  value={row.value}
-                  onChange={e => updateSumRow(row.id, e.target.value)} />
-                <button className="ts-remove" tabIndex={-1}
-                  onClick={() => removeSumRow(row.id)}>×</button>
+            <div className="ts-footer">
+              <span className="ts-total-lbl">Total</span>
+              <div className="ts-total-vals">
+                <span className="ts-total-val">{fmtHHMM(calcTotalMins)}</span>
+                <span className="ts-total-dec">= {fmtDecimal(calcTotalMins)}</span>
+                <button className={"ts-copy" + (copied ? " ts-copy--done" : "")}
+                  onClick={handleCopy}>
+                  {copied ? 'Copied!' : 'Copy decimal'}
+                </button>
               </div>
-            ))}
-            <div className="ts-controls">
-              <button className="ts-btn" onClick={addSumRow}>+ Add row</button>
-              <button className="ts-btn ts-btn--muted" onClick={clearSum}>Clear all</button>
             </div>
-          </div>
-        )}
+        </div>
 
       </div>
-
-      {/* ── Sticky total bar ───────────────────────────────────────────────── */}
-      {showTotal && (
-        <div className="ts-footer">
-          <span className="ts-total-lbl">Total</span>
-          <div className="ts-total-vals">
-            <span className="ts-total-val">{fmtHHMM(totalMins)}</span>
-            {activeTab === 'calc' && (
-              <span className="ts-total-dec">= {fmtDecimal(totalMins)}</span>
-            )}
-            {activeTab === 'calc' && (
-              <button className={"ts-copy" + (copied ? " ts-copy--done" : "")}
-                onClick={handleCopy}>
-                {copied ? 'Copied!' : 'Copy decimal'}
-              </button>
-            )}
-          </div>
-        </div>
-      )}
 
     </div>
   );
