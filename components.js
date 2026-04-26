@@ -26,7 +26,8 @@ function NumInput({
   value,
   onChange,
   step = 1,
-  min = 1
+  min = 1,
+  unit
 }) {
   const [local, setLocal] = React.useState(String(value));
   React.useEffect(() => {
@@ -36,7 +37,7 @@ function NumInput({
     const n = Number(local);
     if (!isNaN(n) && n >= min) onChange(Math.max(min, Math.round(n * 100) / 100));else setLocal(String(value));
   };
-  return /*#__PURE__*/React.createElement("label", {
+  return /*#__PURE__*/React.createElement("div", {
     id: id,
     className: "num-wrap"
   }, /*#__PURE__*/React.createElement("span", {
@@ -52,7 +53,14 @@ function NumInput({
     onChange: e => setLocal(e.target.value),
     onKeyDown: e => e.key === "Enter" && commit(),
     onBlur: commit
-  }), /*#__PURE__*/React.createElement("button", {
+  }), unit && /*#__PURE__*/React.createElement("span", {
+    className: "data-row-unit",
+    style: {
+      display: "flex",
+      alignItems: "center",
+      margin: "0 4px"
+    }
+  }, unit), /*#__PURE__*/React.createElement("button", {
     className: "num-btn",
     onClick: commit
   }, /*#__PURE__*/React.createElement(Icon, {
@@ -862,47 +870,21 @@ function PipeWrapCalculator() {
       gap: 16,
       marginBottom: 16
     }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "num-wrap"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "num-lbl"
-  }, "Pipe outer diameter"), /*#__PURE__*/React.createElement("div", {
-    className: "num-row"
-  }, /*#__PURE__*/React.createElement("input", {
-    type: "number",
-    className: "num-input",
+  }, /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-pipeDiam",
+    label: "Pipe outer diameter",
     value: pipeDiam,
     min: 1,
-    step: 1,
-    onChange: e => setPipeDiam(Math.max(1, Number(e.target.value)))
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "data-row-unit",
-    style: {
-      display: "flex",
-      alignItems: "center",
-      marginLeft: 6
-    }
-  }, "mm"))), /*#__PURE__*/React.createElement("div", {
-    className: "num-wrap"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "num-lbl"
-  }, "Material thickness"), /*#__PURE__*/React.createElement("div", {
-    className: "num-row"
-  }, /*#__PURE__*/React.createElement("input", {
-    type: "number",
-    className: "num-input",
+    unit: "mm",
+    onChange: setPipeDiam
+  }), /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-matThick",
+    label: "Material thickness",
     value: matThick,
     min: 0,
-    step: 1,
-    onChange: e => setMatThick(Math.max(0, Number(e.target.value)))
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "data-row-unit",
-    style: {
-      display: "flex",
-      alignItems: "center",
-      marginLeft: 6
-    }
-  }, "mm")))), /*#__PURE__*/React.createElement("div", {
+    unit: "mm",
+    onChange: setMatThick
+  })), /*#__PURE__*/React.createElement("div", {
     className: "num-lbl",
     style: {
       marginBottom: 8
