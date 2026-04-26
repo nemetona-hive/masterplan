@@ -13,11 +13,7 @@ function Icon({
 }) {
   const faClass = ICONS[name] || "fa-solid fa-circle-question";
   return /*#__PURE__*/React.createElement("i", {
-    className: [faClass, className].filter(Boolean).join(" "),
-    style: {
-      display: "inline-flex",
-      alignItems: "center"
-    }
+    className: [faClass, className, "u-inline-flex-center"].filter(Boolean).join(" ")
   });
 }
 function NumInput({
@@ -54,12 +50,7 @@ function NumInput({
     onKeyDown: e => e.key === "Enter" && commit(),
     onBlur: commit
   }), unit && /*#__PURE__*/React.createElement("span", {
-    className: "data-row-unit",
-    style: {
-      display: "flex",
-      alignItems: "center",
-      margin: "0 4px"
-    }
+    className: "data-row-unit num-unit-span"
   }, unit), /*#__PURE__*/React.createElement("button", {
     className: "num-btn",
     onClick: commit
@@ -287,10 +278,7 @@ function LayoutVisualization({
         className: "strip-seg-lbl"
       }, fmt.mm(seg.w)));
     }), /*#__PURE__*/React.createElement("div", {
-      className: "strip-legend",
-      style: {
-        marginTop: "10px"
-      }
+      className: "strip-legend strip-legend-mt"
     }, [["Edge piece", `${fmt.mm(result.meta.edgeWidth)}mm`, "color-edge"], ["Full panel", `${result.meta.panelWidth}mm`, "color-sys1"]].map(([label, value, color]) => /*#__PURE__*/React.createElement("div", {
       key: label,
       className: "strip-legend-item"
@@ -310,10 +298,7 @@ function LayoutVisualization({
     idx
   }));
   return /*#__PURE__*/React.createElement("div", {
-    className: "sys-rows",
-    style: {
-      border: "1px solid var(--color-gray-light)"
-    }
+    className: "sys-rows sys-rows-border"
   }, orderedRows.map(({
     row,
     idx
@@ -402,11 +387,7 @@ function S4Controls({
   setState
 }) {
   return /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      flexDirection: "column",
-      gap: 12
-    }
+    className: "u-flex-col-gap12"
   }, /*#__PURE__*/React.createElement(NumInput, {
     id: "input-s4long",
     label: "Long (mm)",
@@ -651,10 +632,6 @@ function SheetTimesheet() {
   }, /*#__PURE__*/React.createElement("div", {
     className: "ts-body"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "ts-tabs"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "ts-tab ts-tab--on"
-  }, "Calculate hours")), /*#__PURE__*/React.createElement("div", {
     className: "ts-section"
   }, /*#__PURE__*/React.createElement("div", {
     className: "ts-grid-hd"
@@ -846,11 +823,7 @@ function PipeWrapCalculator() {
   }, /*#__PURE__*/React.createElement("div", {
     className: "page-inner"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "main-head",
-    style: {
-      padding: "0 0 0",
-      marginBottom: 22
-    }
+    className: "main-head pw-head-adj"
   }, /*#__PURE__*/React.createElement("div", {
     className: "title"
   }, "Pipe wrap calculator"), /*#__PURE__*/React.createElement("div", {
@@ -864,12 +837,7 @@ function PipeWrapCalculator() {
   }, /*#__PURE__*/React.createElement("div", {
     className: "section-pad"
   }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "grid",
-      gridTemplateColumns: "1fr 1fr",
-      gap: 16,
-      marginBottom: 16
-    }
+    className: "pw-grid-2col"
   }, /*#__PURE__*/React.createElement(NumInput, {
     id: "input-pipeDiam",
     label: "Pipe outer diameter",
@@ -885,20 +853,12 @@ function PipeWrapCalculator() {
     unit: "mm",
     onChange: setMatThick
   })), /*#__PURE__*/React.createElement("div", {
-    className: "num-lbl",
-    style: {
-      marginBottom: 8
-    }
+    className: "num-lbl pw-preset-label"
   }, "Pipe diameter presets"), /*#__PURE__*/React.createElement("div", {
     className: "ctrl-btns"
   }, PRESETS.map(p => /*#__PURE__*/React.createElement("button", {
     key: p,
     className: `ctrl-dir${pipeDiam === p ? " on" : ""}`,
-    style: {
-      flex: 1,
-      padding: "6px 0",
-      fontSize: "var(--fs-md)"
-    },
     onClick: () => setPipeDiam(p)
   }, "\xD8 ", p)))))), /*#__PURE__*/React.createElement("div", {
     className: "section"
@@ -909,92 +869,39 @@ function PipeWrapCalculator() {
   }, /*#__PURE__*/React.createElement("div", {
     className: "section-pad"
   }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      alignItems: "center",
-      gap: 10,
-      marginBottom: 14
-    }
+    className: "pw-adj-row mb"
   }, /*#__PURE__*/React.createElement("button", {
     onClick: () => setOverlap(prev => Math.min(200, prev + 5)),
-    style: {
-      fontFamily: "var(--mono)",
-      fontSize: "var(--fs-sm)",
-      background: "color-mix(in srgb, var(--color-blue) 18%, transparent)",
-      color: "var(--color-blue)",
-      border: "1px solid color-mix(in srgb, var(--color-blue) 45%, transparent)",
-      borderRadius: 4,
-      padding: "1px 7px",
-      flexShrink: 0,
-      width: 22,
-      textAlign: "center",
-      cursor: "pointer"
-    }
+    className: "pw-adj-btn pw-adj-btn-overlap"
   }, "+"), /*#__PURE__*/React.createElement("span", {
-    className: "ctrl-sublbl",
-    style: {
-      width: 160,
-      flexShrink: 0
-    }
+    className: "ctrl-sublbl pw-adj-label"
   }, "Overlap / extra (mm)"), /*#__PURE__*/React.createElement("input", {
     type: "range",
     min: 0,
     max: 200,
     step: 5,
     value: overlap,
-    style: {
-      flex: 1
-    },
+    className: "pw-adj-range",
     onChange: e => setOverlap(Number(e.target.value))
   }), /*#__PURE__*/React.createElement("span", {
-    className: "ctrl-range-val",
-    style: {
-      minWidth: 36,
-      textAlign: "right"
-    }
+    className: "ctrl-range-val pw-adj-val"
   }, overlap)), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      alignItems: "center",
-      gap: 10
-    }
+    className: "pw-adj-row"
   }, /*#__PURE__*/React.createElement("button", {
     onClick: () => setGap(prev => Math.min(200, prev + 5)),
-    style: {
-      fontFamily: "var(--mono)",
-      fontSize: "var(--fs-sm)",
-      background: "color-mix(in srgb, var(--color-gray-opa80) 18%, transparent)",
-      color: "var(--color-gray-opa80)",
-      border: "1px solid color-mix(in srgb, var(--color-gray-opa80) 45%, transparent)",
-      borderRadius: 4,
-      padding: "1px 7px",
-      flexShrink: 0,
-      width: 22,
-      textAlign: "center",
-      cursor: "pointer"
-    }
+    className: "pw-adj-btn pw-adj-btn-gap"
   }, "\u2212"), /*#__PURE__*/React.createElement("span", {
-    className: "ctrl-sublbl",
-    style: {
-      width: 160,
-      flexShrink: 0
-    }
+    className: "ctrl-sublbl pw-adj-label"
   }, "Gap / cutout (mm)"), /*#__PURE__*/React.createElement("input", {
     type: "range",
     min: 0,
     max: 200,
     step: 5,
     value: gap,
-    style: {
-      flex: 1
-    },
+    className: "pw-adj-range",
     onChange: e => setGap(Number(e.target.value))
   }), /*#__PURE__*/React.createElement("span", {
-    className: "ctrl-range-val",
-    style: {
-      minWidth: 36,
-      textAlign: "right"
-    }
+    className: "ctrl-range-val pw-adj-val"
   }, gap))))), /*#__PURE__*/React.createElement("div", {
     className: "section"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1002,9 +909,7 @@ function PipeWrapCalculator() {
   }, /*#__PURE__*/React.createElement("span", null, "Result")), /*#__PURE__*/React.createElement("div", {
     className: "section-body"
   }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      borderBottom: "1px solid var(--color-gray)"
-    }
+    className: "pw-res-wrap"
   }, /*#__PURE__*/React.createElement("div", {
     className: "data-row"
   }, /*#__PURE__*/React.createElement("span", {
@@ -1022,10 +927,7 @@ function PipeWrapCalculator() {
   }, base.toFixed(1)), /*#__PURE__*/React.createElement("span", {
     className: "data-row-unit"
   }, "mm")), /*#__PURE__*/React.createElement("div", {
-    className: "data-row",
-    style: {
-      borderBottom: "none"
-    }
+    className: "data-row pw-res-row-last"
   }, /*#__PURE__*/React.createElement("span", {
     className: "data-row-lbl"
   }, "Final length needed"), /*#__PURE__*/React.createElement("span", {
@@ -1033,26 +935,16 @@ function PipeWrapCalculator() {
   }, total.toFixed(1)), /*#__PURE__*/React.createElement("span", {
     className: "data-row-unit"
   }, "mm"))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: "14px 16px"
-    }
+    className: "pw-diag-wrap"
   }, /*#__PURE__*/React.createElement("svg", {
     ref: svgRef,
     viewBox: "0 0 420 180",
     width: "100%",
-    style: {
-      display: "block"
-    }
+    className: "pw-diag-svg"
   })), /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: "0 16px 14px"
-    }
+    className: "pw-formula-wrap"
   }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontFamily: "var(--mono)",
-      fontSize: "var(--fs-sm)",
-      color: "var(--color-gray-opa80)"
-    }
+    className: "pw-formula-text"
   }, "formula: \u03C0 \xD7 (pipe \xD8 + 2 \xD7 thickness) + overlap \u2212 gap"))))));
 }
 
@@ -2163,22 +2055,7 @@ function App() {
     setGrItems: setGrItems
   }))), DEV_MODE && /*#__PURE__*/React.createElement("button", {
     onClick: () => setTheme(getNextTheme(theme)),
-    style: {
-      position: 'fixed',
-      bottom: '12px',
-      left: '12px',
-      zIndex: 9999,
-      fontSize: '10px',
-      padding: '4px 10px',
-      border: '0.5px solid var(--color-gray-light)',
-      borderRadius: '4px',
-      background: 'var(--color-darkblue-light)',
-      color: 'var(--color-primary)',
-      fontFamily: 'var(--mono)',
-      letterSpacing: '0.06em',
-      cursor: 'pointer',
-      opacity: 0.7
-    }
+    className: "dev-theme-btn"
   }, THEMES[theme]?.icon, " ", THEMES[theme]?.label));
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/*#__PURE__*/React.createElement(App, null));
