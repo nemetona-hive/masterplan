@@ -6,4 +6,5 @@
 // 5. components/Timesheet.jsx    — SheetTimesheet
 // 6. Sheets.jsx                  — SheetHome, SheetSymmetricLayout, SheetSurfaceLayout, SheetConcrete, SheetNewTool
 // 7. Nav.jsx                     — isNavPageActive, NavButton, AppNav
-// 8. App.jsx                     — MainPageContent, App, ReactDOM.createRoot
+// 8. themes.js                   — THEMES, getThemeOrder, getNextTheme, applyTheme
+// 9. App.jsx                     — MainPageContent, App, ReactDOM.createRoot
