@@ -95,12 +95,14 @@ html, body, #root {
 	--nav-collapsed-w: 60px;
 
 	/* Spacing scale */
-	--sp-1:  6px;
-	--sp-2: 12px;
-	--sp-3: 16px;
-	--sp-4: 24px;
+	--sp-05: 2px;
+	--sp-1:  4px;
+	--sp-2:  8px;
+	--sp-3: 12px;
+	--sp-4: 16px;
 	--sp-5: 20px;
 	--sp-6: 24px;
+	--sp-7: 32px;
  }
 
 body {
@@ -301,7 +303,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	font-weight: 400;
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: var(--sp-2);
 	padding: 8px 12px;
 	border-radius: 6px;
 	border: none;
@@ -551,7 +553,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	padding: 14px 10px;
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: var(--sp-05);
 	overflow-y: auto;
 	overflow-x: visible;
 	scrollbar-width: none;
@@ -565,14 +567,14 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .nav-items {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: var(--sp-05);
 	flex: 1;
 }
 
 .nav-bottom {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: var(--sp-05);
 	margin-top: auto;
 	padding-top: 10px;
 	border-top: 1px solid color-mix(in srgb, var(--color-gray-light) 40%, transparent);
@@ -741,7 +743,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	color: var(--color-gray-opa80);
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: var(--sp-2);
 	cursor: pointer;
 	user-select: none;
 }
@@ -766,7 +768,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	padding: 14px;
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: var(--sp-3);
 }
 
 /*
@@ -780,7 +782,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .num-wrap {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: var(--sp-1);
 }
 
 .num-lbl {
@@ -798,7 +800,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 .num-row {
 	display: flex;
-	gap: 4px;
+	gap: var(--sp-1);
 	align-items: stretch;
 }
 
@@ -902,7 +904,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .data-control .control-panel .panel-data {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: var(--sp-4);
 }
 
 .data-control .control-panel .panel-head {
@@ -932,7 +934,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .ctrl-lbl {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: var(--sp-1);
 }
 
 .ctrl-sublbl {
@@ -945,7 +947,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 .ctrl-btns {
 	display: flex;
-	gap: 4px;
+	gap: var(--sp-1);
 }
 
 .ctrl-dir {
@@ -1034,15 +1036,15 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 /* Golden Ratio spacing polish */
 .data-control #control-base-number > .panel-data {
-	gap: 20px;
+	gap: var(--sp-5);
 }
 
 .data-control .gr-control-card .panel-data {
-	gap: 18px;
+	gap: var(--sp-5);
 }
 
 .data-control .gr-control-card .num-wrap {
-	gap: 7px;
+	gap: var(--sp-2);
 }
 
 .data-control .gr-control-card .num-row {
@@ -1050,7 +1052,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 }
 
 .data-control .gr-control-card .ctrl-lbl {
-	gap: 6px;
+	gap: var(--sp-2);
 }
 
 .data-control .gr-control-card-a::before { background: var(--color-gray); }
@@ -1119,7 +1121,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .data-preview .gr-section-pad {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: var(--sp-3);
 }
 
 .gr-preview-list {
@@ -1209,7 +1211,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	margin-bottom: 0;
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: var(--sp-2);
 	cursor: pointer;
 	user-select: none;
 	background: var(--color-darkblue);
@@ -1270,7 +1272,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .data-preview .sys-row {
 	display: flex;
 	align-items: center;
-	gap: 5px;
+	gap: var(--sp-1);
 }
 
 .data-preview .sys-row-lbl {
@@ -1342,14 +1344,14 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	
 .data-preview .strip-legend {
 	display: flex;
-	gap: 16px;
+	gap: var(--sp-4);
 	margin-top: 10px;
 }
 
 .data-preview .strip-legend-item {
 	display: flex;
 	align-items: center;
-	gap: 6px;
+	gap: var(--sp-2);
 }
 
 .data-preview .strip-legend-dot {
@@ -1401,7 +1403,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	padding: 18px 22px;
 	display: flex;
 	flex-direction: column;
-	gap: 14px;
+	gap: var(--sp-3);
 }
 
 /* Tabs -------------------------------------------------------------------- */
@@ -1440,7 +1442,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	padding: 14px;
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: var(--sp-1);
 }
 
 /* Grid -------------------------------------------------------------------- */
@@ -1449,7 +1451,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .ts-grid-row {
 	display: grid;
 	grid-template-columns: 1fr 1fr 68px 86px 62px 34px;
-	gap: 6px;
+	gap: var(--sp-2);
 	align-items: center;
 }
 
@@ -1537,7 +1539,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 .ts-pills {
 	display: flex;
-	gap: 5px;
+	gap: var(--sp-1);
 	flex-wrap: wrap;
 	align-items: center;
 	margin-top: 6px;
@@ -1570,7 +1572,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 .ts-controls {
 	display: flex;
-	gap: 8px;
+	gap: var(--sp-2);
 	margin-top: 8px;
 	flex-wrap: wrap;
 	align-items: center;
@@ -1602,7 +1604,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .ts-sum-row {
 	display: grid;
 	grid-template-columns: 1fr 34px;
-	gap: 6px;
+	gap: var(--sp-2);
 	align-items: center;
 }
 
@@ -1612,7 +1614,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 14px;
+	gap: var(--sp-3);
 	padding: 8px 3px;
 	border-top: 1px solid var(--color-gray);
 	margin-top: 6px;
@@ -1629,7 +1631,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .ts-total-vals {
 	display: flex;
 	align-items: baseline;
-	gap: 10px;
+	gap: var(--sp-3);
 }
 
 .ts-total-val {
@@ -1673,13 +1675,13 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 @media (max-width: 768px), (max-height: 500px) {
 	.ts-body {
 		padding: 12px;
-		gap: 10px;
+		gap: var(--sp-3);
 	}
 
 	.ts-grid-hd,
 	.ts-grid-row {
 		grid-template-columns: 1fr 1fr 56px 72px 32px;
-		gap: 4px;
+		gap: var(--sp-1);
 	}
 
 	/* Hide decimal column on narrow screens */
@@ -1726,13 +1728,13 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	max-width: 720px;
 	display: flex;
 	flex-direction: column;
-	gap: 32px;
+	gap: var(--sp-7);
 }
 
 .home-brand {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: var(--sp-1);
 }
 
 .home-brand-name {
@@ -1760,14 +1762,14 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .home-cards {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-	gap: 12px;
+	gap: var(--sp-3);
 }
 
 .home-card {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 10px;
+	gap: var(--sp-3);
 	padding: 20px 18px;
 	border-radius: 10px;
 	border: 1px solid color-mix(in srgb, var(--color-gray-light) 60%, transparent);
@@ -1904,7 +1906,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 	.home-inner {
 		max-width: 100%;
-		gap: 10px;
+		gap: var(--sp-3);
 	}
 
 	/* Push brand below cards, display it inline and small */
@@ -1912,7 +1914,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 		order: 10;
 		flex-direction: row;
 		align-items: baseline;
-		gap: 8px;
+		gap: var(--sp-2);
 		opacity: 0.6;
 	}
 
@@ -1937,12 +1939,12 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 	.home-cards {
 		grid-template-columns: 1fr;
-		gap: 8px;
+		gap: var(--sp-2);
 	}
 
 	.home-card {
 		padding: 11px 13px;
-		gap: 5px;
+		gap: var(--sp-1);
 		border-radius: 8px;
 	}
 
@@ -1998,7 +2000,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 		width: 100% !important;
 		flex-direction: column;
 		align-items: stretch;
-		gap: 6px;
+		gap: var(--sp-2);
 		padding: var(--sp-2) var(--sp-3);
 		overflow-x: hidden;
 		overflow-y: auto;
@@ -2027,7 +2029,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 		display: flex;
 		flex-direction: column;
 		flex: 1 1 auto;
-		gap: 4px;
+		gap: var(--sp-1);
 		margin-top: 0;
 		padding-top: 8px;
 		border-top: 1px solid color-mix(in srgb, var(--color-gray-light) 40%, transparent);
@@ -2137,17 +2139,17 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 		border-right: none;
 		border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--color-gray-light));
 		padding: var(--sp-2) var(--sp-3);
-		gap: 8px;
+		gap: var(--sp-2);
 		overflow: visible;
 	}
 
 	.data-control .control-panel,
 	.data-control .control-panel .panel-data {
-		gap: 10px;
+		gap: var(--sp-3);
 	}
 
 	.data-control .gr-control-card .panel-data {
-		gap: 12px;
+		gap: var(--sp-3);
 	}
 
 	.data-preview {
@@ -2181,7 +2183,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 	.panel-body {
 		padding: 10px;
-		gap: 8px;
+		gap: var(--sp-2);
 	}
 
 	.data-preview .gr-row-marker {
@@ -2195,7 +2197,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 		flex-wrap: wrap;
 		align-items: flex-start;
 		padding: 6px 10px;
-		gap: 3px 8px;
+		gap: 3px var(--sp-2);
 	}
 
 	.data-preview .sys-title {
@@ -2225,7 +2227,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 	.data-preview .strip-legend {
 		flex-wrap: wrap;
-		gap: 8px 12px;
+		gap: var(--sp-2) var(--sp-3);
 	}
 
 	.page-scroll {
@@ -2278,7 +2280,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	.nav {
 		max-height: 40vh;
 		padding: var(--sp-1) var(--sp-2);
-		gap: 4px;
+		gap: var(--sp-1);
 	}
 
 	.nav-section.nav-toggle {
@@ -2296,12 +2298,12 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	}
 
 	.home-inner {
-		gap: 8px;
+		gap: var(--sp-2);
 	}
 
 	.home-cards {
 		grid-template-columns: 1fr 1fr;
-		gap: 6px;
+		gap: var(--sp-2);
 	}
 
 	.home-card {
@@ -2366,3 +2368,157 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	}
 }
 
+/*
+ * ----------------------------------------------------------
+ * PIPE WRAP CALCULATOR
+ * ----------------------------------------------------------
+ */
+
+.pw-head-adj {
+	padding: 0 !important;
+	margin-bottom: 22px !important;
+}
+
+.pw-grid-2col {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--sp-4);
+	margin-bottom: 16px;
+}
+
+.pw-preset-label {
+	margin-bottom: 8px;
+}
+
+.pw-adj-row {
+	display: flex;
+	align-items: center;
+	gap: var(--sp-3);
+}
+
+.pw-adj-row.mb {
+	margin-bottom: 14px;
+}
+
+.pw-adj-btn {
+	font-family: var(--mono);
+	font-size: var(--fs-sm);
+	border-radius: 4px;
+	padding: 1px 7px;
+	flex-shrink: 0;
+	width: 22px;
+	text-align: center;
+	cursor: pointer;
+}
+
+.pw-adj-btn-overlap {
+	background: color-mix(in srgb, var(--color-blue) 18%, transparent);
+	color: var(--color-blue);
+	border: 1px solid color-mix(in srgb, var(--color-blue) 45%, transparent);
+}
+
+.pw-adj-btn-gap {
+	background: color-mix(in srgb, var(--color-gray-opa80) 18%, transparent);
+	color: var(--color-gray-opa80);
+	border: 1px solid color-mix(in srgb, var(--color-gray-opa80) 45%, transparent);
+}
+
+.pw-adj-label {
+	width: 160px;
+	flex-shrink: 0;
+}
+
+.pw-adj-range {
+	flex: 1;
+}
+
+.pw-adj-val {
+	min-width: 36px;
+	text-align: right !important;
+}
+
+.pw-res-wrap {
+	border-bottom: 1px solid var(--color-gray);
+}
+
+.pw-res-row-last {
+	border-bottom: none !important;
+}
+
+.pw-diag-wrap {
+	padding: 14px 16px;
+}
+
+.pw-diag-svg {
+	display: block;
+}
+
+.pw-formula-wrap {
+	padding: 0 16px 14px;
+}
+
+.pw-formula-text {
+	font-family: var(--mono);
+	font-size: var(--fs-sm);
+	color: var(--color-gray-opa80);
+}
+
+
+/*
+ * ----------------------------------------------------------
+ * UTILITIES
+ * ----------------------------------------------------------
+ */
+
+.u-flex-center {
+	display: flex;
+	align-items: center;
+}
+
+.u-inline-flex-center {
+	display: inline-flex;
+	align-items: center;
+}
+
+.u-flex-col-gap12 {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sp-3);
+}
+
+/*
+ * ----------------------------------------------------------
+ * SHARED & TOOL SPECIFIC
+ * ----------------------------------------------------------
+ */
+
+.num-unit-span {
+	display: flex;
+	align-items: center;
+	margin: 0 4px;
+}
+
+.strip-legend-mt {
+	margin-top: 10px;
+}
+
+.sys-rows-border {
+	border: 1px solid var(--color-gray-light);
+}
+
+.dev-theme-btn {
+	position: fixed;
+	bottom: 12px;
+	left: 12px;
+	z-index: 9999;
+	font-size: 10px;
+	padding: 4px 10px;
+	border: 0.5px solid var(--color-gray-light);
+	border-radius: 4px;
+	background: var(--color-darkblue-light);
+	color: var(--color-primary);
+	font-family: var(--mono);
+	letter-spacing: 0.06em;
+	cursor: pointer;
+	opacity: 0.7;
+}
