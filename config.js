@@ -116,6 +116,12 @@ var PAGES = [{
   title: "Timesheet",
   desc: "Calculate and sum work hours",
   icon: "clock"
+}, {
+  id: "pipe-wrap",
+  label: "Pipe Wrap",
+  title: "Pipe Wrap Calculator",
+  desc: "Material length needed to wrap around a pipe",
+  icon: "ring"
 }];
 
 
