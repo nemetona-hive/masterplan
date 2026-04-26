@@ -45,7 +45,9 @@ const simulate = (W, H, PP, PL, offset, minJ, sys, vSym = false, startOff = 0) =
 	  const ve = Math.min(x + PL, W);
 	  if (ve > vs) {
 		const isFull = x >= 0 && x + PL <= W;
-		segs.push({ x: vs, w: ve - vs, type: isFull ? "full" : "cut", pid: isFull ? pid : undefined });
+		const cutW  = ve - vs;
+		const type  = isFull ? "full" : (cutW >= minJ ? "cut" : "gap");
+		segs.push({ x: vs, w: cutW, type, pid: isFull ? pid : undefined });
 		if (isFull) pid++;
 	  }
 	  x += PL;
@@ -61,24 +63,55 @@ const simulate = (W, H, PP, PL, offset, minJ, sys, vSym = false, startOff = 0) =
 
 function simulateS4(W, H, PP, PLong, PShort, minJ, vSym) {
   if (W <= 0 || H <= 0 || PP <= 0 || PLong <= 0 || PShort <= 0) return [];
-  return mkRowHeights(H, PP, vSym).map(function(h, i) {
+  var heights = mkRowHeights(H, PP, vSym);
+  var rows = [];
+  var carryW = 0;        // offcut length carried from previous row
+  var carryIsLong = false;
+
+  for (var i = 0; i < heights.length; i++) {
+	var h = heights[i];
 	var startsLong = i % 2 === 0;
 	var segs = [];
-	var x = 0, pid = 0, phase = 0;
+	var x = 0, pid = 0;
+	var nextIsLong = startsLong;
+
+	if (vSym) carryW = 0;  // symmetric rows are independent
+
+	// Place offcut carried from the previous row
+	if (carryW > 0) {
+	  var offcutW = Math.min(carryW, W);
+	  segs.push({ x: 0, w: offcutW, type: "offcut", "long": carryIsLong });
+	  x = offcutW;
+	  carryW = carryW > W ? carryW - W : 0;
+	  nextIsLong = !carryIsLong;  // alternate from the offcut type
+	  if (x >= W) {
+		rows.push({ segs: segs, h: h, "long": startsLong });
+		continue;
+	  }
+	}
+
+	var cutDone = false;
 	while (x < W) {
-	  var isLong = startsLong ? phase % 2 === 0 : phase % 2 === 1;
-	  var PL = isLong ? PLong : PShort;
+	  var PL = nextIsLong ? PLong : PShort;
 	  if (x + PL <= W) {
-		segs.push({ x: x, w: PL, type: "full", pid: pid, "long": isLong });
-		x += PL; pid++; phase++;
+		segs.push({ x: x, w: PL, type: "full", pid: pid, "long": nextIsLong });
+		x += PL; pid++;
+		nextIsLong = !nextIsLong;
 	  } else {
-		var remainder = W - x;
-		if (remainder > 0) segs.push({ x: x, w: remainder, type: remainder >= minJ ? "cut" : "gap", pid: pid, "long": isLong });
+		var rem = W - x;
+		if (rem > 0) segs.push({ x: x, w: rem, type: rem >= minJ ? "cut" : "gap", pid: pid, "long": nextIsLong });
+		var newCarry = PL - rem;
+		carryW = newCarry >= minJ ? newCarry : 0;
+		carryIsLong = nextIsLong;
+		cutDone = true;
 		break;
 	  }
 	}
-	return { segs: segs, h: h, "long": startsLong };
-  });
+	if (!cutDone) carryW = 0;
+
+	rows.push({ segs: segs, h: h, "long": startsLong });
+  }
+  return rows;
 }
 
 // Single helper replaces nPanels, nCut, nGap, nOffcut
@@ -138,14 +171,21 @@ function computeStandard(sh, sysNum, offset, palKey) {
   const sW = vSym ? H : W;
   const rows = simulate(sW, vSym ? W : H, PLa, PPi, offset, minJ, sysNum, vSym, startOff);
   const stats = makeStats(rows);
+  const gaps = nGap(rows);
+  const totalGapWidth = gapWidth(rows);
+  const valid = gaps === 0;
   const L = SUMMARY_LABELS.s1s2s3;
   return {
-	valid: true, rows, stats,
+	valid, rows, stats,
 	summaryRows: [
-	  { label: L.full,      value: stats.full,    unit: "pcs", hi: true, hoverType: "full" },
-	  { label: L.cut,       value: stats.cut,     unit: "pcs", hoverType: "cut" },
-	  { label: L.remainder, value: nOffcut(rows), unit: "pcs", hoverType: "offcut" },
-	  { label: L.total,     value: stats.total,   unit: "pcs", hi: true }
+	  { label: L.total,     value: stats.total,                            unit: "pcs", hi: true },
+	  { label: L.placed,    value: stats.full + stats.cut + nOffcut(rows), unit: "pcs", hi: true },
+	  { label: L.full,      value: stats.full,                             unit: "pcs", hoverType: "full" },
+	  { label: L.cut,       value: stats.cut,                              unit: "pcs", hoverType: "cut" },
+	  { label: L.remainder, value: nOffcut(rows),                          unit: "pcs", hoverType: "offcut" },
+	  { label: L.gaps,      value: gaps,                                   unit: "pcs", hoverType: "gap" },
+	  { label: L.gapWidth,  value: fmt.decimal(totalGapWidth),             unit: "mm",  hoverType: "gap" },
+	  { label: L.status,    value: valid ? "Valid" : "Invalid", unit: valid ? "" : L.statusInvalid, hi: !valid }
 	],
 	meta: { width: sW, visualization: "rows", palClasses: PAL_CLASSES[palKey] }
   };
@@ -180,13 +220,14 @@ function computeS4(sh) {
   return {
 	valid, rows, stats,
 	summaryRows: [
-	  { label: L.stock,    value: stockPcs,                   unit: "pcs", hi: true },
-	  { label: L.full,     value: stats.full,                 unit: "pcs", hi: true, hoverType: "full" },
-	  { label: L.cut,      value: stats.cut,                  unit: "pcs", hoverType: "cut" },
-	  { label: L.total,    value: stats.total,                unit: "pcs", hi: true },
-	  { label: L.gaps,     value: gaps,                       unit: "pcs", hoverType: "gap" },
-	  { label: L.gapWidth, value: fmt.decimal(totalGapWidth), unit: "mm",  hoverType: "gap" },
-	  { label: L.status,   value: valid ? "Valid" : "Invalid", unit: valid ? "" : L.statusInvalid, hi: !valid }
+	  { label: L.stock,     value: stockPcs,                              unit: "pcs", hi: true },
+	  { label: L.total,     value: stats.full + stats.cut + nOffcut(rows), unit: "pcs", hi: true },
+	  { label: L.full,      value: stats.full,                            unit: "pcs", hoverType: "full" },
+	  { label: L.cut,       value: stats.cut,                             unit: "pcs", hoverType: "cut" },
+	  { label: L.remainder, value: nOffcut(rows),                         unit: "pcs", hoverType: "offcut" },
+	  { label: L.gaps,      value: gaps,                                  unit: "pcs", hoverType: "gap" },
+	  { label: L.gapWidth,  value: fmt.decimal(totalGapWidth),            unit: "mm",  hoverType: "gap" },
+	  { label: L.status,    value: valid ? "Valid" : "Invalid", unit: valid ? "" : L.statusInvalid, hi: !valid }
 	],
 	meta: { width: sW, visualization: "rows", s4: true }
   };
