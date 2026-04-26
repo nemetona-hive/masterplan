@@ -113,9 +113,6 @@ function SheetTimesheet() {
 
       <div className="ts-body">
 
-        <div className="ts-tabs">
-          <button className="ts-tab ts-tab--on">Calculate hours</button>
-        </div>
 
         {/* ── Calculate tab ────────────────────────────────────────────────── */}
         <div className="ts-section">
