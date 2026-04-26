@@ -158,12 +158,18 @@ const SUMMARY_LABELS = {
     full:          "Full panels",
     cut:           "Cut panels",
     remainder:     "Remainder from prev",
-    total:         "Total"
+    total:         "Material pieces (full length)",
+    placed:        "Total panels placed",
+    gaps:          "Uncovered gaps",
+    gapWidth:      "Gap width total",
+    status:        "Status",
+    statusInvalid: "increase min remainder or adjust panel size"
   },
   s4: {
     full:          "Full panels",
     cut:           "Cut panels",
-    total:         "Total panels",
+    remainder:     "Remainder from prev",
+    total:         "Total panels placed",
     stock:         "Material pieces (full length)",
     gaps:          "Uncovered gaps",
     gapWidth:      "Gap width total",
