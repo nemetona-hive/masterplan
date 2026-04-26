@@ -13,6 +13,7 @@ const SOURCES = [
   "src/components/Timesheet.jsx",
   "src/Sheets.jsx",
   "src/Nav.jsx",
+  "themes.js",
   "src/App.jsx"
 ];
 const OUT_FILE = "components.js";
