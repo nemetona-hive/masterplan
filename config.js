@@ -1,4 +1,4 @@
-﻿const PAL_CLASSES = {
+const PAL_CLASSES = {
   s1: ["color-s1"],
   s2: ["color-s1"],
   s3: ["color-s1"],
@@ -136,7 +136,8 @@ const DEFAULT_SH = {
 
 const DEFAULT_SYM = {
   roomWidth:  2500,
-  panelWidth:  300
+  panelWidth:  300,
+  oneFullEdge: false
 };
 
 const DEFAULT_GR = [
