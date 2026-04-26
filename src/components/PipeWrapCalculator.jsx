@@ -137,35 +137,23 @@ function PipeWrapCalculator() {
             <div className="section-pad">
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
 
-                <div className="num-wrap">
-                  <div className="num-lbl">Pipe outer diameter</div>
-                  <div className="num-row">
-                    <input
-                      type="number"
-                      className="num-input"
-                      value={pipeDiam}
-                      min={1}
-                      step={1}
-                      onChange={e => setPipeDiam(Math.max(1, Number(e.target.value)))}
-                    />
-                    <span className="data-row-unit" style={{ display:"flex", alignItems:"center", marginLeft:6 }}>mm</span>
-                  </div>
-                </div>
+                <NumInput
+                  id="input-pipeDiam"
+                  label="Pipe outer diameter"
+                  value={pipeDiam}
+                  min={1}
+                  unit="mm"
+                  onChange={setPipeDiam}
+                />
 
-                <div className="num-wrap">
-                  <div className="num-lbl">Material thickness</div>
-                  <div className="num-row">
-                    <input
-                      type="number"
-                      className="num-input"
-                      value={matThick}
-                      min={0}
-                      step={1}
-                      onChange={e => setMatThick(Math.max(0, Number(e.target.value)))}
-                    />
-                    <span className="data-row-unit" style={{ display:"flex", alignItems:"center", marginLeft:6 }}>mm</span>
-                  </div>
-                </div>
+                <NumInput
+                  id="input-matThick"
+                  label="Material thickness"
+                  value={matThick}
+                  min={0}
+                  unit="mm"
+                  onChange={setMatThick}
+                />
               </div>
 
               {/* presets */}
