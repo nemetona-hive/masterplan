@@ -163,7 +163,8 @@ const SUMMARY_LABELS = {
   s4: {
     full:          "Full panels",
     cut:           "Cut panels",
-    total:         "Total",
+    total:         "Total panels",
+    stock:         "Material pieces (full length)",
     gaps:          "Uncovered gaps",
     gapWidth:      "Gap width total",
     status:        "Status",
