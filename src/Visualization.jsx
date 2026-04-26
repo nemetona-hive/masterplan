@@ -60,7 +60,7 @@ function LayoutVisualization({ result, hoveredType, rowStart = "top" }) {
             </div>
           );
         })}
-        <div className="strip-legend strip-legend-mt">
+        <Stack direction="row" gap={3} className="strip-legend strip-legend-mt">
           {[["Edge piece", `${fmt.mm(result.meta.edgeWidth)}mm`, "color-edge"],
             ["Full panel", `${result.meta.panelWidth}mm`, "color-sys1"]].map(([label, value, color]) => (
             <div key={label} className="strip-legend-item">
@@ -68,7 +68,7 @@ function LayoutVisualization({ result, hoveredType, rowStart = "top" }) {
               <span className="strip-legend-lbl">{label} ({value})</span>
             </div>
           ))}
-        </div>
+        </Stack>
         <div className="strip-note">
           &#128161; {result.stats.cut === 0 ? "No panels are cut (perfect fit)." : result.stats.cut === 1 ? "1 edge piece is cut from a full panel (1 panel is cut)." : "Both edge pieces are cut from full panels (2 panels are cut)."}
         </div>
@@ -79,7 +79,7 @@ function LayoutVisualization({ result, hoveredType, rowStart = "top" }) {
     ? result.rows.map((row, idx) => ({ row, idx })).reverse()
     : result.rows.map((row, idx) => ({ row, idx })));
   return (
-    <div className="sys-rows sys-rows-border">
+    <Stack className="sys-rows sys-rows-border" gap={0}>
       {orderedRows.map(({ row, idx }, i) => (
         <div key={i} className="sys-row">
           <span className="sys-row-lbl">R{idx + 1}</span>
@@ -92,7 +92,7 @@ function LayoutVisualization({ result, hoveredType, rowStart = "top" }) {
           </div>
         </div>
       ))}
-    </div>
+    </Stack>
   );
 }
 
@@ -109,12 +109,12 @@ function LayoutPanel({ layout, result, hoveredType, isBest, setHoveredType, rowS
         <span className="sys-head-count">{result.stats.total} pcs {isBest ? <Icon name="best-badge" /> : ""}</span>
       </div>
       {open && (
-        <div className="panel-body">
+        <Stack className="panel-body" gap={2}>
           {layout.renderControls && React.createElement(layout.renderControls, { state: layout.getState(), setState: layout.setState })}
           {result.summaryRows.length > 0 && <PanelSummary rows={result.summaryRows} hoveredType={hoveredType} setHoveredType={setHoveredType} />}
           {!result.valid && <p className="desc">This layout leaves uncovered gaps and is excluded from best-layout scoring.</p>}
           {result.rows.length > 0 && <LayoutVisualization result={result} hoveredType={hoveredType} rowStart={rowStart} />}
-        </div>
+        </Stack>
       )}
     </div>
   );
@@ -122,12 +122,12 @@ function LayoutPanel({ layout, result, hoveredType, isBest, setHoveredType, rowS
 
 function PreviewSection({ id, title, description, children }) {
   return (
-    <>
-      <div className="preview-head">
+    <Stack gap={3}>
+      <Stack className="preview-head" gap={1}>
         <h3 className="layout-section-title">{title}</h3>
         <p className="layout-section-desc">{description}</p>
-      </div>
-      <div className="preview-data">{children}</div>
-    </>
+      </Stack>
+      <Stack className="preview-data" gap={3}>{children}</Stack>
+    </Stack>
   );
 }
