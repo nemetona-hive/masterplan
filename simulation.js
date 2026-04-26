@@ -19,7 +19,7 @@ const mkRowHeights = (H, PP, vSym) => {
   }
   const count = Math.ceil(H / PP);
   if (count <= 0 || !isFinite(count)) return [H];
-  return Array(count).fill(PP);
+  return [...Array(count - 1).fill(PP), H - (count - 1) * PP];
 };
 
 const simulate = (W, H, PP, PL, offset, minJ, sys, vSym = false, startOff = 0) => {
@@ -53,8 +53,7 @@ const simulate = (W, H, PP, PL, offset, minJ, sys, vSym = false, startOff = 0) =
 	  x += PL;
 	}
 	const offsetW = W + off;
-	const neededFromPlanks = Math.max(0, offsetW - remainder);
-	const nj = offsetW <= remainder ? remainder - offsetW : (remainder + Math.ceil(neededFromPlanks / PL) * PL) - offsetW;
+	const nj = remainder + Math.ceil(Math.max(0, offsetW - remainder) / PL) * PL - offsetW;
 	remainder = nj >= minJ && isFinite(nj) && !isNaN(nj) ? nj : 0;
 	rows.push({ segs, h: heights[i] });
   }
@@ -63,44 +62,44 @@ const simulate = (W, H, PP, PL, offset, minJ, sys, vSym = false, startOff = 0) =
 
 function simulateS4(W, H, PP, PLong, PShort, minJ, vSym) {
   if (W <= 0 || H <= 0 || PP <= 0 || PLong <= 0 || PShort <= 0) return [];
-  var heights = mkRowHeights(H, PP, vSym);
-  var rows = [];
-  var carryW = 0;        // offcut length carried from previous row
-  var carryIsLong = false;
+  const heights = mkRowHeights(H, PP, vSym);
+  const rows = [];
+  let carryW = 0;        // offcut length carried from previous row
+  let carryIsLong = false;
 
-  for (var i = 0; i < heights.length; i++) {
-	var h = heights[i];
-	var startsLong = i % 2 === 0;
-	var segs = [];
-	var x = 0, pid = 0;
-	var nextIsLong = startsLong;
+  for (let i = 0; i < heights.length; i++) {
+	const h = heights[i];
+	const startsLong = i % 2 === 0;
+	const segs = [];
+	let x = 0, pid = 0;
+	let nextIsLong = startsLong;
 
 	if (vSym) carryW = 0;  // symmetric rows are independent
 
 	// Place offcut carried from the previous row
 	if (carryW > 0) {
-	  var offcutW = Math.min(carryW, W);
-	  segs.push({ x: 0, w: offcutW, type: "offcut", "long": carryIsLong });
+	  const offcutW = Math.min(carryW, W);
+	  segs.push({ x: 0, w: offcutW, type: "offcut", long: carryIsLong });
 	  x = offcutW;
 	  carryW = carryW > W ? carryW - W : 0;
 	  nextIsLong = !carryIsLong;  // alternate from the offcut type
 	  if (x >= W) {
-		rows.push({ segs: segs, h: h, "long": startsLong });
+		rows.push({ segs, h, long: startsLong });
 		continue;
 	  }
 	}
 
-	var cutDone = false;
+	let cutDone = false;
 	while (x < W) {
-	  var PL = nextIsLong ? PLong : PShort;
+	  const PL = nextIsLong ? PLong : PShort;
 	  if (x + PL <= W) {
-		segs.push({ x: x, w: PL, type: "full", pid: pid, "long": nextIsLong });
+		segs.push({ x, w: PL, type: "full", pid, long: nextIsLong });
 		x += PL; pid++;
 		nextIsLong = !nextIsLong;
 	  } else {
-		var rem = W - x;
-		if (rem > 0) segs.push({ x: x, w: rem, type: rem >= minJ ? "cut" : "gap", pid: pid, "long": nextIsLong });
-		var newCarry = PL - rem;
+		const rem = W - x;
+		if (rem > 0) segs.push({ x, w: rem, type: rem >= minJ ? "cut" : "gap", pid, long: nextIsLong });
+		const newCarry = PL - rem;
 		carryW = newCarry >= minJ ? newCarry : 0;
 		carryIsLong = nextIsLong;
 		cutDone = true;
@@ -109,7 +108,7 @@ function simulateS4(W, H, PP, PLong, PShort, minJ, vSym) {
 	}
 	if (!cutDone) carryW = 0;
 
-	rows.push({ segs: segs, h: h, "long": startsLong });
+	rows.push({ segs, h, long: startsLong });
   }
   return rows;
 }
@@ -124,17 +123,24 @@ const nPanels = rows => countSegs(rows, "full");
 const nCut    = rows => countSegs(rows, "cut");
 const nGap    = rows => countSegs(rows, "gap");
 const nOffcut = rows => countSegs(rows, "offcut");
-const gapWidth = rows =>
+const sumSegWidth = (rows, type) =>
   Array.isArray(rows) ? rows.reduce((a, r) =>
-    a + (Array.isArray(r.segs) ? r.segs.reduce((acc, s) => acc + (s.type === "gap" ? s.w : 0), 0) : 0)
+    a + (Array.isArray(r.segs) ? r.segs.reduce((acc, s) => acc + (s.type === type ? s.w : 0), 0) : 0)
   , 0) : 0;
+const gapWidth = rows => sumSegWidth(rows, "gap");
 const nTotal = rows => nPanels(rows) + nCut(rows);
 
 function emptyLayoutResult() {
   return { valid: false, rows: [], stats: { full: 0, cut: 0, total: 0 }, summaryRows: [], meta: {} };
 }
 function makeStats(rows) {
-  return { full: nPanels(rows), cut: nCut(rows), total: Math.ceil(nTotal(rows)) };
+  let full = 0, cut = 0;
+  if (Array.isArray(rows)) for (const r of rows)
+    if (Array.isArray(r.segs)) for (const s of r.segs) {
+      if (s.type === "full") full++;
+      else if (s.type === "cut") cut++;
+    }
+  return { full, cut, total: full + cut };
 }
 
 function computeS0(state) {
