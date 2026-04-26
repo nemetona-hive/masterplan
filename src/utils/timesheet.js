@@ -26,12 +26,6 @@ function parseLunch(raw) {
   return null;
 }
 
-function parseSumTime(raw) {
-  if (!raw || !raw.trim()) return null;
-  const m = raw.trim().match(/^(\d+)[:\.](\d{2})$/);
-  return m ? +m[1] * 60 + +m[2] : null;
-}
-
 function roundMins(mins, to) { return to ? Math.round(mins / to) * to : mins; }
 // Formats as H:MM (e.g. 8:05 not 8:5)
 function fmtHHMM(mins) { return Math.floor(mins / 60) + ':' + String(mins % 60).padStart(2, '0'); }
