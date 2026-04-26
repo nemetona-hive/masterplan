@@ -248,6 +248,15 @@ function SheetSymmetricLayout({ sym, setSym }) {
         <ControlPanel id="control-sym-surface" title="Surface Area" open={surfaceOpen} setOpen={setSurfaceOpen}>
           <NumInput id="input-sym-room-width"  label="Room width (mm)"  value={sym.roomWidth}  onChange={v => setSym(s => ({ ...s, roomWidth: v }))}  step={10} />
           <NumInput id="input-sym-panel-width" label="Panel width (mm)" value={sym.panelWidth} onChange={v => setSym(s => ({ ...s, panelWidth: v }))} step={10} />
+          <div className="ctrl-lbl">
+            <span className="ctrl-sublbl">Layout style</span>
+            <div className="ctrl-btns">
+              <button className={"ctrl-dir " + (sym.oneFullEdge ? "on" : "")}
+                onClick={() => setSym(s => ({ ...s, oneFullEdge: true }))}>Asymmetric</button>
+              <button className={"ctrl-dir " + (!sym.oneFullEdge ? "on" : "")}
+                onClick={() => setSym(s => ({ ...s, oneFullEdge: false }))}>Symmetric</button>
+            </div>
+          </div>
         </ControlPanel>
       </div>
       <div id="data-preview" className="data-preview">
