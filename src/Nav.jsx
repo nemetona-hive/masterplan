@@ -93,10 +93,11 @@ function initOpenGroups(isMob) {
   }, {});
 }
 
-function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileMenuOpen, isMobile }) {
+function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileMenuOpen, isMobile, theme, setTheme }) {
   const mobile = isMobile;
   const showSubs = mobile ? mobileMenuOpen : navOpen;
   const navRef = React.useRef(null);
+  const isNavCollapsed = !mobile && !navOpen;
 
   const [openGroups, setOpenGroups] = React.useState(() => initOpenGroups(mobile));
 
@@ -154,7 +155,7 @@ function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileM
   return (
     <div id="page-side" className="page-side">
       <nav id="side-navi" ref={navRef}
-        className={"nav" + (!mobile && !navOpen ? " nav-collapsed" : "") + (mobile && mobileMenuOpen ? " nav-mobile-open" : "")}
+        className={"nav" + (isNavCollapsed ? " nav-collapsed" : "") + (mobile && mobileMenuOpen ? " nav-mobile-open" : "")}
         role="navigation" aria-label="Main navigation">
 
         {/* Header */}
@@ -187,7 +188,19 @@ function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileM
         </div>
 
         {/* Bottom pinned section — add utility items here */}
-        <div className="nav-bottom" role="menubar" aria-orientation="vertical" />
+        <div className="nav-bottom" role="menubar" aria-orientation="vertical">
+          {typeof DEV_MODE !== 'undefined' && DEV_MODE && (
+            <div className="nav-btn-wrap">
+              <button className={"nav-btn dev-theme-btn" + (isNavCollapsed ? " nav-btn-icon-only" : "")}
+                onClick={() => setTheme(window.getNextTheme(theme))}
+                title="Switch Theme">
+                <span className="nav-btn-icon">{THEMES[theme]?.icon}</span>
+                <span className="nav-btn-label">{THEMES[theme]?.label}</span>
+                {isNavCollapsed && <span className="nav-tooltip">Theme: {THEMES[theme]?.label}</span>}
+              </button>
+            </div>
+          )}
+        </div>
 
       </nav>
     </div>
