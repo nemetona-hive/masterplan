@@ -277,61 +277,15 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 /* â”€â”€ Active â€” shared â”€â”€ */
 .nav-btn.active {
-	font-weight: 600;
+	font-weight: 500;
 	color: var(--color-primary);
-}
-
-/* â”€â”€ Active â€” leaf (no parent, no children) â”€â”€ */
-.nav-btn.active:not(.nav-sub-btn):not(.nav-parent) {
-	background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-}
-
-.nav-btn.active:not(.nav-sub-btn):not(.nav-parent)::before {
-	content: "";
-	position: absolute;
-	left: 0;
-	top: 20%;
-	bottom: 20%;
-	width: 3px;
-	background: var(--color-primary);
-	border-radius: 0 4px 4px 0;
-	box-shadow: 0 0 8px var(--color-primary);
-}
-
-/* â”€â”€ Active â€” parent directly active (no child active) â”€â”€ */
-.nav-btn.nav-parent.active:not(.child-active) {
-	color: var(--color-primary);
-	font-weight: 600;
-}
-
-/* â”€â”€ Active â€” sub-item â”€â”€ */
-.nav-sub-btn.active::before {
-	content: "";
-	position: absolute;
-	left: 0;
-	top: 25%;
-	bottom: 25%;
-	width: 2px;
-	background: var(--color-primary);
-	border-radius: 0 3px 3px 0;
-	opacity: 0.8;
+	background: color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 /* â”€â”€ Parent with active child â”€â”€ */
-.nav-btn.nav-parent.child-active,
-.nav-btn.nav-parent.child-active:hover {
-	background: color-mix(in srgb, var(--color-primary) 4%, transparent);
-	color: color-mix(in srgb, var(--color-gray) 80%, var(--color-primary));
-	font-weight: 400;
-}
-
-.nav-btn-icon-only.nav-parent.child-active,
-.nav-btn-icon-only.nav-parent.child-active:hover {
-	background: transparent;
-}
-
-.nav-btn.nav-parent.child-active::before {
-	display: none;
+.nav-btn.nav-parent.child-active {
+	color: var(--color-white);
+	font-weight: 500;
 }
 
 /* â”€â”€ Focus ring â”€â”€ */
@@ -442,18 +396,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	opacity: 1;
 }
 
-/* Collapsed active â€” outline pill on icon, no dimension change */
-.nav-collapsed .nav-btn.active .nav-btn-icon {
-	outline: 1.5px solid color-mix(in srgb, var(--color-primary) 50%, transparent);
-	outline-offset: 4px;
-	border-radius: 6px;
-}
-
-/* Hide ::before bars â€” no room in collapsed */
-.nav-collapsed .nav-btn.active::before,
-.nav-collapsed .nav-sub-btn.active::before {
-	display: none;
-}
+/* Collapsed active icon rules removed as background tint handles highlight gracefully */
 /* â”€â”€ Tooltip (collapsed only) â”€â”€ */
 .nav-btn-wrap {
 	position: relative;
