@@ -154,22 +154,7 @@ function App() {
       {DEV_MODE && (
         <button
           onClick={() => setTheme(getNextTheme(theme))}
-          style={{
-            position:       'fixed',
-            bottom:         '12px',
-            left:           '12px',
-            zIndex:         9999,
-            fontSize:       '10px',
-            padding:        '4px 10px',
-            border:         '0.5px solid var(--color-gray-light)',
-            borderRadius:   '4px',
-            background:     'var(--color-darkblue-light)',
-            color:          'var(--color-primary)',
-            fontFamily:     'var(--mono)',
-            letterSpacing:  '0.06em',
-            cursor:         'pointer',
-            opacity:        0.7,
-          }}
+          className="dev-theme-btn"
         >
           {THEMES[theme]?.icon} {THEMES[theme]?.label}
         </button>
