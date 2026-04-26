@@ -47,6 +47,8 @@ function MainPageContent({ page, setPage, sh, setSh, sym, setSym, grItems, setGr
   return null;
 }
 
+const DEV_MODE = true;
+
 function App() {
   const [page, setPageState]                = useState(getHashPage);
   
@@ -54,6 +56,7 @@ function App() {
   const [isMobile, setIsMobile]            = React.useState(getIsMobile);
   const [navOpen, setNavOpen]               = React.useState(!getIsMobile());
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [theme, setTheme]                   = useState("navi");
 
   // Sync page state with URL hash
   const setPage = id => {
@@ -105,6 +108,10 @@ function App() {
     return () => window.removeEventListener("keydown", onEnterCommit, true);
   }, []);
 
+  React.useEffect(() => {
+    applyTheme(theme);
+  }, [theme]);
+
   const [sh,      setSh]      = useState(DEFAULT_SH);
   const [sym,     setSym]     = useState(DEFAULT_SYM);
   const [grItems, setGrItems] = useState(DEFAULT_GR);
@@ -141,6 +148,29 @@ function App() {
           grItems={grItems} setGrItems={setGrItems} />
         </div>
       </div>
+      {DEV_MODE && (
+        <button
+          onClick={() => setTheme(getNextTheme(theme))}
+          style={{
+            position:       'fixed',
+            bottom:         '12px',
+            left:           '12px',
+            zIndex:         9999,
+            fontSize:       '10px',
+            padding:        '4px 10px',
+            border:         '0.5px solid var(--color-gray-light)',
+            borderRadius:   '4px',
+            background:     'var(--color-darkblue-light)',
+            color:          'var(--color-primary)',
+            fontFamily:     'var(--mono)',
+            letterSpacing:  '0.06em',
+            cursor:         'pointer',
+            opacity:        0.7,
+          }}
+        >
+          {THEMES[theme]?.icon} {THEMES[theme]?.label}
+        </button>
+      )}
     </div>
   );
 }
