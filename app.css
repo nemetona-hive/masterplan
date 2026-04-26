@@ -102,7 +102,13 @@ html, body, #root {
 	--sp-5: 20px;
 	--sp-6: 24px;
  }
-	
+
+body {
+	background: var(--color-darkblue);
+	color: var(--color-gray);
+	font-family: var(--sans);
+}
+
 @media (min-width: 2560px) and (min-height: 1440px) {
 	:root {
 		--fs-xs: 13px;
@@ -110,12 +116,6 @@ html, body, #root {
 		--fs-md: 15px;
 		--fs-lg: 20px;
 	}
-}
-
-body { 
-	background: var(--color-darkblue);
-	color: var(--color-gray);
-	font-family: var(--sans);
 }
 
 /*
@@ -1459,7 +1459,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 .ts-grid-row {
 	padding: 2px 3px;
-	border-radius: 5px;
+	border-radius: 6px;
 	transition: background 0.08s;
 }
 
@@ -1478,21 +1478,21 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 .ts-input {
 	width: 100%;
-	background: transparent;
-	border: 1px solid var(--color-gray-light);
-	border-radius: 4px;
+	background: var(--color-darkblue-light);
+	border: 1px solid var(--color-gray);
+	border-radius: 6px;
 	color: var(--color-primary);
 	font-family: var(--mono);
 	font-size: var(--fs-md);
-	padding: 5px 7px;
+	padding: 6px 8px;
 	height: 32px;
-	transition: border-color 0.1s, background 0.1s;
+	transition: border-color 0.1s, background 0.1s, box-shadow 0.1s;
 }
 
 .ts-input:focus {
 	outline: none;
-	border-color: var(--color-gray);
-	background: var(--color-darkblue-light);
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 2px var(--color-gray);
 }
 
 .ts-input::placeholder {
@@ -1536,12 +1536,12 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 34px;
-	height: 34px;
+	width: 32px;
+	height: 32px;
 	flex-shrink: 0;
 	background: none;
-	border: 1px solid var(--color-gray-light);
-	border-radius: 5px;
+	border: 1px solid var(--color-gray);
+	border-radius: 6px;
 	color: var(--color-gray-opa80);
 	font-size: var(--fs-lg);
 	cursor: pointer;
@@ -1601,8 +1601,8 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	font-family: var(--mono);
 	font-size: var(--fs-md);
 	padding: 5px 12px;
-	border: 1px solid var(--color-gray-light);
-	border-radius: 5px;
+	border: 1px solid var(--color-gray);
+	border-radius: 6px;
 	background: none;
 	color: var(--color-primary);
 	cursor: pointer;
@@ -1635,9 +1635,8 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	justify-content: space-between;
 	gap: 14px;
 	padding: 8px 3px;
-	border-top: 1px solid var(--color-gray-light);
+	border-top: 1px solid var(--color-gray);
 	margin-top: 6px;
-	padding-top: 8px;
 }
 
 .ts-total-lbl {
@@ -1671,8 +1670,8 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	font-family: var(--mono);
 	font-size: var(--fs-sm);
 	padding: 4px 12px;
-	border: 1px solid var(--color-gray-light);
-	border-radius: 5px;
+	border: 1px solid var(--color-gray);
+	border-radius: 6px;
 	background: none;
 	color: var(--color-gray-opa80);
 	cursor: pointer;
@@ -1720,7 +1719,6 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	}
 
 	.ts-remove {
-		width: 32px;
 		height: 34px;
 	}
 
