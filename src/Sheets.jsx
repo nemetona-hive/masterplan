@@ -262,6 +262,9 @@ function SheetSymmetricLayout({ sym, setSym }) {
                   onClick={() => setSym(s => ({ ...s, oneFullEdge: false }))}>Symmetric</button>
               </Stack>
             </Stack>
+            {sym.oneFullEdge && (
+              <NumInput id="input-sym-custom-first" label="First piece width (mm)" value={sym.customFirstPieceWidth ?? ""} onChange={v => setSym(s => ({ ...s, customFirstPieceWidth: v }))} step={10} />
+            )}
           </Stack>
         </ControlPanel>
       </Stack>
