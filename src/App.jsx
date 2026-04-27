@@ -50,7 +50,7 @@ function MainPageContent({ page, setPage, sh, setSh, sym, setSym, grItems, setGr
   return null;
 }
 
-const DEV_MODE = true;
+const DEV_MODE = false;
 
 function App() {
   const [page, setPageState]                = useState(getHashPage);
