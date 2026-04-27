@@ -111,17 +111,17 @@ var PAGES = [{
   desc: "Small is to big as big is to Whole",
   icon: "golden-phi"
 }, {
-  id: "timesheet",
-  label: "Timesheet",
-  title: "Timesheet",
-  desc: "Calculate and sum work hours",
-  icon: "clock"
-}, {
   id: "pipe-wrap",
   label: "Pipe Wrap",
   title: "Pipe Wrap Calculator",
   desc: "Material length needed to wrap around a pipe",
   icon: "ring"
+}, {
+  id: "timesheet",
+  label: "Timesheet",
+  title: "Timesheet",
+  desc: "Calculate and sum work hours",
+  icon: "clock"
 }];
 
 
