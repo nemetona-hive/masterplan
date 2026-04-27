@@ -150,17 +150,28 @@ function computeS0(state) {
   const L = SUMMARY_LABELS.s0;
   
   if (oneFullEdge) {
-    const finalFullCount = Math.floor(roomWidth / panelWidth);
-    const remainder = roomWidth - (finalFullCount * panelWidth);
+    const hasCustom = state.customFirstPieceWidth !== null && state.customFirstPieceWidth !== undefined && state.customFirstPieceWidth > 0;
+    let firstPieceWidth = hasCustom ? state.customFirstPieceWidth : 0;
+    let remainingWidth = roomWidth - firstPieceWidth;
+    const finalFullCount = Math.floor(remainingWidth / panelWidth);
+    const remainder = remainingWidth - (finalFullCount * panelWidth);
+    
     const fullPanels = Array.from({ length: Math.max(0, finalFullCount) }, (_, i) => ({ w: panelWidth, type: "full", pid: i }));
-    const segs = [...fullPanels];
+    const segs = [];
+    
     let cutCount = 0;
-    if (remainder > 0) {
-      segs.push({ w: remainder, type: "edge" });
+    if (hasCustom && firstPieceWidth > 0) {
+      segs.push({ w: firstPieceWidth, type: "edge" });
       cutCount = 1;
     }
-    const totalToBuy = Math.max(0, finalFullCount) + cutCount;
-    const layoutLength = (Math.max(0, finalFullCount) * panelWidth) + remainder;
+    segs.push(...fullPanels);
+    if (remainder > 0) {
+      segs.push({ w: remainder, type: "edge" });
+      cutCount = hasCustom ? cutCount + 1 : 1;
+    }
+    
+    const totalToBuy = (hasCustom && firstPieceWidth > 0 ? 1 : 0) + Math.max(0, finalFullCount) + (remainder > 0 ? 1 : 0);
+    const layoutLength = firstPieceWidth + (Math.max(0, finalFullCount) * panelWidth) + remainder;
     const roomGap = Math.abs(roomWidth - layoutLength);
     
     return {
@@ -168,8 +179,9 @@ function computeS0(state) {
       rows: [{ segs }],
       stats: { full: Math.max(0, finalFullCount), cut: cutCount, total: totalToBuy },
       summaryRows: [
+        ...(hasCustom && firstPieceWidth > 0 ? [{ label: "First piece width", value: fmt.decimal(firstPieceWidth), unit: "mm", hi: true, hoverType: "edge" }] : []),
         { label: L.fullPanels,   value: Math.max(0, finalFullCount),  unit: "pcs", hi: true, hoverType: "full" },
-        { label: "Last piece width", value: fmt.decimal(Math.max(0, remainder)), unit: "mm", hi: true, hoverType: "edge" },
+        { label: hasCustom ? "Last piece width" : "Last piece width", value: fmt.decimal(Math.max(0, remainder)), unit: "mm", hi: true, hoverType: "edge" },
         { label: L.cutEdge,      value: cutCount.toString(),          unit: "pcs", hoverType: "edge" },
         { label: L.totalToBuy,   value: totalToBuy,   unit: "pcs", hi: true },
         { label: L.layoutLength, value: layoutLength, unit: "mm" },
