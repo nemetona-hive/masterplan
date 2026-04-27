@@ -25,21 +25,6 @@ const THEMES = {
       '--color-white':          '#fff',
     },
   },
-  
-  sharp: {
-    name: 'sharp',
-    label: 'Sharp',
-    icon: '◆',
-    colors: {
-      '--color-darkblue':       '#0c0d10',
-      '--color-darkblue-light': '#13141a',
-      '--color-gray':           '#7e8088',
-      '--color-gray-light':     '#20222a',
-      '--color-gray-opa80':     '#585a62',
-      '--color-blue':           '#4a90c0',
-      '--color-white':          '#fff',
-    },
-  },
 
   // TEMPLATE FOR NEW THEMES:
   // themeName: {
