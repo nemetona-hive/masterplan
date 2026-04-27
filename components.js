@@ -199,6 +199,56 @@ function useLinkedCardHighlight(groupId) {
   };
 }
 
+/**
+ * Primitive layout component to enforce spacing scale
+ * @param {1|2|3|4|5|6|7|0.5} gap - Spacing level from scale
+ * @param {"column"|"row"} direction - Flex direction
+ */
+function Stack({
+  children,
+  gap = 2,
+  direction = "column",
+  className = "",
+  style = {},
+  as: Tag = "div",
+  ...props
+}) {
+  const gClass = `u-gap-${String(gap).replace('.', '')}`;
+  const dClass = `u-flex-${direction === "row" ? "row" : "col"}`;
+  return /*#__PURE__*/React.createElement(Tag, _extends({
+    className: [dClass, gClass, className].filter(Boolean).join(" "),
+    style: style
+  }, props), children);
+}
+
+/**
+ * Text Typography component
+ * @param {"xs"|"sm"|"md"|"lg"|"xl"|"xxl"} size - Font size level
+ * @param {"reg"|"med"|"semi"|"bold"|"black"} weight - Font weight level
+ * @param {"sans"|"mono"} variant - Font family variant
+ */
+function Text({
+  children,
+  size,
+  weight,
+  variant,
+  color,
+  className = "",
+  style = {},
+  as: Tag = "span",
+  ...props
+}) {
+  const classes = [size && `u-fs-${size}`, weight && `u-fw-${weight}`, variant && `u-${variant}`, className].filter(Boolean).join(" ");
+  const s = {
+    ...style
+  };
+  if (color) s.color = color;
+  return /*#__PURE__*/React.createElement(Tag, _extends({
+    className: classes,
+    style: s
+  }, props), children);
+}
+
 // ── Visualization components ──────────────────────────────────────────────────
 
 const PanelRowVis = React.memo(function PanelRowVis({
@@ -277,7 +327,9 @@ function LayoutVisualization({
       }, wp > 5 && /*#__PURE__*/React.createElement("span", {
         className: "strip-seg-lbl"
       }, fmt.mm(seg.w)));
-    }), /*#__PURE__*/React.createElement("div", {
+    }), /*#__PURE__*/React.createElement(Stack, {
+      direction: "row",
+      gap: 3,
       className: "strip-legend strip-legend-mt"
     }, [["Edge piece", `${fmt.mm(result.meta.edgeWidth)}mm`, "color-edge"], ["Full panel", `${result.meta.panelWidth}mm`, "color-sys1"]].map(([label, value, color]) => /*#__PURE__*/React.createElement("div", {
       key: label,
@@ -297,8 +349,9 @@ function LayoutVisualization({
     row,
     idx
   }));
-  return /*#__PURE__*/React.createElement("div", {
-    className: "sys-rows sys-rows-border"
+  return /*#__PURE__*/React.createElement(Stack, {
+    className: "sys-rows sys-rows-border",
+    gap: 0
   }, orderedRows.map(({
     row,
     idx
@@ -346,8 +399,9 @@ function LayoutPanel({
     className: "sys-head-count"
   }, result.stats.total, " pcs ", isBest ? /*#__PURE__*/React.createElement(Icon, {
     name: "best-badge"
-  }) : "")), open && /*#__PURE__*/React.createElement("div", {
-    className: "panel-body"
+  }) : "")), open && /*#__PURE__*/React.createElement(Stack, {
+    className: "panel-body",
+    gap: 2
   }, layout.renderControls && React.createElement(layout.renderControls, {
     state: layout.getState(),
     setState: layout.setState
@@ -369,14 +423,18 @@ function PreviewSection({
   description,
   children
 }) {
-  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-    className: "preview-head"
+  return /*#__PURE__*/React.createElement(Stack, {
+    gap: 3
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "preview-head",
+    gap: 1
   }, /*#__PURE__*/React.createElement("h3", {
     className: "layout-section-title"
   }, title), /*#__PURE__*/React.createElement("p", {
     className: "layout-section-desc"
-  }, description)), /*#__PURE__*/React.createElement("div", {
-    className: "preview-data"
+  }, description)), /*#__PURE__*/React.createElement(Stack, {
+    className: "preview-data",
+    gap: 3
   }, children));
 }
 
@@ -386,8 +444,8 @@ function S4Controls({
   state,
   setState
 }) {
-  return /*#__PURE__*/React.createElement("div", {
-    className: "u-flex-col-gap12"
+  return /*#__PURE__*/React.createElement(Stack, {
+    gap: 3
   }, /*#__PURE__*/React.createElement(NumInput, {
     id: "input-s4long",
     label: "Long (mm)",
@@ -410,7 +468,9 @@ function S2Controls({
   state,
   setState
 }) {
-  return /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/React.createElement(Stack, {
+    direction: "row",
+    gap: 2,
     className: "ctrl-lbl"
   }, /*#__PURE__*/React.createElement("span", {
     className: "ctrl-sublbl"
@@ -629,10 +689,12 @@ function SheetTimesheet() {
 
   return /*#__PURE__*/React.createElement("div", {
     className: "ts-page"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "ts-body"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "ts-section"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "ts-body",
+    gap: 3
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "ts-section",
+    gap: 1
   }, /*#__PURE__*/React.createElement("div", {
     className: "ts-grid-hd"
   }, /*#__PURE__*/React.createElement("span", {
@@ -686,7 +748,9 @@ function SheetTimesheet() {
       tabIndex: -1,
       onClick: () => removeCalcRow(row.id)
     }, "\xD7"));
-  }), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement(Stack, {
+    direction: "row",
+    gap: 1,
     className: "ts-pills"
   }, /*#__PURE__*/React.createElement("span", {
     className: "ts-pill-lbl"
@@ -694,7 +758,9 @@ function SheetTimesheet() {
     key: val,
     className: "ts-pill",
     onClick: () => applyLunchPreset(val)
-  }, label))), /*#__PURE__*/React.createElement("div", {
+  }, label))), /*#__PURE__*/React.createElement(Stack, {
+    direction: "row",
+    gap: 2,
     className: "ts-controls"
   }, /*#__PURE__*/React.createElement("button", {
     className: "ts-btn",
@@ -702,11 +768,15 @@ function SheetTimesheet() {
   }, "+ Add row"), /*#__PURE__*/React.createElement("button", {
     className: "ts-btn ts-btn--muted",
     onClick: clearCalc
-  }, "Clear all")), /*#__PURE__*/React.createElement("div", {
+  }, "Clear all")), /*#__PURE__*/React.createElement(Stack, {
+    direction: "row",
+    gap: 3,
     className: "ts-footer"
   }, /*#__PURE__*/React.createElement("span", {
     className: "ts-total-lbl"
-  }, "Total"), /*#__PURE__*/React.createElement("div", {
+  }, "Total"), /*#__PURE__*/React.createElement(Stack, {
+    direction: "row",
+    gap: 3,
     className: "ts-total-vals"
   }, /*#__PURE__*/React.createElement("span", {
     className: "ts-total-val"
@@ -820,10 +890,12 @@ function PipeWrapCalculator() {
   }
   return /*#__PURE__*/React.createElement("div", {
     className: "page-scroll"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "page-inner"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "main-head pw-head-adj"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "page-inner",
+    gap: 5
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "main-head pw-head-adj",
+    gap: 1
   }, /*#__PURE__*/React.createElement("div", {
     className: "title"
   }, "Pipe wrap calculator"), /*#__PURE__*/React.createElement("div", {
@@ -834,8 +906,9 @@ function PipeWrapCalculator() {
     className: "section-head"
   }, /*#__PURE__*/React.createElement("span", null, "Dimensions")), /*#__PURE__*/React.createElement("div", {
     className: "section-body"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "section-pad"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "section-pad",
+    gap: 3
   }, /*#__PURE__*/React.createElement("div", {
     className: "pw-grid-2col"
   }, /*#__PURE__*/React.createElement(NumInput, {
@@ -852,24 +925,31 @@ function PipeWrapCalculator() {
     min: 0,
     unit: "mm",
     onChange: setMatThick
-  })), /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React.createElement(Stack, {
+    gap: 2
+  }, /*#__PURE__*/React.createElement("div", {
     className: "num-lbl pw-preset-label"
-  }, "Pipe diameter presets"), /*#__PURE__*/React.createElement("div", {
+  }, "Pipe diameter presets"), /*#__PURE__*/React.createElement(Stack, {
+    direction: "row",
+    gap: 1,
     className: "ctrl-btns"
   }, PRESETS.map(p => /*#__PURE__*/React.createElement("button", {
     key: p,
     className: `ctrl-dir${pipeDiam === p ? " on" : ""}`,
     onClick: () => setPipeDiam(p)
-  }, "\xD8 ", p)))))), /*#__PURE__*/React.createElement("div", {
+  }, "\xD8 ", p))))))), /*#__PURE__*/React.createElement("div", {
     className: "section"
   }, /*#__PURE__*/React.createElement("div", {
     className: "section-head"
   }, /*#__PURE__*/React.createElement("span", null, "Adjustments")), /*#__PURE__*/React.createElement("div", {
     className: "section-body"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "section-pad"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "pw-adj-row mb"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "section-pad",
+    gap: 3
+  }, /*#__PURE__*/React.createElement(Stack, {
+    direction: "row",
+    gap: 3,
+    className: "pw-adj-row"
   }, /*#__PURE__*/React.createElement("button", {
     onClick: () => setOverlap(prev => Math.min(200, prev + 5)),
     className: "pw-adj-btn pw-adj-btn-overlap"
@@ -885,7 +965,9 @@ function PipeWrapCalculator() {
     onChange: e => setOverlap(Number(e.target.value))
   }), /*#__PURE__*/React.createElement("span", {
     className: "ctrl-range-val pw-adj-val"
-  }, overlap)), /*#__PURE__*/React.createElement("div", {
+  }, overlap)), /*#__PURE__*/React.createElement(Stack, {
+    direction: "row",
+    gap: 3,
     className: "pw-adj-row"
   }, /*#__PURE__*/React.createElement("button", {
     onClick: () => setGap(prev => Math.min(200, prev + 5)),
@@ -910,31 +992,20 @@ function PipeWrapCalculator() {
     className: "section-body"
   }, /*#__PURE__*/React.createElement("div", {
     className: "pw-res-wrap"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "data-row"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "data-row-lbl"
-  }, "Outer diameter"), /*#__PURE__*/React.createElement("span", {
-    className: "data-row-val"
-  }, outer.toFixed(1)), /*#__PURE__*/React.createElement("span", {
-    className: "data-row-unit"
-  }, "mm")), /*#__PURE__*/React.createElement("div", {
-    className: "data-row"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "data-row-lbl"
-  }, "Base wrap length"), /*#__PURE__*/React.createElement("span", {
-    className: "data-row-val"
-  }, base.toFixed(1)), /*#__PURE__*/React.createElement("span", {
-    className: "data-row-unit"
-  }, "mm")), /*#__PURE__*/React.createElement("div", {
-    className: "data-row pw-res-row-last"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "data-row-lbl"
-  }, "Final length needed"), /*#__PURE__*/React.createElement("span", {
-    className: "data-row-val hi"
-  }, total.toFixed(1)), /*#__PURE__*/React.createElement("span", {
-    className: "data-row-unit"
-  }, "mm"))), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Row, {
+    label: "Outer diameter",
+    value: outer.toFixed(1),
+    unit: "mm"
+  }), /*#__PURE__*/React.createElement(Row, {
+    label: "Base wrap length",
+    value: base.toFixed(1),
+    unit: "mm"
+  }), /*#__PURE__*/React.createElement(Row, {
+    label: "Final length needed",
+    value: total.toFixed(1),
+    unit: "mm",
+    hi: true
+  })), /*#__PURE__*/React.createElement("div", {
     className: "pw-diag-wrap"
   }, /*#__PURE__*/React.createElement("svg", {
     ref: svgRef,
@@ -957,10 +1028,12 @@ function SheetHome({
   const cards = PAGES.filter(pg => !pg.noNav && !pg.parentId);
   return /*#__PURE__*/React.createElement("div", {
     className: "home-scroll"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "home-inner"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "home-brand"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "home-inner",
+    gap: 3
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "home-brand",
+    gap: 1
   }, /*#__PURE__*/React.createElement("div", {
     className: "home-brand-name"
   }, "NEMETONA"), /*#__PURE__*/React.createElement("div", {
@@ -973,9 +1046,11 @@ function SheetHome({
     const isActive = page === pg.id || PAGES.some(p => p.parentId === pg.id && p.id === page);
     const firstChild = PAGES.find(p => p.parentId === pg.id);
     const target = firstChild ? firstChild.id : pg.id;
-    return /*#__PURE__*/React.createElement("button", {
+    return /*#__PURE__*/React.createElement(Stack, {
       key: pg.id,
+      as: "button",
       className: "home-card" + (isActive ? " home-card-active" : ""),
+      gap: 3,
       onClick: () => setPage(target),
       onKeyDown: e => (e.key === "Enter" || e.key === " ") && setPage(target)
     }, /*#__PURE__*/React.createElement("span", {
@@ -995,7 +1070,7 @@ function SheetHome({
     className: "home-divider"
   }), /*#__PURE__*/React.createElement("div", {
     className: "home-footer"
-  }, "NEMETONA HIVE motiveited corporeited")));
+  }, "NEMETONA HIVE")));
 }
 function SheetConcrete() {
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
@@ -1006,7 +1081,7 @@ function SheetConcrete() {
     className: "data-preview"
   }));
 }
-function SheetNewTool({
+function SheetGoldenRatio({
   grItems: baseItems,
   setGrItems: setBaseItems
 }) {
@@ -1078,6 +1153,8 @@ function SheetNewTool({
     title: "Base Number",
     open: baseOpen,
     setOpen: setBaseOpen
+  }, /*#__PURE__*/React.createElement(Stack, {
+    gap: 2
   }, baseItems.map(item => {
     const tone = getLinkedCardTone(item.id);
     const trimmedSuffix = item.suffix.trim();
@@ -1089,10 +1166,11 @@ function SheetNewTool({
       key: item.id,
       id: `control-base-number-${item.id}`,
       className: `control-panel gr-control-card gr-control-card-${tone}${isStored ? " gr-card-saved" : ""}`
-    }, link.bindControl(item.id)), /*#__PURE__*/React.createElement("div", {
-      className: "panel-data"
-    }, /*#__PURE__*/React.createElement("label", {
-      id: `input-base-number-${item.id}`,
+    }, link.bindControl(item.id)), /*#__PURE__*/React.createElement(Stack, {
+      className: "panel-data",
+      gap: 3
+    }, /*#__PURE__*/React.createElement(Stack, {
+      gap: 1,
       className: "num-wrap"
     }, /*#__PURE__*/React.createElement("span", {
       className: "num-lbl"
@@ -1113,7 +1191,8 @@ function SheetNewTool({
       onClick: () => commitBaseValue(item.id)
     }, /*#__PURE__*/React.createElement(Icon, {
       name: "corner-down-left"
-    })))), /*#__PURE__*/React.createElement("div", {
+    })))), /*#__PURE__*/React.createElement(Stack, {
+      gap: 1,
       className: "ctrl-lbl"
     }, /*#__PURE__*/React.createElement("span", {
       className: "ctrl-sublbl"
@@ -1135,11 +1214,14 @@ function SheetNewTool({
       }
     }, /*#__PURE__*/React.createElement(Icon, {
       name: "corner-down-left"
-    })))), /*#__PURE__*/React.createElement("div", {
+    })))), /*#__PURE__*/React.createElement(Stack, {
+      gap: 1,
       className: "ctrl-lbl"
     }, /*#__PURE__*/React.createElement("span", {
       className: "ctrl-sublbl"
-    }, "Entry"), /*#__PURE__*/React.createElement("div", {
+    }, "Entry"), /*#__PURE__*/React.createElement(Stack, {
+      direction: "row",
+      gap: 1,
       className: "ctrl-btns"
     }, /*#__PURE__*/React.createElement("button", {
       type: "button",
@@ -1150,13 +1232,15 @@ function SheetNewTool({
       className: "ctrl-dir",
       onClick: () => resetItem(item.id)
     }, "Reset")))));
-  }))), /*#__PURE__*/React.createElement("div", {
+  })))), /*#__PURE__*/React.createElement("div", {
     id: "data-preview",
     className: "data-preview"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "gr-preview-list"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "sys-head"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "gr-preview-list",
+    gap: 3
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "sys-head",
+    gap: 1
   }, /*#__PURE__*/React.createElement("h3", {
     className: "sys-title"
   }, /*#__PURE__*/React.createElement(Icon, {
@@ -1178,8 +1262,9 @@ function SheetNewTool({
       key: item.id,
       id: `panel-golden-ratio-${item.id}`,
       className: `sys-block gr-preview-card gr-preview-card-${tone}${isStored ? " gr-card-saved" : ""}${link.isActive(item.id) ? " linked-preview-active" : ""}`
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "section-pad gr-section-pad"
+    }, /*#__PURE__*/React.createElement(Stack, {
+      className: "section-pad gr-section-pad",
+      gap: 3
     }, /*#__PURE__*/React.createElement("div", {
       className: "data-row"
     }, /*#__PURE__*/React.createElement("span", {
@@ -1225,14 +1310,17 @@ function SheetSymmetricLayout({
     includeInBest: false
   };
   const result = layout.compute();
-  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Stack, {
     id: "data-control",
-    className: "data-control"
+    className: "data-control",
+    gap: 3
   }, /*#__PURE__*/React.createElement(ControlPanel, {
     id: "control-sym-surface",
     title: "Surface Area",
     open: surfaceOpen,
     setOpen: setSurfaceOpen
+  }, /*#__PURE__*/React.createElement(Stack, {
+    gap: 3
   }, /*#__PURE__*/React.createElement(NumInput, {
     id: "input-sym-room-width",
     label: "Room width (mm)",
@@ -1251,11 +1339,14 @@ function SheetSymmetricLayout({
       panelWidth: v
     })),
     step: 10
-  }), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement(Stack, {
+    gap: 1,
     className: "ctrl-lbl"
   }, /*#__PURE__*/React.createElement("span", {
     className: "ctrl-sublbl"
-  }, "Layout style"), /*#__PURE__*/React.createElement("div", {
+  }, "Layout style"), /*#__PURE__*/React.createElement(Stack, {
+    direction: "row",
+    gap: 1,
     className: "ctrl-btns"
   }, /*#__PURE__*/React.createElement("button", {
     className: "ctrl-dir " + (sym.oneFullEdge ? "on" : ""),
@@ -1269,7 +1360,16 @@ function SheetSymmetricLayout({
       ...s,
       oneFullEdge: false
     }))
-  }, "Symmetric"))))), /*#__PURE__*/React.createElement("div", {
+  }, "Symmetric"))), sym.oneFullEdge && /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-sym-custom-first",
+    label: "First piece width (mm)",
+    value: sym.customFirstPieceWidth ?? "",
+    onChange: v => setSym(s => ({
+      ...s,
+      customFirstPieceWidth: v
+    })),
+    step: 10
+  })))), /*#__PURE__*/React.createElement("div", {
     id: "data-preview",
     className: "data-preview"
   }, /*#__PURE__*/React.createElement(LayoutPanel, {
@@ -1350,9 +1450,12 @@ function SheetSurfaceLayout({
   const comparableResults = panelResults.filter(p => p.layout.includeInBest && p.result.valid);
   const best = comparableResults.length ? Math.min(...comparableResults.map(p => p.result.stats.total)) : Infinity;
   if (W <= 0 || H <= 0 || PPi <= 0 || PLa <= 0) {
-    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Stack, {
       id: "data-control",
-      className: "data-control"
+      className: "data-control",
+      gap: 3
+    }, /*#__PURE__*/React.createElement(Stack, {
+      gap: 1
     }, /*#__PURE__*/React.createElement(SLabel, null, "Material Specification"), /*#__PURE__*/React.createElement(NumInput, {
       id: "input-PPi",
       label: "Length (mm)",
@@ -1365,7 +1468,9 @@ function SheetSurfaceLayout({
       value: Math.max(1, PLa),
       onChange: set("PLa"),
       step: 10
-    }), /*#__PURE__*/React.createElement(SLabel, null, "Surface Area"), /*#__PURE__*/React.createElement(NumInput, {
+    })), /*#__PURE__*/React.createElement(Stack, {
+      gap: 1
+    }, /*#__PURE__*/React.createElement(SLabel, null, "Surface Area"), /*#__PURE__*/React.createElement(NumInput, {
       id: "input-W",
       label: "Width (mm)",
       value: Math.max(1, W),
@@ -1377,21 +1482,24 @@ function SheetSurfaceLayout({
       value: Math.max(1, H),
       onChange: set("H"),
       step: 10
-    })), /*#__PURE__*/React.createElement("div", {
+    }))), /*#__PURE__*/React.createElement("div", {
       id: "data-preview",
       className: "data-preview"
     }, /*#__PURE__*/React.createElement("p", {
       className: "desc"
     }, "Select all input values - all must be greater than 0!")));
   }
-  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Stack, {
     id: "data-control",
-    className: "data-control"
+    className: "data-control",
+    gap: 3
   }, /*#__PURE__*/React.createElement(ControlPanel, {
     id: "control-material",
     title: "Material Specification",
     open: materialOpen,
     setOpen: setMaterialOpen
+  }, /*#__PURE__*/React.createElement(Stack, {
+    gap: 3
   }, /*#__PURE__*/React.createElement(NumInput, {
     id: "input-PPi",
     label: "Length (mm)",
@@ -1404,11 +1512,13 @@ function SheetSurfaceLayout({
     value: PLa,
     onChange: set("PLa"),
     step: 10
-  })), /*#__PURE__*/React.createElement(ControlPanel, {
+  }))), /*#__PURE__*/React.createElement(ControlPanel, {
     id: "control-surface",
     title: "Surface Area",
     open: surfaceOpen,
     setOpen: setSurfaceOpen
+  }, /*#__PURE__*/React.createElement(Stack, {
+    gap: 3
   }, /*#__PURE__*/React.createElement(NumInput, {
     id: "input-W",
     label: "Width (mm)",
@@ -1421,17 +1531,22 @@ function SheetSurfaceLayout({
     value: H,
     onChange: set("H"),
     step: 10
-  })), /*#__PURE__*/React.createElement(ControlPanel, {
+  }))), /*#__PURE__*/React.createElement(ControlPanel, {
     id: "control-settings",
     title: "Settings",
     open: settingsOpen,
     setOpen: setSettingsOpen
-  }, /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Stack, {
+    gap: 3
+  }, /*#__PURE__*/React.createElement(Stack, {
+    gap: 1,
     className: "ctrl-lbl"
   }, /*#__PURE__*/React.createElement("span", {
     className: "ctrl-sublbl"
-  }, "Direction"), /*#__PURE__*/React.createElement("div", {
+  }, "Direction"), /*#__PURE__*/React.createElement(Stack, {
     id: "ctrl-direction",
+    direction: "row",
+    gap: 1,
     className: "ctrl-btns"
   }, ["V", "H"].map(s => /*#__PURE__*/React.createElement("button", {
     key: s,
@@ -1440,12 +1555,15 @@ function SheetSurfaceLayout({
       ...st,
       direction: s
     }))
-  }, s)))), /*#__PURE__*/React.createElement("div", {
+  }, s)))), /*#__PURE__*/React.createElement(Stack, {
+    gap: 1,
     className: "ctrl-lbl"
   }, /*#__PURE__*/React.createElement("span", {
     className: "ctrl-sublbl"
-  }, "Row order"), /*#__PURE__*/React.createElement("div", {
+  }, "Row order"), /*#__PURE__*/React.createElement(Stack, {
     id: "ctrl-row-order",
+    direction: "row",
+    gap: 1,
     className: "ctrl-btns"
   }, /*#__PURE__*/React.createElement("button", {
     className: "ctrl-dir " + (rowStart === "top" ? "on" : ""),
@@ -1475,7 +1593,7 @@ function SheetSurfaceLayout({
     })),
     step: 10,
     min: 0
-  }))), /*#__PURE__*/React.createElement("div", {
+  })))), /*#__PURE__*/React.createElement("div", {
     id: "data-preview",
     className: "data-preview"
   }, /*#__PURE__*/React.createElement(PreviewSection, {
@@ -1610,11 +1728,14 @@ function AppNav({
   setNavOpen,
   mobileMenuOpen,
   setMobileMenuOpen,
-  isMobile
+  isMobile,
+  theme,
+  setTheme
 }) {
   const mobile = isMobile;
   const showSubs = mobile ? mobileMenuOpen : navOpen;
   const navRef = React.useRef(null);
+  const isNavCollapsed = !mobile && !navOpen;
   const [openGroups, setOpenGroups] = React.useState(() => initOpenGroups(mobile));
 
   // Reinitialize open groups when switching between mobile and desktop
@@ -1673,7 +1794,7 @@ function AppNav({
   }, /*#__PURE__*/React.createElement("nav", {
     id: "side-navi",
     ref: navRef,
-    className: "nav" + (!mobile && !navOpen ? " nav-collapsed" : "") + (mobile && mobileMenuOpen ? " nav-mobile-open" : ""),
+    className: "nav" + (isNavCollapsed ? " nav-collapsed" : "") + (mobile && mobileMenuOpen ? " nav-mobile-open" : ""),
     role: "navigation",
     "aria-label": "Main navigation"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1749,20 +1870,6 @@ const THEMES = {
       '--color-gray-light': '#233342',
       '--color-gray-opa80': '#73808d',
       '--color-blue': '#3d7a9e',
-      '--color-white': '#fff'
-    }
-  },
-  sharp: {
-    name: 'sharp',
-    label: 'Sharp',
-    icon: '◆',
-    colors: {
-      '--color-darkblue': '#0c0d10',
-      '--color-darkblue-light': '#13141a',
-      '--color-gray': '#7e8088',
-      '--color-gray-light': '#20222a',
-      '--color-gray-opa80': '#585a62',
-      '--color-blue': '#4a90c0',
       '--color-white': '#fff'
     }
   }
@@ -1869,7 +1976,7 @@ function MainPageContent({
     return /*#__PURE__*/React.createElement("div", {
       id: "main-data",
       className: "main-data"
-    }, /*#__PURE__*/React.createElement(SheetNewTool, {
+    }, /*#__PURE__*/React.createElement(SheetGoldenRatio, {
       grItems: grItems,
       setGrItems: setGrItems
     }));
@@ -1899,7 +2006,7 @@ function MainPageContent({
   }
   return null;
 }
-const DEV_MODE = true;
+const DEV_MODE = false;
 function App() {
   const [page, setPageState] = useState(getHashPage);
 
@@ -2039,7 +2146,9 @@ function App() {
     setNavOpen: setNavOpen,
     mobileMenuOpen: mobileMenuOpen,
     setMobileMenuOpen: setMobileMenuOpen,
-    isMobile: isMobile
+    isMobile: isMobile,
+    theme: theme,
+    setTheme: setTheme
   }), /*#__PURE__*/React.createElement("div", {
     id: "page-main",
     className: "page-main",
@@ -2053,9 +2162,6 @@ function App() {
     setSym: setSym,
     grItems: grItems,
     setGrItems: setGrItems
-  }))), DEV_MODE && /*#__PURE__*/React.createElement("button", {
-    onClick: () => setTheme(getNextTheme(theme)),
-    className: "dev-theme-btn"
-  }, THEMES[theme]?.icon, " ", THEMES[theme]?.label));
+  }))));
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/*#__PURE__*/React.createElement(App, null));
