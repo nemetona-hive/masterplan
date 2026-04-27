@@ -189,17 +189,6 @@ function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileM
 
         {/* Bottom pinned section — add utility items here */}
         <div className="nav-bottom" role="menubar" aria-orientation="vertical">
-          {typeof DEV_MODE !== 'undefined' && DEV_MODE && (
-            <div className="nav-btn-wrap">
-              <button className={"nav-btn dev-theme-btn" + (isNavCollapsed ? " nav-btn-icon-only" : "")}
-                onClick={() => setTheme(window.getNextTheme(theme))}
-                title="Switch Theme">
-                <span className="nav-btn-icon">{THEMES[theme]?.icon}</span>
-                <span className="nav-btn-label">{THEMES[theme]?.label}</span>
-                {isNavCollapsed && <span className="nav-tooltip">Theme: {THEMES[theme]?.label}</span>}
-              </button>
-            </div>
-          )}
         </div>
 
       </nav>
