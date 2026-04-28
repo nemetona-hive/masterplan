@@ -2408,6 +2408,64 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 /*
  * ----------------------------------------------------------
+ * RANGE SLIDER (LOCKABLE)
+ * ----------------------------------------------------------
+ */
+
+.range-slider-wrap {
+	display: flex;
+	align-items: center;
+	gap: var(--sp-2);
+	flex: 1;
+	min-width: 0;
+}
+
+.range-input {
+	flex: 1;
+	height: 8px;
+	border-radius: 4px;
+	background: color-mix(in srgb, var(--color-gray-light) 30%, transparent);
+	cursor: pointer;
+	transition: opacity 0.2s ease;
+}
+
+.range-slider-wrap.is-locked .range-input {
+	opacity: 0.35;
+	cursor: not-allowed;
+}
+
+.range-lock-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 8px;
+	border: 1px solid color-mix(in srgb, var(--color-gray-light) 40%, transparent);
+	background: color-mix(in srgb, var(--color-darkblue) 80%, transparent);
+	color: var(--color-gray-opa80);
+	cursor: pointer;
+	transition: all 0.15s ease;
+	flex-shrink: 0;
+}
+
+.range-slider-wrap.is-unlocked .range-lock-btn {
+	color: var(--color-primary);
+	border-color: color-mix(in srgb, var(--color-primary) 50%, transparent);
+	background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.range-lock-btn:hover {
+	background: color-mix(in srgb, var(--color-gray-light) 20%, transparent);
+	color: var(--color-white);
+}
+
+.range-lock-btn:active {
+	transform: scale(0.95);
+}
+
+/*
+ * ----------------------------------------------------------
  * PIPE WRAP CALCULATOR
  * ----------------------------------------------------------
  */
