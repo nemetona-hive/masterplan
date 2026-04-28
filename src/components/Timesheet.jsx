@@ -127,18 +127,27 @@ function SheetTimesheet() {
             return (
               <div key={row.id}
                 className={"ts-grid-row" + (row.id === activeRowId ? " ts-grid-row--active" : "")}>
-                <input className="num-input ts-input" type="text" placeholder="9, 9:30, 0930"
+                <input 
+                  id={`ts-start-${row.id}`}
+                  name={`ts-start-${row.id}`}
+                  className="num-input ts-input" type="text" placeholder="9, 9:30, 0930"
                   value={row.start}
                   ref={el => { startRefs.current[row.id] = el; }}
                   onFocus={() => setActiveRowId(row.id)}
                   onChange={e => updateCalcRow(row.id, 'start', e.target.value)}
                   onBlur={e => formatTimeInput(row.id, 'start', e.target.value)} />
-                <input className="num-input ts-input" type="text" placeholder="17, 17:30"
+                <input 
+                  id={`ts-end-${row.id}`}
+                  name={`ts-end-${row.id}`}
+                  className="num-input ts-input" type="text" placeholder="17, 17:30"
                   value={row.end}
                   onFocus={() => setActiveRowId(row.id)}
                   onChange={e => updateCalcRow(row.id, 'end', e.target.value)}
                   onBlur={e => formatTimeInput(row.id, 'end', e.target.value)} />
-                <input className="num-input ts-input" type="text" placeholder=".30"
+                <input 
+                  id={`ts-lunch-${row.id}`}
+                  name={`ts-lunch-${row.id}`}
+                  className="num-input ts-input" type="text" placeholder=".30"
                   value={row.lunch}
                   onFocus={() => setActiveRowId(row.id)}
                   onKeyDown={e => handleLunchTab(e, idx)}
