@@ -8,6 +8,58 @@ function Icon({ name, className = "" }) {
   return <i className={[faClass, className, "u-inline-flex-center"].filter(Boolean).join(" ")} />;
 }
 
+/**
+ * Hook for protecting range sliders from accidental touch during scroll on mobile.
+ * On mobile, touches are tracked to distinguish between horizontal slider adjustment
+ * and vertical scroll. Only allows slider changes on primarily horizontal gestures.
+ * @param {Function} onChange - Original onChange callback for the slider
+ * @returns {Object} { onChange: protected onChange, onTouchStart: touch start handler, onTouchMove: touch move handler }
+ */
+function useProtectedRangeSlider(onChange) {
+  const touchState = React.useRef({ startX: 0, startY: 0, isScrolling: false, initialValue: 0 });
+  const isMobileMode = typeof window !== "undefined" && (window.innerWidth <= 768 || window.innerHeight <= 500);
+
+  const onTouchStart = (e) => {
+    if (!isMobileMode) return;
+    const touch = e.touches[0];
+    touchState.current = {
+      startX: touch.clientX,
+      startY: touch.clientY,
+      isScrolling: false,
+      initialValue: parseFloat(e.target.value)
+    };
+  };
+
+  const onTouchMove = (e) => {
+    if (!isMobileMode || touchState.current.isScrolling) return;
+    
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - touchState.current.startX;
+    const deltaY = touch.clientY - touchState.current.startY;
+    
+    // Determine if user is scrolling (vertical movement) or adjusting slider (horizontal)
+    // If vertical movement is significantly larger than horizontal, treat as scroll
+    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 10) {
+      touchState.current.isScrolling = true;
+    }
+  };
+
+  const protectedOnChange = (e) => {
+    // On desktop, always allow changes
+    if (!isMobileMode) {
+      onChange(e);
+      return;
+    }
+    
+    // On mobile, only trigger onChange if we're not scrolling
+    if (!touchState.current.isScrolling) {
+      onChange(e);
+    }
+  };
+
+  return { onChange: protectedOnChange, onTouchStart, onTouchMove };
+}
+
 function NumInput({ id, label, value, onChange, step = 1, min = 1, unit }) {
   const [local, setLocal] = React.useState(String(value));
   React.useEffect(() => { setLocal(String(value)); }, [value]);
