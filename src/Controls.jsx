@@ -10,16 +10,17 @@ function S4Controls({ state, setState }) {
 }
 
 function S2Controls({ state, setState }) {
-  const { onChange, onTouchStart, onTouchMove } = useProtectedRangeSlider(
-    e => setState({ offset: +e.target.value })
-  );
   return (
     <Stack direction="row" gap={2} className="ctrl-lbl">
       <span className="ctrl-sublbl">Offset (&times;PL)</span>
-      <input id="input-offset" type="range" min={0.1} max={0.9} step={0.05} value={state.offset}
-        onChange={onChange}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove} />
+      <RangeSlider 
+        id="input-offset" 
+        min={0.1} 
+        max={0.9} 
+        step={0.05} 
+        value={state.offset}
+        onChange={e => setState({ offset: +e.target.value })}
+      />
       <span className="ctrl-range-val">{fmt.decimals(state.offset, 2)}</span>
     </Stack>
   );
