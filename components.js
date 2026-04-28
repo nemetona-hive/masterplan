@@ -16,6 +16,62 @@ function Icon({
     className: [faClass, className, "u-inline-flex-center"].filter(Boolean).join(" ")
   });
 }
+
+/**
+ * Hook for protecting range sliders from accidental touch during scroll on mobile.
+ * On mobile, touches are tracked to distinguish between horizontal slider adjustment
+ * and vertical scroll. Only allows slider changes on primarily horizontal gestures.
+ * @param {Function} onChange - Original onChange callback for the slider
+ * @returns {Object} { onChange: protected onChange, onTouchStart: touch start handler, onTouchMove: touch move handler }
+ */
+function useProtectedRangeSlider(onChange) {
+  const touchState = React.useRef({
+    startX: 0,
+    startY: 0,
+    isScrolling: false,
+    initialValue: 0
+  });
+  const isMobileMode = typeof window !== "undefined" && (window.innerWidth <= 768 || window.innerHeight <= 500);
+  const onTouchStart = e => {
+    if (!isMobileMode) return;
+    const touch = e.touches[0];
+    touchState.current = {
+      startX: touch.clientX,
+      startY: touch.clientY,
+      isScrolling: false,
+      initialValue: parseFloat(e.target.value)
+    };
+  };
+  const onTouchMove = e => {
+    if (!isMobileMode || touchState.current.isScrolling) return;
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - touchState.current.startX;
+    const deltaY = touch.clientY - touchState.current.startY;
+
+    // Determine if user is scrolling (vertical movement) or adjusting slider (horizontal)
+    // If vertical movement is significantly larger than horizontal, treat as scroll
+    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 10) {
+      touchState.current.isScrolling = true;
+    }
+  };
+  const protectedOnChange = e => {
+    // On desktop, always allow changes
+    if (!isMobileMode) {
+      onChange(e);
+      return;
+    }
+
+    // On mobile, only trigger onChange if we're not scrolling
+    if (!touchState.current.isScrolling) {
+      onChange(e);
+    }
+  };
+  return {
+    onChange: protectedOnChange,
+    onTouchStart,
+    onTouchMove
+  };
+}
 function NumInput({
   id,
   label,
@@ -468,6 +524,13 @@ function S2Controls({
   state,
   setState
 }) {
+  const {
+    onChange,
+    onTouchStart,
+    onTouchMove
+  } = useProtectedRangeSlider(e => setState({
+    offset: +e.target.value
+  }));
   return /*#__PURE__*/React.createElement(Stack, {
     direction: "row",
     gap: 2,
@@ -481,9 +544,9 @@ function S2Controls({
     max: 0.9,
     step: 0.05,
     value: state.offset,
-    onChange: e => setState({
-      offset: +e.target.value
-    })
+    onChange: onChange,
+    onTouchStart: onTouchStart,
+    onTouchMove: onTouchMove
   }), /*#__PURE__*/React.createElement("span", {
     className: "ctrl-range-val"
   }, fmt.decimals(state.offset, 2)));
@@ -794,6 +857,16 @@ function PipeWrapCalculator() {
   const [overlap, setOverlap] = React.useState(0);
   const [gap, setGap] = React.useState(0);
   const svgRef = React.useRef(null);
+  const {
+    onChange: protectedOverlapChange,
+    onTouchStart: overlapTouchStart,
+    onTouchMove: overlapTouchMove
+  } = useProtectedRangeSlider(e => setOverlap(Number(e.target.value)));
+  const {
+    onChange: protectedGapChange,
+    onTouchStart: gapTouchStart,
+    onTouchMove: gapTouchMove
+  } = useProtectedRangeSlider(e => setGap(Number(e.target.value)));
   const outer = pipeDiam + 2 * matThick;
   const base = Math.PI * outer;
   const total = Math.max(0, base + overlap - gap);
@@ -962,7 +1035,9 @@ function PipeWrapCalculator() {
     step: 5,
     value: overlap,
     className: "pw-adj-range",
-    onChange: e => setOverlap(Number(e.target.value))
+    onChange: protectedOverlapChange,
+    onTouchStart: overlapTouchStart,
+    onTouchMove: overlapTouchMove
   }), /*#__PURE__*/React.createElement("span", {
     className: "ctrl-range-val pw-adj-val"
   }, overlap)), /*#__PURE__*/React.createElement(Stack, {
@@ -981,7 +1056,9 @@ function PipeWrapCalculator() {
     step: 5,
     value: gap,
     className: "pw-adj-range",
-    onChange: e => setGap(Number(e.target.value))
+    onChange: protectedGapChange,
+    onTouchStart: gapTouchStart,
+    onTouchMove: gapTouchMove
   }), /*#__PURE__*/React.createElement("span", {
     className: "ctrl-range-val pw-adj-val"
   }, gap))))), /*#__PURE__*/React.createElement("div", {
