@@ -72,6 +72,62 @@ function useProtectedRangeSlider(onChange) {
     onTouchMove
   };
 }
+
+/**
+ * A lockable range slider component to prevent accidental movement on mobile.
+ */
+function RangeSlider({
+  id,
+  value,
+  onChange,
+  min,
+  max,
+  step,
+  className = ""
+}) {
+  const isMobileMode = typeof window !== "undefined" && (window.innerWidth <= 768 || window.innerHeight <= 500);
+  // Default to locked on both mobile and desktop
+  const [isLocked, setIsLocked] = React.useState(true);
+  const {
+    onChange: protectedOnChange,
+    onTouchStart,
+    onTouchMove
+  } = useProtectedRangeSlider(onChange);
+  const handleRowClick = e => {
+    // Only unlock if currently locked. 
+    // If clicking the button itself, let the button's onClick handle it.
+    if (isLocked && !e.target.closest('.range-lock-btn')) {
+      setIsLocked(false);
+    }
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: `range-slider-wrap ${isLocked ? 'is-locked' : 'is-unlocked'} ${className}`,
+    onClick: handleRowClick
+  }, /*#__PURE__*/React.createElement("input", {
+    id: id,
+    name: id,
+    type: "range",
+    min: min,
+    max: max,
+    step: step,
+    value: value,
+    disabled: isLocked,
+    onChange: protectedOnChange,
+    onTouchStart: onTouchStart,
+    onTouchMove: onTouchMove,
+    className: "range-input"
+  }), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "range-lock-btn",
+    onClick: e => {
+      e.stopPropagation(); // Prevent handleRowClick from firing
+      setIsLocked(!isLocked);
+    },
+    title: isLocked ? "Unlock to adjust" : "Lock to prevent accidental changes"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: isLocked ? "lock" : "unlock"
+  })));
+}
 function NumInput({
   id,
   label,
@@ -90,13 +146,14 @@ function NumInput({
     if (!isNaN(n) && n >= min) onChange(Math.max(min, Math.round(n * 100) / 100));else setLocal(String(value));
   };
   return /*#__PURE__*/React.createElement("div", {
-    id: id,
     className: "num-wrap"
   }, /*#__PURE__*/React.createElement("span", {
     className: "num-lbl"
   }, label), /*#__PURE__*/React.createElement("div", {
     className: "num-row"
   }, /*#__PURE__*/React.createElement("input", {
+    id: id,
+    name: id,
     className: "num-input",
     type: "number",
     value: local,
@@ -524,29 +581,21 @@ function S2Controls({
   state,
   setState
 }) {
-  const {
-    onChange,
-    onTouchStart,
-    onTouchMove
-  } = useProtectedRangeSlider(e => setState({
-    offset: +e.target.value
-  }));
   return /*#__PURE__*/React.createElement(Stack, {
     direction: "row",
     gap: 2,
     className: "ctrl-lbl"
   }, /*#__PURE__*/React.createElement("span", {
     className: "ctrl-sublbl"
-  }, "Offset (\xD7PL)"), /*#__PURE__*/React.createElement("input", {
+  }, "Offset (\xD7PL)"), /*#__PURE__*/React.createElement(RangeSlider, {
     id: "input-offset",
-    type: "range",
     min: 0.1,
     max: 0.9,
     step: 0.05,
     value: state.offset,
-    onChange: onChange,
-    onTouchStart: onTouchStart,
-    onTouchMove: onTouchMove
+    onChange: e => setState({
+      offset: +e.target.value
+    })
   }), /*#__PURE__*/React.createElement("span", {
     className: "ctrl-range-val"
   }, fmt.decimals(state.offset, 2)));
@@ -776,6 +825,8 @@ function SheetTimesheet() {
       key: row.id,
       className: "ts-grid-row" + (row.id === activeRowId ? " ts-grid-row--active" : "")
     }, /*#__PURE__*/React.createElement("input", {
+      id: `ts-start-${row.id}`,
+      name: `ts-start-${row.id}`,
       className: "num-input ts-input",
       type: "text",
       placeholder: "9, 9:30, 0930",
@@ -787,6 +838,8 @@ function SheetTimesheet() {
       onChange: e => updateCalcRow(row.id, 'start', e.target.value),
       onBlur: e => formatTimeInput(row.id, 'start', e.target.value)
     }), /*#__PURE__*/React.createElement("input", {
+      id: `ts-end-${row.id}`,
+      name: `ts-end-${row.id}`,
       className: "num-input ts-input",
       type: "text",
       placeholder: "17, 17:30",
@@ -795,6 +848,8 @@ function SheetTimesheet() {
       onChange: e => updateCalcRow(row.id, 'end', e.target.value),
       onBlur: e => formatTimeInput(row.id, 'end', e.target.value)
     }), /*#__PURE__*/React.createElement("input", {
+      id: `ts-lunch-${row.id}`,
+      name: `ts-lunch-${row.id}`,
       className: "num-input ts-input",
       type: "text",
       placeholder: ".30",
@@ -857,16 +912,6 @@ function PipeWrapCalculator() {
   const [overlap, setOverlap] = React.useState(0);
   const [gap, setGap] = React.useState(0);
   const svgRef = React.useRef(null);
-  const {
-    onChange: protectedOverlapChange,
-    onTouchStart: overlapTouchStart,
-    onTouchMove: overlapTouchMove
-  } = useProtectedRangeSlider(e => setOverlap(Number(e.target.value)));
-  const {
-    onChange: protectedGapChange,
-    onTouchStart: gapTouchStart,
-    onTouchMove: gapTouchMove
-  } = useProtectedRangeSlider(e => setGap(Number(e.target.value)));
   const outer = pipeDiam + 2 * matThick;
   const base = Math.PI * outer;
   const total = Math.max(0, base + overlap - gap);
@@ -1024,20 +1069,19 @@ function PipeWrapCalculator() {
     gap: 3,
     className: "pw-adj-row"
   }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
     onClick: () => setOverlap(prev => Math.min(200, prev + 5)),
     className: "pw-adj-btn pw-adj-btn-overlap"
   }, "+"), /*#__PURE__*/React.createElement("span", {
     className: "ctrl-sublbl pw-adj-label"
-  }, "Overlap / extra (mm)"), /*#__PURE__*/React.createElement("input", {
-    type: "range",
+  }, "Overlap / extra (mm)"), /*#__PURE__*/React.createElement(RangeSlider, {
+    id: "input-overlap",
     min: 0,
     max: 200,
     step: 5,
     value: overlap,
     className: "pw-adj-range",
-    onChange: protectedOverlapChange,
-    onTouchStart: overlapTouchStart,
-    onTouchMove: overlapTouchMove
+    onChange: e => setOverlap(Number(e.target.value))
   }), /*#__PURE__*/React.createElement("span", {
     className: "ctrl-range-val pw-adj-val"
   }, overlap)), /*#__PURE__*/React.createElement(Stack, {
@@ -1045,20 +1089,19 @@ function PipeWrapCalculator() {
     gap: 3,
     className: "pw-adj-row"
   }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
     onClick: () => setGap(prev => Math.min(200, prev + 5)),
     className: "pw-adj-btn pw-adj-btn-gap"
   }, "\u2212"), /*#__PURE__*/React.createElement("span", {
     className: "ctrl-sublbl pw-adj-label"
-  }, "Gap / cutout (mm)"), /*#__PURE__*/React.createElement("input", {
-    type: "range",
+  }, "Gap / cutout (mm)"), /*#__PURE__*/React.createElement(RangeSlider, {
+    id: "input-gap",
     min: 0,
     max: 200,
     step: 5,
     value: gap,
     className: "pw-adj-range",
-    onChange: protectedGapChange,
-    onTouchStart: gapTouchStart,
-    onTouchMove: gapTouchMove
+    onChange: e => setGap(Number(e.target.value))
   }), /*#__PURE__*/React.createElement("span", {
     className: "ctrl-range-val pw-adj-val"
   }, gap))))), /*#__PURE__*/React.createElement("div", {
@@ -1255,6 +1298,7 @@ function SheetGoldenRatio({
       className: "num-row"
     }, /*#__PURE__*/React.createElement("input", {
       id: `input-base-number-field-${item.id}`,
+      name: `input-base-number-field-${item.id}`,
       className: "num-input",
       type: "number",
       value: item.value,
@@ -1277,6 +1321,7 @@ function SheetGoldenRatio({
       className: "num-row"
     }, /*#__PURE__*/React.createElement("input", {
       id: `input-base-label-suffix-${item.id}`,
+      name: `input-base-label-suffix-${item.id}`,
       className: "num-input gr-label-input",
       type: "text",
       value: item.suffix,
