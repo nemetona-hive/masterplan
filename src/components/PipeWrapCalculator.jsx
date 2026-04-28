@@ -190,6 +190,7 @@ function PipeWrapCalculator() {
                 >+</button>
                 <span className="ctrl-sublbl pw-adj-label">Overlap / extra (mm)</span>
                 <RangeSlider
+                  id="input-overlap"
                   min={0} max={200} step={5} value={overlap}
                   className="pw-adj-range"
                   onChange={e => setOverlap(Number(e.target.value))}
@@ -206,6 +207,7 @@ function PipeWrapCalculator() {
                 >−</button>
                 <span className="ctrl-sublbl pw-adj-label">Gap / cutout (mm)</span>
                 <RangeSlider
+                  id="input-gap"
                   min={0} max={200} step={5} value={gap}
                   className="pw-adj-range"
                   onChange={e => setGap(Number(e.target.value))}
