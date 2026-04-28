@@ -74,6 +74,7 @@ function RangeSlider({ id, value, onChange, min, max, step, className = "" }) {
     <div className={`range-slider-wrap ${isLocked ? 'is-locked' : 'is-unlocked'} ${className}`}>
       <input 
         id={id} 
+        name={id}
         type="range" 
         min={min} 
         max={max} 
@@ -106,10 +107,17 @@ function NumInput({ id, label, value, onChange, step = 1, min = 1, unit }) {
     else setLocal(String(value));
   };
   return (
-    <div id={id} className="num-wrap">
+    <div className="num-wrap">
       <span className="num-lbl">{label}</span>
       <div className="num-row">
-        <input className="num-input" type="number" value={local} min={min} step={step}
+        <input 
+          id={id}
+          name={id}
+          className="num-input" 
+          type="number" 
+          value={local} 
+          min={min} 
+          step={step}
           onChange={e => setLocal(e.target.value)}
           onKeyDown={e => e.key === "Enter" && commit()}
           onBlur={commit} />
