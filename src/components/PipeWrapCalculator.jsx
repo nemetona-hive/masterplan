@@ -4,11 +4,11 @@ function PipeWrapCalculator() {
   const [pipeDiam, setPipeDiam] = React.useState(100);
   const [matThick, setMatThick] = React.useState(50);
   const [overlap, setOverlap] = React.useState(0);
-  const [gap, setGap]         = React.useState(0);
+  const [gap, setGap] = React.useState(0);
   const svgRef = React.useRef(null);
 
   const outer = pipeDiam + 2 * matThick;
-  const base  = Math.PI * outer;
+  const base = Math.PI * outer;
   const total = Math.max(0, base + overlap - gap);
 
   React.useEffect(() => {
@@ -22,17 +22,17 @@ function PipeWrapCalculator() {
     const cx = 100, cy = 90, maxR = 72;
     const totalR_mm = (pipeDiam / 2 + matThick) || 1;
     // Lower reference radius = more "zoom" for smaller pipes
-    const refR_mm = 110; 
+    const refR_mm = 110;
     const scale = maxR / Math.max(refR_mm, totalR_mm);
     const rP = (pipeDiam / 2) * scale;
     const rO = totalR_mm * scale;
 
-    const gapAngle  = outer > 0 ? (gap     / (Math.PI * outer)) * Math.PI * 2 : 0;
+    const gapAngle = outer > 0 ? (gap / (Math.PI * outer)) * Math.PI * 2 : 0;
     const overAngle = outer > 0 ? (overlap / (Math.PI * outer)) * Math.PI * 2 : 0;
 
     const arc = (r, startA, endA) => {
       const x1 = cx + r * Math.cos(startA), y1 = cy + r * Math.sin(startA);
-      const x2 = cx + r * Math.cos(endA),   y2 = cy + r * Math.sin(endA);
+      const x2 = cx + r * Math.cos(endA), y2 = cy + r * Math.sin(endA);
       const lg = (endA - startA) > Math.PI ? 1 : 0;
       return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${lg} 1 ${x2} ${y2} Z`;
     };
@@ -40,26 +40,26 @@ function PipeWrapCalculator() {
     let ty = 28;
     const lines = [
       `<text x="230" y="${ty}" style="font-family:var(--mono);font-size:11px;fill:var(--color-gray-opa80)">` +
-        `π × (${pipeDiam} + 2×${matThick}) = ${base.toFixed(1)} mm</text>`
+      `π × (${pipeDiam} + 2×${matThick}) = ${base.toFixed(1)} mm</text>`
     ];
     if (overlap > 0) {
       ty += 20;
       lines.push(
         `<text x="230" y="${ty}" style="font-family:var(--mono);font-size:11px;fill:var(--color-blue)">` +
-          `+ overlap  ${overlap} mm</text>`
+        `+ overlap  ${overlap} mm</text>`
       );
     }
     if (gap > 0) {
       ty += 20;
       lines.push(
         `<text x="230" y="${ty}" style="font-family:var(--mono);font-size:11px;fill:var(--color-gray-opa80)">` +
-          `− gap  ${gap} mm</text>`
+        `− gap  ${gap} mm</text>`
       );
     }
     ty += 22;
     lines.push(
       `<text x="230" y="${ty}" style="font-family:var(--mono);font-size:14px;font-weight:700;fill:var(--color-primary)">` +
-        `= ${total.toFixed(1)} mm</text>`
+      `= ${total.toFixed(1)} mm</text>`
     );
 
     const cmResult = `
@@ -79,11 +79,11 @@ function PipeWrapCalculator() {
         fill="color-mix(in srgb, var(--color-gray-light) 80%, transparent)"
         stroke="var(--color-gray)" stroke-width="0.5"/>
 
-      ${gap > 0 ? `<path d="${arc(rO, -Math.PI/2, -Math.PI/2 + gapAngle)}"
+      ${gap > 0 ? `<path d="${arc(rO, -Math.PI / 2, -Math.PI / 2 + gapAngle)}"
         fill="color-mix(in srgb, var(--color-gray-opa80) 40%, transparent)"
         stroke="var(--color-gray)" stroke-width="0.5"/>` : ""}
 
-      ${overlap > 0 ? `<path d="${arc(rO, -Math.PI/2 + gapAngle, -Math.PI/2 + gapAngle + overAngle)}"
+      ${overlap > 0 ? `<path d="${arc(rO, -Math.PI / 2 + gapAngle, -Math.PI / 2 + gapAngle + overAngle)}"
         fill="color-mix(in srgb, var(--color-blue) 35%, transparent)"
         stroke="var(--color-blue)" stroke-width="0.5" opacity="0.9"/>` : ""}
 
