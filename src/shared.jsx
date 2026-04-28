@@ -60,6 +60,43 @@ function useProtectedRangeSlider(onChange) {
   return { onChange: protectedOnChange, onTouchStart, onTouchMove };
 }
 
+/**
+ * A lockable range slider component to prevent accidental movement on mobile.
+ */
+function RangeSlider({ id, value, onChange, min, max, step, className = "" }) {
+  const isMobileMode = typeof window !== "undefined" && (window.innerWidth <= 768 || window.innerHeight <= 500);
+  // Default to locked on mobile, unlocked on desktop
+  const [isLocked, setIsLocked] = React.useState(isMobileMode);
+  
+  const { onChange: protectedOnChange, onTouchStart, onTouchMove } = useProtectedRangeSlider(onChange);
+
+  return (
+    <div className={`range-slider-wrap ${isLocked ? 'is-locked' : 'is-unlocked'} ${className}`}>
+      <input 
+        id={id} 
+        type="range" 
+        min={min} 
+        max={max} 
+        step={step} 
+        value={value}
+        disabled={isLocked}
+        onChange={protectedOnChange}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        className="range-input"
+      />
+      <button 
+        type="button"
+        className="range-lock-btn" 
+        onClick={() => setIsLocked(!isLocked)}
+        title={isLocked ? "Unlock to adjust" : "Lock to prevent accidental changes"}
+      >
+        <Icon name={isLocked ? "lock" : "unlock"} />
+      </button>
+    </div>
+  );
+}
+
 function NumInput({ id, label, value, onChange, step = 1, min = 1, unit }) {
   const [local, setLocal] = React.useState(String(value));
   React.useEffect(() => { setLocal(String(value)); }, [value]);
