@@ -2418,6 +2418,24 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	gap: var(--sp-2);
 	flex: 1;
 	min-width: 0;
+	padding: 4px 8px;
+	margin: -4px -8px;
+	border-radius: 10px;
+	transition: background 0.15s ease, border-color 0.15s ease;
+	border: 1px solid transparent;
+}
+
+.range-slider-wrap.is-locked {
+	cursor: pointer;
+}
+
+.range-slider-wrap.is-locked:hover {
+	background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+	border-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+.range-slider-wrap.is-unlocked {
+	background: transparent;
 }
 
 .range-input {
