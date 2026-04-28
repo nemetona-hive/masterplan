@@ -70,8 +70,19 @@ function RangeSlider({ id, value, onChange, min, max, step, className = "" }) {
   
   const { onChange: protectedOnChange, onTouchStart, onTouchMove } = useProtectedRangeSlider(onChange);
 
+  const handleRowClick = (e) => {
+    // Only unlock if currently locked. 
+    // If clicking the button itself, let the button's onClick handle it.
+    if (isLocked && !e.target.closest('.range-lock-btn')) {
+      setIsLocked(false);
+    }
+  };
+
   return (
-    <div className={`range-slider-wrap ${isLocked ? 'is-locked' : 'is-unlocked'} ${className}`}>
+    <div 
+      className={`range-slider-wrap ${isLocked ? 'is-locked' : 'is-unlocked'} ${className}`}
+      onClick={handleRowClick}
+    >
       <input 
         id={id} 
         name={id}
@@ -89,7 +100,10 @@ function RangeSlider({ id, value, onChange, min, max, step, className = "" }) {
       <button 
         type="button"
         className="range-lock-btn" 
-        onClick={() => setIsLocked(!isLocked)}
+        onClick={(e) => {
+          e.stopPropagation(); // Prevent handleRowClick from firing
+          setIsLocked(!isLocked);
+        }}
         title={isLocked ? "Unlock to adjust" : "Lock to prevent accidental changes"}
       >
         <Icon name={isLocked ? "lock" : "unlock"} />
