@@ -32,11 +32,11 @@ function useProtectedRangeSlider(onChange) {
 
   const onTouchMove = (e) => {
     if (!isMobileMode || touchState.current.isScrolling) return;
-    
+
     const touch = e.touches[0];
     const deltaX = touch.clientX - touchState.current.startX;
     const deltaY = touch.clientY - touchState.current.startY;
-    
+
     // Determine if user is scrolling (vertical movement) or adjusting slider (horizontal)
     // If vertical movement is significantly larger than horizontal, treat as scroll
     if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 10) {
@@ -50,7 +50,7 @@ function useProtectedRangeSlider(onChange) {
       onChange(e);
       return;
     }
-    
+
     // On mobile, only trigger onChange if we're not scrolling
     if (!touchState.current.isScrolling) {
       onChange(e);
@@ -65,9 +65,9 @@ function useProtectedRangeSlider(onChange) {
  */
 function RangeSlider({ id, value, onChange, min, max, step, className = "" }) {
   const isMobileMode = typeof window !== "undefined" && (window.innerWidth <= 768 || window.innerHeight <= 500);
-  // Default to locked on mobile, unlocked on desktop
-  const [isLocked, setIsLocked] = React.useState(isMobileMode);
-  
+  // Default to locked on both mobile and desktop
+  const [isLocked, setIsLocked] = React.useState(true);
+
   const { onChange: protectedOnChange, onTouchStart, onTouchMove } = useProtectedRangeSlider(onChange);
 
   const handleRowClick = (e) => {
@@ -79,17 +79,17 @@ function RangeSlider({ id, value, onChange, min, max, step, className = "" }) {
   };
 
   return (
-    <div 
+    <div
       className={`range-slider-wrap ${isLocked ? 'is-locked' : 'is-unlocked'} ${className}`}
       onClick={handleRowClick}
     >
-      <input 
-        id={id} 
+      <input
+        id={id}
         name={id}
-        type="range" 
-        min={min} 
-        max={max} 
-        step={step} 
+        type="range"
+        min={min}
+        max={max}
+        step={step}
         value={value}
         disabled={isLocked}
         onChange={protectedOnChange}
@@ -97,9 +97,9 @@ function RangeSlider({ id, value, onChange, min, max, step, className = "" }) {
         onTouchMove={onTouchMove}
         className="range-input"
       />
-      <button 
+      <button
         type="button"
-        className="range-lock-btn" 
+        className="range-lock-btn"
         onClick={(e) => {
           e.stopPropagation(); // Prevent handleRowClick from firing
           setIsLocked(!isLocked);
@@ -124,13 +124,13 @@ function NumInput({ id, label, value, onChange, step = 1, min = 1, unit }) {
     <div className="num-wrap">
       <span className="num-lbl">{label}</span>
       <div className="num-row">
-        <input 
+        <input
           id={id}
           name={id}
-          className="num-input" 
-          type="number" 
-          value={local} 
-          min={min} 
+          className="num-input"
+          type="number"
+          value={local}
+          min={min}
           step={step}
           onChange={e => setLocal(e.target.value)}
           onKeyDown={e => e.key === "Enter" && commit()}
@@ -149,7 +149,7 @@ function SLabel({ children }) {
 // Single collapsible replaces both Section and ControlPanel
 function Collapsible({ id, title, bg, open: openProp, setOpen: setOpenProp, children, variant = "section", className = "" }) {
   const [openLocal, setOpenLocal] = React.useState(true);
-  const open    = setOpenProp ? openProp    : openLocal;
+  const open = setOpenProp ? openProp : openLocal;
   const setOpen = setOpenProp ? setOpenProp : setOpenLocal;
   if (variant === "panel") {
     return (
@@ -174,7 +174,7 @@ function Collapsible({ id, title, bg, open: openProp, setOpen: setOpenProp, chil
 }
 
 // Convenience aliases for readability at call sites
-const Section      = ({ title, bg, children }) => <Collapsible title={title} bg={bg}>{children}</Collapsible>;
+const Section = ({ title, bg, children }) => <Collapsible title={title} bg={bg}>{children}</Collapsible>;
 const ControlPanel = ({ id, title, open, setOpen, children, className = "" }) => (
   <Collapsible id={id} title={title} open={open} setOpen={setOpen} variant="panel" className={className}>
     {children}
