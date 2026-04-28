@@ -124,6 +124,7 @@ function SheetGoldenRatio({ grItems: baseItems, setGrItems: setBaseItems }) {
                       <div className="num-row">
                         <input
                           id={`input-base-number-field-${item.id}`}
+                          name={`input-base-number-field-${item.id}`}
                           className="num-input"
                           type="number"
                           value={item.value}
@@ -142,6 +143,7 @@ function SheetGoldenRatio({ grItems: baseItems, setGrItems: setBaseItems }) {
                       <div className="num-row">
                         <input
                           id={`input-base-label-suffix-${item.id}`}
+                          name={`input-base-label-suffix-${item.id}`}
                           className="num-input gr-label-input"
                           type="text"
                           value={item.suffix}
