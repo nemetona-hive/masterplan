@@ -1,64 +1,69 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MASTER PLAN</title>
-<link href="vendor/fonts/fonts.css" rel="stylesheet">
-<link rel="stylesheet" href="app.css">
+<html lang="en">
 
-<link rel="stylesheet" href="vendor/fontawesome.min.css">
-<script src="vendor/react.production.min.js"></script>
-<script src="vendor/react-dom.production.min.js"></script>
-<script>
-/* ============================================================
- * ICON CONFIGURATION
- * Edit the Font Awesome class on the right to change any icon.
- * Format: "fa-solid fa-[name]" or "fa-regular fa-[name]"
- * Reference: https://fontawesome.com/icons
- * ============================================================ */
-const ICONS = {
-  // UI Actions
-  "corner-down-left": "fa-solid fa-turn-down",       // Confirm / Enter button
-  "home":             "fa-solid fa-house",           // Home icon
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MASTER PLAN</title>
+  <link href="vendor/fonts/fonts.css" rel="stylesheet">
+  <link rel="stylesheet" href="app.css">
 
-  // Collapse / Expand toggles
-  "chevron-down":     "fa-solid fa-chevron-down",     // Section open
-  "chevron-right":    "fa-solid fa-chevron-right",    // Section closed
+  <link rel="stylesheet" href="vendor/fontawesome.min.css">
+  <script src="vendor/react.production.min.js"></script>
+  <script src="vendor/react-dom.production.min.js"></script>
+  <script>
+    /* ============================================================
+     * ICON CONFIGURATION
+     * Edit the Font Awesome class on the right to change any icon.
+     * Format: "fa-solid fa-[name]" or "fa-regular fa-[name]"
+     * Reference: https://fontawesome.com/icons
+     * ============================================================ */
+    const ICONS = {
+      // UI Actions
+      "corner-down-left": "fa-solid fa-turn-down",       // Confirm / Enter button
+      "home": "fa-solid fa-house",           // Home icon
 
-  // Navigation sidebar
-  "panel-left-close": "fa-solid fa-kaaba",   // Toggle sidebar
-  "layout-template":  "fa-solid fa-table-cells-large",// Nav: Layout
-  "rows-3":           "fa-solid fa-table-list",       // Nav: Pattern Layouts
-  "columns-2":        "fa-solid fa-columns",          // Nav: Symmetric Layout
-  "layer-group":      "fa-solid fa-layer-group",       // Nav: Concrete
-  "golden-phi":       "fa-solid fa-dharmachakra",     // Nav: Golden Ratio
+      // Collapse / Expand toggles
+      "chevron-down": "fa-solid fa-chevron-down",     // Section open
+      "chevron-right": "fa-solid fa-chevron-right",    // Section closed
 
-  // Layout system title icons
-  "s0":               "fa-solid fa-circle-0",         // S0: Symmetric layout
-  "s1":               "fa-solid fa-1",                // S1: Straight layout
-  "s2":               "fa-solid fa-2",                // S2: Shifted layout
-  "s3":               "fa-solid fa-3",                // S3: Stepped layout
-  "s4":               "fa-solid fa-4",                // S4: Long-Short
+      // Navigation sidebar
+      "panel-left-close": "fa-solid fa-kaaba",   // Toggle sidebar
+      "layout-template": "fa-solid fa-table-cells-large",// Nav: Layout
+      "rows-3": "fa-solid fa-table-list",       // Nav: Pattern Layouts
+      "columns-2": "fa-solid fa-columns",          // Nav: Symmetric Layout
+      "layer-group": "fa-solid fa-layer-group",       // Nav: Concrete
+      "golden-phi": "fa-solid fa-dharmachakra",     // Nav: Golden Ratio
 
-  // Best layout badge
-  "best-badge":       "fa-solid fa-star-of-david",             // Best layout indicator
+      // Layout system title icons
+      "s0": "fa-solid fa-circle-0",         // S0: Symmetric layout
+      "s1": "fa-solid fa-1",                // S1: Straight layout
+      "s2": "fa-solid fa-2",                // S2: Shifted layout
+      "s3": "fa-solid fa-3",                // S3: Stepped layout
+      "s4": "fa-solid fa-4",                // S4: Long-Short
 
-  // Timesheet
-  "clock":            "fa-solid fa-clock",                     // Timesheet page
+      // Best layout badge
+      "best-badge": "fa-solid fa-star-of-david",             // Best layout indicator
 
-  // Pipe Wrap
-  "ring":             "fa-solid fa-ring",                       // Pipe Wrap page
+      // Timesheet
+      "clock": "fa-solid fa-clock",                     // Timesheet page
 
-  // Lock / Unlock
-  "lock":             "fa-solid fa-lock",
-  "unlock":           "fa-solid fa-lock-open"
-};
-</script>
+      // Pipe Wrap
+      "ring": "fa-solid fa-ring",                       // Pipe Wrap page
+
+      // Lock / Unlock
+      "lock": "fa-solid fa-lock",
+      "unlock": "fa-solid fa-lock-open"
+    };
+  </script>
 </head>
+
 <body>
-<div id="root"></div>
-<script src="config.js" defer></script>
-<script src="simulation.js" defer></script>
-<script src="components.js" defer></script>
-</body></html>
+  <div id="root"></div>
+  <script src="config.js" defer></script>
+  <script src="simulation.js" defer></script>
+  <script src="components.js" defer></script>
+</body>
+
+</html>
