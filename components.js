@@ -905,6 +905,237 @@ function SheetTimesheet() {
     onClick: handleCopy
   }, copied ? 'Copied!' : 'Copy decimal'))))));
 }
+
+// ── Self-Leveling Floor Calculator ────────────────────────────────────────────
+
+function SheetSelfLevelingFloor() {
+  const [areaMode, setAreaMode] = React.useState("direct"); // "direct" | "dims"
+  const [thickMode, setThickMode] = React.useState("avg"); // "avg" | "corners"
+
+  // Area inputs
+  const [areaManual, setAreaManual] = React.useState("");
+  const [lenMm, setLenMm] = React.useState(1000);
+  const [widMm, setWidMm] = React.useState(1000);
+
+  // Thickness inputs
+  const [avgH, setAvgH] = React.useState(10);
+  const [ca, setCa] = React.useState(10);
+  const [cb, setCb] = React.useState(15);
+  const [cc, setCc] = React.useState(8);
+  const [cd, setCd] = React.useState(12);
+
+  // Consumption & packaging
+  const [rate, setRate] = React.useState(1.7);
+  const [bagKg, setBagKg] = React.useState(25);
+  const [bagPrice, setBagPrice] = React.useState("");
+
+  // ── Derived values ─────────────────────────────────────────────────────────
+
+  const area = areaMode === "dims" ? lenMm * widMm / 1_000_000 : parseFloat(areaManual) || 0;
+  const computedDimsArea = lenMm * widMm / 1_000_000;
+  let computedAvgH, diff;
+  if (thickMode === "avg") {
+    computedAvgH = avgH;
+    diff = null;
+  } else {
+    computedAvgH = (ca + cb + cc + cd) / 4;
+    diff = Math.max(ca, cb, cc, cd) - Math.min(ca, cb, cc, cd);
+  }
+  const mass = area * computedAvgH * rate;
+  const bags = bagKg > 0 ? Math.ceil(mass / bagKg) : 0;
+  const totalPrice = bags > 0 && parseFloat(bagPrice) > 0 ? bags * parseFloat(bagPrice) : null;
+  const fmtEur = n => n.toLocaleString("et-EE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+
+  return /*#__PURE__*/React.createElement("div", {
+    className: "page-scroll"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "page-inner",
+    gap: 5
+  }, /*#__PURE__*/React.createElement(Section, {
+    title: "Floor Area"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "section-pad",
+    gap: 3
+  }, /*#__PURE__*/React.createElement(Stack, {
+    direction: "row",
+    gap: 1,
+    className: "ctrl-btns"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "ctrl-dir" + (areaMode === "direct" ? " on" : ""),
+    onClick: () => setAreaMode("direct")
+  }, "Enter area"), /*#__PURE__*/React.createElement("button", {
+    className: "ctrl-dir" + (areaMode === "dims" ? " on" : ""),
+    onClick: () => setAreaMode("dims")
+  }, "Room dimensions")), areaMode === "direct" && /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-slf-area",
+    label: "Area (m\xB2)",
+    value: parseFloat(areaManual) || 0,
+    min: 0,
+    step: 0.1,
+    unit: "m\xB2",
+    onChange: v => setAreaManual(String(v))
+  }), areaMode === "dims" && /*#__PURE__*/React.createElement(Stack, {
+    gap: 3
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "pw-grid-2col"
+  }, /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-slf-len",
+    label: "Length (mm)",
+    value: lenMm,
+    min: 1,
+    step: 10,
+    unit: "mm",
+    onChange: setLenMm
+  }), /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-slf-wid",
+    label: "Width (mm)",
+    value: widMm,
+    min: 1,
+    step: 10,
+    unit: "mm",
+    onChange: setWidMm
+  })), /*#__PURE__*/React.createElement(Row, {
+    label: "Calculated area",
+    value: computedDimsArea.toFixed(1),
+    unit: "m\xB2"
+  })))), /*#__PURE__*/React.createElement(Section, {
+    title: "Layer Thickness"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "section-pad",
+    gap: 3
+  }, /*#__PURE__*/React.createElement(Stack, {
+    direction: "row",
+    gap: 1,
+    className: "ctrl-btns"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "ctrl-dir" + (thickMode === "avg" ? " on" : ""),
+    onClick: () => setThickMode("avg")
+  }, "Average thickness"), /*#__PURE__*/React.createElement("button", {
+    className: "ctrl-dir" + (thickMode === "corners" ? " on" : ""),
+    onClick: () => setThickMode("corners")
+  }, "4 corners")), thickMode === "avg" && /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-slf-havg",
+    label: "Average thickness (mm)",
+    value: avgH,
+    min: 1,
+    step: 1,
+    unit: "mm",
+    onChange: setAvgH
+  }), thickMode === "corners" && /*#__PURE__*/React.createElement(Stack, {
+    gap: 3
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "pw-grid-2col"
+  }, /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-slf-ca",
+    label: "Corner A (mm)",
+    value: ca,
+    min: 0,
+    step: 1,
+    unit: "mm",
+    onChange: setCa
+  }), /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-slf-cb",
+    label: "Corner B (mm)",
+    value: cb,
+    min: 0,
+    step: 1,
+    unit: "mm",
+    onChange: setCb
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "pw-grid-2col"
+  }, /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-slf-cc",
+    label: "Corner C (mm)",
+    value: cc,
+    min: 0,
+    step: 1,
+    unit: "mm",
+    onChange: setCc
+  }), /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-slf-cd",
+    label: "Corner D (mm)",
+    value: cd,
+    min: 0,
+    step: 1,
+    unit: "mm",
+    onChange: setCd
+  }))))), /*#__PURE__*/React.createElement(Section, {
+    title: "Consumption & Packaging"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "section-pad",
+    gap: 3
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "pw-grid-2col"
+  }, /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-slf-rate",
+    label: "Consumption (kg/m\xB2\xB7mm)",
+    value: rate,
+    min: 0.1,
+    step: 0.1,
+    onChange: setRate
+  }), /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-slf-bagkg",
+    label: "Bag weight (kg)",
+    value: bagKg,
+    min: 1,
+    step: 1,
+    unit: "kg",
+    onChange: setBagKg
+  })), /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-slf-bagprice",
+    label: "Bag price (\u20AC)",
+    value: parseFloat(bagPrice) || 0,
+    min: 0,
+    step: 0.01,
+    onChange: v => setBagPrice(String(v))
+  }))), /*#__PURE__*/React.createElement(Section, {
+    title: "Results"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "section-pad",
+    gap: 1
+  }, /*#__PURE__*/React.createElement(Row, {
+    label: "Floor area",
+    value: area.toFixed(1),
+    unit: "m\xB2"
+  }), /*#__PURE__*/React.createElement(Row, {
+    label: "Avg thickness",
+    value: Math.round(computedAvgH),
+    unit: "mm"
+  }), diff !== null && /*#__PURE__*/React.createElement(Row, {
+    label: "Height difference",
+    value: Math.round(diff),
+    unit: "mm"
+  }), /*#__PURE__*/React.createElement(Row, {
+    label: "Total mix mass",
+    value: mass > 0 ? mass.toFixed(1) : "—",
+    unit: mass > 0 ? "kg" : ""
+  }), /*#__PURE__*/React.createElement(Row, {
+    label: "Bags needed",
+    value: bags || "—",
+    unit: bags ? "pcs" : "",
+    hi: true
+  }), /*#__PURE__*/React.createElement(Row, {
+    label: "Total price",
+    value: totalPrice !== null ? "€\u202f" + fmtEur(totalPrice) : "—",
+    hi: totalPrice !== null
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "pw-formula-wrap"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "pw-formula-text"
+  }, "mass = area \xD7 avg thickness \xD7 consumption rate")))), /*#__PURE__*/React.createElement("div", {
+    className: "pw-formula-wrap",
+    style: {
+      paddingBottom: "1rem"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "pw-formula-text"
+  }, "Results are approximate \u2014 actual consumption may vary due to substrate absorption and mixing residue."))));
+}
 const PRESETS = [100, 125, 160, 200];
 function PipeWrapCalculator() {
   const [pipeDiam, setPipeDiam] = React.useState(100);
@@ -1081,10 +1312,14 @@ function PipeWrapCalculator() {
     step: 5,
     value: overlap,
     className: "pw-adj-range",
+    onChange: e => setOverlap(Number(e.target.value)),
+    onReset: () => setOverlap(0)
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "number",
+    className: "ctrl-range-val pw-adj-val",
+    value: overlap,
     onChange: e => setOverlap(Number(e.target.value))
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "ctrl-range-val pw-adj-val"
-  }, overlap)), /*#__PURE__*/React.createElement(Stack, {
+  })), /*#__PURE__*/React.createElement(Stack, {
     direction: "row",
     gap: 3,
     className: "pw-adj-row"
@@ -2081,6 +2316,18 @@ function MainPageContent({
       id: "main-data",
       className: "main-data"
     }, /*#__PURE__*/React.createElement(SheetConcrete, null));
+  }
+  if (page === "self-leveling-floor") {
+    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+      id: "main-head",
+      className: "main-head"
+    }, /*#__PURE__*/React.createElement("h2", {
+      className: "title"
+    }, pageMeta?.title), /*#__PURE__*/React.createElement("p", {
+      className: "desc"
+    }, pageMeta?.desc)), /*#__PURE__*/React.createElement("div", {
+      className: "page-main-full"
+    }, /*#__PURE__*/React.createElement(SheetSelfLevelingFloor, null)));
   }
   if (page === "timesheet") {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
