@@ -194,6 +194,8 @@ function PipeWrapCalculator() {
                 onChange={e => setOverlap(e.target.value)}
               />
               <input
+                id="input-overlap-val"
+                name="input-overlap-val"
                 type="number"
                 className="num-input pw-adj-val"
                 min={0} max={200} step={1}
@@ -217,6 +219,8 @@ function PipeWrapCalculator() {
                 onChange={e => setGap(e.target.value)}
               />
               <input
+                id="input-gap-val"
+                name="input-gap-val"
                 type="number"
                 className="num-input pw-adj-val"
                 min={0} max={200} step={1}
