@@ -905,8 +905,8 @@ function SheetConcrete() {
 
   // Area inputs
   const [areaManual, setAreaManual] = React.useState("");
-  const [lenMm, setLenMm] = React.useState(1000);
-  const [widMm, setWidMm] = React.useState(1000);
+  const [lenMm, setLenMm] = React.useState("");
+  const [widMm, setWidMm] = React.useState("");
 
   // Thickness inputs
   const [avgH, setAvgH] = React.useState("");
@@ -938,11 +938,9 @@ function SheetConcrete() {
     bagPrice: ""
   }]);
   const resetAll = () => {
-    setAreaMode("direct");
-    setThickMode("avg");
     setAreaManual("");
-    setLenMm(1000);
-    setWidMm(1000);
+    setLenMm("");
+    setWidMm("");
     setAvgH("");
     setCa("");
     setCb("");
@@ -976,8 +974,8 @@ function SheetConcrete() {
 
   // ── Derived values ─────────────────────────────────────────────────────────
 
-  const area = areaMode === "dims" ? lenMm * widMm / 1_000_000 : parseFloat(areaManual) || 0;
-  const computedDimsArea = lenMm * widMm / 1_000_000;
+  const area = areaMode === "dims" ? (parseFloat(lenMm) || 0) * (parseFloat(widMm) || 0) / 1_000_000 : parseFloat(areaManual) || 0;
+  const computedDimsArea = (parseFloat(lenMm) || 0) * (parseFloat(widMm) || 0) / 1_000_000;
   let computedAvgH, diff;
   if (thickMode === "avg") {
     computedAvgH = parseFloat(avgH) || 0;
