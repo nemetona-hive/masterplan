@@ -16,6 +16,8 @@ function PipeWrapCalculator() {
   const base = Math.PI * outer;
   const total = Math.max(0, base + o - g);
 
+  const [adjOpen, setAdjOpen] = React.useState(false);
+
   React.useEffect(() => {
     drawDiagram();
   }, [pipeDiam, matThick, overlap, gap]);
@@ -179,62 +181,57 @@ function PipeWrapCalculator() {
         </div>
 
         {/* ── adjustments ── */}
-        <div className="section">
-          <div className="section-head">
-            <span>Adjustments</span>
-          </div>
-          <div className="section-body">
-            <Stack className="section-pad" gap={3}>
+        <Section title="Adjustments" open={adjOpen} setOpen={setAdjOpen}>
+          <Stack className="section-pad" gap={3}>
 
-              {/* overlap */}
-              <Stack direction="row" gap={3} className="pw-adj-row">
-                <span className="ctrl-sublbl pw-adj-label">Overlap / extra (mm)</span>
-                <RangeSlider
-                  id="input-overlap"
-                  min={0} max={200} step={5} value={overlap}
-                  className="pw-adj-range"
-                  onChange={e => setOverlap(Number(e.target.value))}
-                />
-                <input
-                  type="number"
-                  className="num-input pw-adj-val"
-                  min={0} max={200} step={1}
-                  value={overlap}
-                  onChange={e => setOverlap(e.target.value)}
-                  onBlur={e => {
-                    const v = e.target.value;
-                    if (v === "") setOverlap("");
-                    else setOverlap(Math.max(0, Math.min(200, parseFloat(v) || 0)));
-                  }}
-                />
-              </Stack>
-
-              {/* gap */}
-              <Stack direction="row" gap={3} className="pw-adj-row">
-                <span className="ctrl-sublbl pw-adj-label">Gap / cutout (mm)</span>
-                <RangeSlider
-                  id="input-gap"
-                  min={0} max={200} step={5} value={gap}
-                  className="pw-adj-range"
-                  onChange={e => setGap(Number(e.target.value))}
-                />
-                <input
-                  type="number"
-                  className="num-input pw-adj-val"
-                  min={0} max={200} step={1}
-                  value={gap}
-                  onChange={e => setGap(e.target.value)}
-                  onBlur={e => {
-                    const v = e.target.value;
-                    if (v === "") setGap("");
-                    else setGap(Math.max(0, Math.min(200, parseFloat(v) || 0)));
-                  }}
-                />
-              </Stack>
-
+            {/* overlap */}
+            <Stack direction="row" gap={3} className="pw-adj-row">
+              <span className="ctrl-sublbl pw-adj-label">Overlap / extra (mm)</span>
+              <RangeSlider
+                id="input-overlap"
+                min={0} max={200} step={5} value={overlap}
+                className="pw-adj-range"
+                onChange={e => setOverlap(e.target.value)}
+              />
+              <input
+                type="number"
+                className="num-input pw-adj-val"
+                min={0} max={200} step={1}
+                value={overlap}
+                onChange={e => setOverlap(e.target.value)}
+                onBlur={e => {
+                  const v = e.target.value;
+                  if (v === "") setOverlap("");
+                  else setOverlap(Math.max(0, Math.min(200, parseFloat(v) || 0)));
+                }}
+              />
             </Stack>
-          </div>
-        </div>
+
+            {/* gap */}
+            <Stack direction="row" gap={3} className="pw-adj-row">
+              <span className="ctrl-sublbl pw-adj-label">Gap / cutout (mm)</span>
+              <RangeSlider
+                id="input-gap"
+                min={0} max={200} step={5} value={gap}
+                className="pw-adj-range"
+                onChange={e => setGap(e.target.value)}
+              />
+              <input
+                type="number"
+                className="num-input pw-adj-val"
+                min={0} max={200} step={1}
+                value={gap}
+                onChange={e => setGap(e.target.value)}
+                onBlur={e => {
+                  const v = e.target.value;
+                  if (v === "") setGap("");
+                  else setGap(Math.max(0, Math.min(200, parseFloat(v) || 0)));
+                }}
+              />
+            </Stack>
+
+          </Stack>
+        </Section>
 
         {/* ── results ── */}
         <div className="section">
