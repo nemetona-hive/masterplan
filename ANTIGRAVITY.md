@@ -21,8 +21,8 @@ and is available as globals — do NOT import them.
 3.  Controls.jsx               → S2Controls, S4Controls, LAYOUT_REGISTRY
 4.  utils/timesheet.js         → parseTime, parseLunch, parseSumTime, roundMins, fmtHHMM, fmtDecimal
 5.  components/Timesheet.jsx   → SheetTimesheet
-6.  components/SelfLevelingFloor.jsx → SheetSelfLevelingFloor
-7.  Sheets.jsx                 → SheetHome, SheetConcrete, SheetGoldenRatio, SheetSymmetricLayout, SheetSurfaceLayout
+6.  components/Concrete.jsx → SheetConcrete
+7.  Sheets.jsx                 → SheetHome, SheetGoldenRatio, SheetSymmetricLayout, SheetSurfaceLayout
 8.  Nav.jsx                    → isNavPageActive, NavButton, initOpenGroups, AppNav
 9.  themes.js                  → THEMES, getThemeOrder, getNextTheme, applyTheme
 10. App.jsx                    → MainPageContent, App, ReactDOM.createRoot
@@ -80,7 +80,7 @@ Page render is handled in `MainPageContent` in App.jsx — add new pages there.
 Nav items come from `PAGES` global — add new pages in config (outside src/).
 
 Current pages: `home`, `layout` (parent), `pattern-layout`, `symmetric-layout`,
-`concrete`, `self-leveling-floor`, `golden-ratio`, `pipe-wrap`, `timesheet`.
+`self-leveling-floor`, `golden-ratio`, `pipe-wrap`, `timesheet`.
 
 ## UI components (from shared.jsx)
 
@@ -100,7 +100,7 @@ Current pages: `home`, `layout` (parent), `pattern-layout`, `symmetric-layout`,
 | Page ID | Component | Location | Description |
 |---|---|---|---|
 | `pipe-wrap` | `PipeWrapCalculator` | `components/PipeWrapCalculator.jsx` | Pipe wrap length calculator with SVG diagram; uses presets, RangeSlider for overlap/gap |
-| `self-leveling-floor` | `SheetSelfLevelingFloor` | `components/SelfLevelingFloor.jsx` | Self-leveling floor compound estimator; area/thickness modes, bag count, pricing |
+| `concrete` | `SheetConcrete` | `components/Concrete.jsx` | Concrete consumption and bag cost estimator; area/thickness modes, bag count, pricing |
 | `timesheet` | `SheetTimesheet` | `components/Timesheet.jsx` | Work hours calculator; dynamic rows, lunch presets, decimal copy |
 
 ## Layout systems
@@ -155,7 +155,6 @@ Cards use tone system (a/b/c/d) for visual identity.
 
 ## What does NOT exist yet (possible future work)
 
-- Concrete page (SheetConcrete) — placeholder divs only, no logic
 - Export / print functionality
 - Persistence (no localStorage)
 - Unit tests
