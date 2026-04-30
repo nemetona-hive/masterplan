@@ -1,7 +1,7 @@
 // ── Page sheets ───────────────────────────────────────────────────────────────
 
 function SheetHome({ page, setPage }) {
-  const cards = PAGES.filter(pg => !pg.noNav && !pg.parentId);
+  const items = PAGES.filter(pg => !pg.noNav);
   return (
     <div className="home-scroll">
       <Stack className="home-inner" gap={3}>
@@ -14,18 +14,17 @@ function SheetHome({ page, setPage }) {
         <div className="home-divider" />
 
         <div className="home-cards">
-          {cards.map(pg => {
-            const isActive = page === pg.id ||
-              PAGES.some(p => p.parentId === pg.id && p.id === page);
-            const firstChild = PAGES.find(p => p.parentId === pg.id);
-            const target = firstChild ? firstChild.id : pg.id;
+          {items.map(pg => {
+            if (pg.isParent) return null;
+
+            const isActive = page === pg.id;
             return (
               <Stack key={pg.id}
                 as="button"
                 className={"home-card" + (isActive ? " home-card-active" : "")}
                 gap={3}
-                onClick={() => setPage(target)}
-                onKeyDown={e => (e.key === "Enter" || e.key === " ") && setPage(target)}>
+                onClick={() => setPage(pg.id)}
+                onKeyDown={e => (e.key === "Enter" || e.key === " ") && setPage(pg.id)}>
                 <span className="home-card-icon"><Icon name={pg.icon} /></span>
                 <span className="home-card-title">{pg.title}</span>
                 <span className="home-card-desc">{pg.desc}</span>
