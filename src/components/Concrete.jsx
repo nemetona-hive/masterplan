@@ -52,8 +52,8 @@ function SheetConcrete() {
   };
 
   const applyPreset = (p) => {
-    setRate(parseFloat(p.rate) || 0);
-    setBagKg(parseFloat(p.bagKg) || 0);
+    setRate(p.rate === "" ? "" : (parseFloat(p.rate) || 0));
+    setBagKg(p.bagKg === "" ? "" : (parseFloat(p.bagKg) || 0));
     setBagPrice(p.bagPrice);
   };
 
