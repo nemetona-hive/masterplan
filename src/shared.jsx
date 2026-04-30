@@ -174,12 +174,8 @@ function Collapsible({ id, title, bg, open: openProp, setOpen: setOpenProp, chil
 }
 
 // Convenience aliases for readability at call sites
-const Section = ({ title, bg, children }) => <Collapsible title={title} bg={bg}>{children}</Collapsible>;
-const ControlPanel = ({ id, title, open, setOpen, children, className = "" }) => (
-  <Collapsible id={id} title={title} open={open} setOpen={setOpen} variant="panel" className={className}>
-    {children}
-  </Collapsible>
-);
+const Section = (props) => <Collapsible {...props} />;
+const ControlPanel = (props) => <Collapsible {...props} variant="panel" />;
 
 function Row({ label, value, unit, hi, hoverType, hoveredType, setHoveredType }) {
   const isHovered = hoverType && hoveredType === hoverType;
