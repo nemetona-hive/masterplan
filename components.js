@@ -1138,14 +1138,18 @@ function SheetSelfLevelingFloor() {
 }
 const PRESETS = [100, 125, 160, 200];
 function PipeWrapCalculator() {
-  const [pipeDiam, setPipeDiam] = React.useState(100);
-  const [matThick, setMatThick] = React.useState(50);
-  const [overlap, setOverlap] = React.useState(0);
-  const [gap, setGap] = React.useState(0);
+  const [pipeDiam, setPipeDiam] = React.useState("");
+  const [matThick, setMatThick] = React.useState("");
+  const [overlap, setOverlap] = React.useState("");
+  const [gap, setGap] = React.useState("");
   const svgRef = React.useRef(null);
-  const outer = pipeDiam + 2 * matThick;
+  const d = parseFloat(pipeDiam) || 0;
+  const t = parseFloat(matThick) || 0;
+  const o = parseFloat(overlap) || 0;
+  const g = parseFloat(gap) || 0;
+  const outer = d + 2 * t;
   const base = Math.PI * outer;
-  const total = Math.max(0, base + overlap - gap);
+  const total = Math.max(0, base + o - g);
   React.useEffect(() => {
     drawDiagram();
   }, [pipeDiam, matThick, overlap, gap]);
@@ -1155,14 +1159,14 @@ function PipeWrapCalculator() {
     const cx = 100,
       cy = 90,
       maxR = 72;
-    const totalR_mm = pipeDiam / 2 + matThick || 1;
+    const totalR_mm = d / 2 + t || 1;
     // Lower reference radius = more "zoom" for smaller pipes
     const refR_mm = 110;
     const scale = maxR / Math.max(refR_mm, totalR_mm);
-    const rP = pipeDiam / 2 * scale;
+    const rP = d / 2 * scale;
     const rO = totalR_mm * scale;
-    const gapAngle = outer > 0 ? gap / (Math.PI * outer) * Math.PI * 2 : 0;
-    const overAngle = outer > 0 ? overlap / (Math.PI * outer) * Math.PI * 2 : 0;
+    const gapAngle = outer > 0 ? g / (Math.PI * outer) * Math.PI * 2 : 0;
+    const overAngle = outer > 0 ? o / (Math.PI * outer) * Math.PI * 2 : 0;
     const arc = (r, startA, endA) => {
       const x1 = cx + r * Math.cos(startA),
         y1 = cy + r * Math.sin(startA);
@@ -1172,14 +1176,14 @@ function PipeWrapCalculator() {
       return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${lg} 1 ${x2} ${y2} Z`;
     };
     let ty = 28;
-    const lines = [`<text x="230" y="${ty}" style="font-family:var(--mono);font-size:11px;fill:var(--color-gray-opa80)">` + `π × (${pipeDiam} + 2×${matThick}) = ${base.toFixed(1)} mm</text>`];
-    if (overlap > 0) {
+    const lines = [`<text x="230" y="${ty}" style="font-family:var(--mono);font-size:11px;fill:var(--color-gray-opa80)">` + `π × (${d} + 2×${t}) = ${base.toFixed(1)} mm</text>`];
+    if (o > 0) {
       ty += 20;
-      lines.push(`<text x="230" y="${ty}" style="font-family:var(--mono);font-size:11px;fill:var(--color-blue)">` + `+ overlap  ${overlap} mm</text>`);
+      lines.push(`<text x="230" y="${ty}" style="font-family:var(--mono);font-size:11px;fill:var(--color-blue)">` + `+ overlap  ${o} mm</text>`);
     }
-    if (gap > 0) {
+    if (g > 0) {
       ty += 20;
-      lines.push(`<text x="230" y="${ty}" style="font-family:var(--mono);font-size:11px;fill:var(--color-gray-opa80)">` + `− gap  ${gap} mm</text>`);
+      lines.push(`<text x="230" y="${ty}" style="font-family:var(--mono);font-size:11px;fill:var(--color-gray-opa80)">` + `− gap  ${g} mm</text>`);
     }
     ty += 22;
     lines.push(`<text x="230" y="${ty}" style="font-family:var(--mono);font-size:14px;font-weight:700;fill:var(--color-primary)">` + `= ${total.toFixed(1)} mm</text>`);
@@ -1199,11 +1203,11 @@ function PipeWrapCalculator() {
         fill="color-mix(in srgb, var(--color-gray-light) 80%, transparent)"
         stroke="var(--color-gray)" stroke-width="0.5"/>
 
-      ${gap > 0 ? `<path d="${arc(rO, -Math.PI / 2, -Math.PI / 2 + gapAngle)}"
+      ${g > 0 ? `<path d="${arc(rO, -Math.PI / 2, -Math.PI / 2 + gapAngle)}"
         fill="color-mix(in srgb, var(--color-gray-opa80) 40%, transparent)"
         stroke="var(--color-gray)" stroke-width="0.5"/>` : ""}
 
-      ${overlap > 0 ? `<path d="${arc(rO, -Math.PI / 2 + gapAngle, -Math.PI / 2 + gapAngle + overAngle)}"
+      ${o > 0 ? `<path d="${arc(rO, -Math.PI / 2 + gapAngle, -Math.PI / 2 + gapAngle + overAngle)}"
         fill="color-mix(in srgb, var(--color-blue) 35%, transparent)"
         stroke="var(--color-blue)" stroke-width="0.5" opacity="0.9"/>` : ""}
 
@@ -1216,23 +1220,23 @@ function PipeWrapCalculator() {
         text-anchor="middle">pipe</text>
       <text x="${cx}" y="${cy + 8}"
         style="font-family:var(--mono);font-size:9px;fill:var(--color-gray-opa80)"
-        text-anchor="middle">Ø${pipeDiam}mm</text>
+        text-anchor="middle">Ø${d}mm</text>
 
       ${lines.join("\n")}
       ${cmResult}
 
-      ${gap > 0 ? `
+      ${g > 0 ? `
         <rect x="230" y="${ty + 14}" width="9" height="9" rx="2"
           fill="color-mix(in srgb, var(--color-gray-opa80) 40%, transparent)"
           stroke="var(--color-gray)" stroke-width="0.5"/>
         <text x="243" y="${ty + 22}"
           style="font-family:var(--mono);font-size:10px;fill:var(--color-gray-opa80)">gap</text>
       ` : ""}
-      ${overlap > 0 ? `
-        <rect x="230" y="${ty + (gap > 0 ? 30 : 14)}" width="9" height="9" rx="2"
+      ${o > 0 ? `
+        <rect x="230" y="${ty + (g > 0 ? 30 : 14)}" width="9" height="9" rx="2"
           fill="color-mix(in srgb, var(--color-blue) 35%, transparent)"
           stroke="var(--color-blue)" stroke-width="0.5"/>
-        <text x="243" y="${ty + (gap > 0 ? 38 : 22)}"
+        <text x="243" y="${ty + (g > 0 ? 38 : 22)}"
           style="font-family:var(--mono);font-size:10px;fill:var(--color-blue)">overlap</text>
       ` : ""}
     `;
@@ -1299,11 +1303,7 @@ function PipeWrapCalculator() {
     direction: "row",
     gap: 3,
     className: "pw-adj-row"
-  }, /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    onClick: () => setOverlap(prev => Math.min(200, prev + 5)),
-    className: "pw-adj-btn pw-adj-btn-overlap"
-  }, "+"), /*#__PURE__*/React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "ctrl-sublbl pw-adj-label"
   }, "Overlap / extra (mm)"), /*#__PURE__*/React.createElement(RangeSlider, {
     id: "input-overlap",
@@ -1312,22 +1312,24 @@ function PipeWrapCalculator() {
     step: 5,
     value: overlap,
     className: "pw-adj-range",
-    onChange: e => setOverlap(Number(e.target.value)),
-    onReset: () => setOverlap(0)
+    onChange: e => setOverlap(Number(e.target.value))
   }), /*#__PURE__*/React.createElement("input", {
     type: "number",
-    className: "ctrl-range-val pw-adj-val",
+    className: "num-input pw-adj-val",
+    min: 0,
+    max: 200,
+    step: 1,
     value: overlap,
-    onChange: e => setOverlap(Number(e.target.value))
+    onChange: e => setOverlap(e.target.value),
+    onBlur: e => {
+      const v = e.target.value;
+      if (v === "") setOverlap("");else setOverlap(Math.max(0, Math.min(200, parseFloat(v) || 0)));
+    }
   })), /*#__PURE__*/React.createElement(Stack, {
     direction: "row",
     gap: 3,
     className: "pw-adj-row"
-  }, /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    onClick: () => setGap(prev => Math.min(200, prev + 5)),
-    className: "pw-adj-btn pw-adj-btn-gap"
-  }, "\u2212"), /*#__PURE__*/React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "ctrl-sublbl pw-adj-label"
   }, "Gap / cutout (mm)"), /*#__PURE__*/React.createElement(RangeSlider, {
     id: "input-gap",
@@ -1337,9 +1339,19 @@ function PipeWrapCalculator() {
     value: gap,
     className: "pw-adj-range",
     onChange: e => setGap(Number(e.target.value))
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "ctrl-range-val pw-adj-val"
-  }, gap))))), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "number",
+    className: "num-input pw-adj-val",
+    min: 0,
+    max: 200,
+    step: 1,
+    value: gap,
+    onChange: e => setGap(e.target.value),
+    onBlur: e => {
+      const v = e.target.value;
+      if (v === "") setGap("");else setGap(Math.max(0, Math.min(200, parseFloat(v) || 0)));
+    }
+  }))))), /*#__PURE__*/React.createElement("div", {
     className: "section"
   }, /*#__PURE__*/React.createElement("div", {
     className: "section-head"
