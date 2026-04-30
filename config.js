@@ -101,13 +101,7 @@ var PAGES = [{
   id: "concrete",
   label: "Concrete",
   title: "Concrete",
-  desc: "Concrete calculator — coming soon",
-  icon: "layer-group"
-}, {
-  id: "self-leveling-floor",
-  label: "Self-Leveling Floor",
-  title: "Self-Leveling Floor",
-  desc: "Compound consumption and bag cost estimator",
+  desc: "Concrete consumption and bag cost estimator",
   icon: "layer-group"
 }, {
   id: "golden-ratio",
