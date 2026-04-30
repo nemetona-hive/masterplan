@@ -14,16 +14,13 @@ function MainPageContent({ page, setPage, sh, setSh, sym, setSym, grItems, setGr
     return <div id="page-home" className="page-main-full"><SheetHome page={page} setPage={setPage} /></div>;
   }
   if (page === "concrete") {
-    return <div id="main-data" className="main-data"><SheetConcrete /></div>;
-  }
-  if (page === "self-leveling-floor") {
     return (
       <>
         <div id="main-head" className="main-head">
           <h2 className="title">{pageMeta?.title}</h2>
           <p className="desc">{pageMeta?.desc}</p>
         </div>
-        <div className="page-main-full"><SheetSelfLevelingFloor /></div>
+        <div className="page-main-full"><SheetConcrete /></div>
       </>
     );
   }
