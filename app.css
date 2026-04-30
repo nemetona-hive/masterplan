@@ -981,6 +981,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .ctrl-btns {
 	display: flex;
 	gap: var(--sp-1);
+	flex-wrap: wrap;
 }
 
 .ctrl-dir {
@@ -2567,6 +2568,14 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	display: flex;
 	align-items: center;
 	gap: var(--sp-3);
+	flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+	.pw-adj-label {
+		width: 100% !important;
+		margin-bottom: -4px;
+	}
 }
 
 .pw-adj-row.mb {
