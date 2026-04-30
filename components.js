@@ -969,8 +969,8 @@ function SheetConcrete() {
     }]);
   };
   const applyPreset = p => {
-    setRate(parseFloat(p.rate) || 0);
-    setBagKg(parseFloat(p.bagKg) || 0);
+    setRate(p.rate === "" ? "" : parseFloat(p.rate) || 0);
+    setBagKg(p.bagKg === "" ? "" : parseFloat(p.bagKg) || 0);
     setBagPrice(p.bagPrice);
   };
 
@@ -1535,7 +1535,7 @@ function SheetHome({
   page,
   setPage
 }) {
-  const cards = PAGES.filter(pg => !pg.noNav && !pg.parentId);
+  const items = PAGES.filter(pg => !pg.noNav);
   return /*#__PURE__*/React.createElement("div", {
     className: "home-scroll"
   }, /*#__PURE__*/React.createElement(Stack, {
@@ -1552,17 +1552,16 @@ function SheetHome({
     className: "home-divider"
   }), /*#__PURE__*/React.createElement("div", {
     className: "home-cards"
-  }, cards.map(pg => {
-    const isActive = page === pg.id || PAGES.some(p => p.parentId === pg.id && p.id === page);
-    const firstChild = PAGES.find(p => p.parentId === pg.id);
-    const target = firstChild ? firstChild.id : pg.id;
+  }, items.map(pg => {
+    if (pg.isParent) return null;
+    const isActive = page === pg.id;
     return /*#__PURE__*/React.createElement(Stack, {
       key: pg.id,
       as: "button",
       className: "home-card" + (isActive ? " home-card-active" : ""),
       gap: 3,
-      onClick: () => setPage(target),
-      onKeyDown: e => (e.key === "Enter" || e.key === " ") && setPage(target)
+      onClick: () => setPage(pg.id),
+      onKeyDown: e => (e.key === "Enter" || e.key === " ") && setPage(pg.id)
     }, /*#__PURE__*/React.createElement("span", {
       className: "home-card-icon"
     }, /*#__PURE__*/React.createElement(Icon, {
