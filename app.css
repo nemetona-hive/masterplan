@@ -765,7 +765,6 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 }
 
 .section {
-	margin-bottom: 20px;
 }
 
 .section-head {
@@ -2546,7 +2545,6 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 .pw-head-adj {
 	padding: 0 !important;
-	margin-bottom: 22px !important;
 }
 
 .pw-grid-2col {
