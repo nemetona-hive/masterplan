@@ -112,13 +112,22 @@ function RangeSlider({ id, value, onChange, min, max, step, className = "" }) {
   );
 }
 
-function NumInput({ id, label, value, onChange, step = 1, min = 1, unit }) {
-  const [local, setLocal] = React.useState(String(value));
-  React.useEffect(() => { setLocal(String(value)); }, [value]);
+function NumInput({ id, label, value, onChange, step = 1, min = 0, unit }) {
+  const [local, setLocal] = React.useState(value === "" ? "" : String(value));
+  React.useEffect(() => { setLocal(value === "" ? "" : String(value)); }, [value]);
   const commit = () => {
+    if (local === "") {
+      onChange("");
+      return;
+    }
     const n = Number(local);
-    if (!isNaN(n) && n >= min) onChange(Math.max(min, Math.round(n * 100) / 100));
-    else setLocal(String(value));
+    if (!isNaN(n)) {
+      const val = Math.max(min, Math.round(n * 100) / 100);
+      onChange(val);
+      setLocal(String(val));
+    } else {
+      setLocal(value === "" ? "" : String(value));
+    }
   };
   return (
     <div className="num-wrap">
