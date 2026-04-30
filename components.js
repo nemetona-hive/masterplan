@@ -226,29 +226,10 @@ function Collapsible({
 }
 
 // Convenience aliases for readability at call sites
-const Section = ({
-  title,
-  bg,
-  children
-}) => /*#__PURE__*/React.createElement(Collapsible, {
-  title: title,
-  bg: bg
-}, children);
-const ControlPanel = ({
-  id,
-  title,
-  open,
-  setOpen,
-  children,
-  className = ""
-}) => /*#__PURE__*/React.createElement(Collapsible, {
-  id: id,
-  title: title,
-  open: open,
-  setOpen: setOpen,
-  variant: "panel",
-  className: className
-}, children);
+const Section = props => /*#__PURE__*/React.createElement(Collapsible, props);
+const ControlPanel = props => /*#__PURE__*/React.createElement(Collapsible, _extends({}, props, {
+  variant: "panel"
+}));
 function Row({
   label,
   value,
@@ -906,9 +887,9 @@ function SheetTimesheet() {
   }, copied ? 'Copied!' : 'Copy decimal'))))));
 }
 
-// ── Self-Leveling Floor Calculator ────────────────────────────────────────────
+// ── Concrete Calculator ────────────────────────────────────────────────────────
 
-function SheetSelfLevelingFloor() {
+function SheetConcrete() {
   const [areaMode, setAreaMode] = React.useState("direct"); // "direct" | "dims"
   const [thickMode, setThickMode] = React.useState("avg"); // "avg" | "corners"
 
@@ -1150,6 +1131,7 @@ function PipeWrapCalculator() {
   const outer = d + 2 * t;
   const base = Math.PI * outer;
   const total = Math.max(0, base + o - g);
+  const [adjOpen, setAdjOpen] = React.useState(false);
   React.useEffect(() => {
     drawDiagram();
   }, [pipeDiam, matThick, overlap, gap]);
@@ -1290,12 +1272,10 @@ function PipeWrapCalculator() {
     key: p,
     className: `ctrl-dir${pipeDiam === p ? " on" : ""}`,
     onClick: () => setPipeDiam(p)
-  }, "\xD8 ", p))))))), /*#__PURE__*/React.createElement("div", {
-    className: "section"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "section-head"
-  }, /*#__PURE__*/React.createElement("span", null, "Adjustments")), /*#__PURE__*/React.createElement("div", {
-    className: "section-body"
+  }, "\xD8 ", p))))))), /*#__PURE__*/React.createElement(Section, {
+    title: "Adjustments",
+    open: adjOpen,
+    setOpen: setAdjOpen
   }, /*#__PURE__*/React.createElement(Stack, {
     className: "section-pad",
     gap: 3
@@ -1312,7 +1292,7 @@ function PipeWrapCalculator() {
     step: 5,
     value: overlap,
     className: "pw-adj-range",
-    onChange: e => setOverlap(Number(e.target.value))
+    onChange: e => setOverlap(e.target.value)
   }), /*#__PURE__*/React.createElement("input", {
     type: "number",
     className: "num-input pw-adj-val",
@@ -1338,7 +1318,7 @@ function PipeWrapCalculator() {
     step: 5,
     value: gap,
     className: "pw-adj-range",
-    onChange: e => setGap(Number(e.target.value))
+    onChange: e => setGap(e.target.value)
   }), /*#__PURE__*/React.createElement("input", {
     type: "number",
     className: "num-input pw-adj-val",
@@ -1351,7 +1331,7 @@ function PipeWrapCalculator() {
       const v = e.target.value;
       if (v === "") setGap("");else setGap(Math.max(0, Math.min(200, parseFloat(v) || 0)));
     }
-  }))))), /*#__PURE__*/React.createElement("div", {
+  })))), /*#__PURE__*/React.createElement("div", {
     className: "section"
   }, /*#__PURE__*/React.createElement("div", {
     className: "section-head"
@@ -1438,15 +1418,6 @@ function SheetHome({
   }), /*#__PURE__*/React.createElement("div", {
     className: "home-footer"
   }, "NEMETONA HIVE")));
-}
-function SheetConcrete() {
-  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-    id: "data-control",
-    className: "data-control"
-  }), /*#__PURE__*/React.createElement("div", {
-    id: "data-preview",
-    className: "data-preview"
-  }));
 }
 function SheetGoldenRatio({
   grItems: baseItems,
@@ -2324,12 +2295,6 @@ function MainPageContent({
     }));
   }
   if (page === "concrete") {
-    return /*#__PURE__*/React.createElement("div", {
-      id: "main-data",
-      className: "main-data"
-    }, /*#__PURE__*/React.createElement(SheetConcrete, null));
-  }
-  if (page === "self-leveling-floor") {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
       id: "main-head",
       className: "main-head"
@@ -2339,7 +2304,7 @@ function MainPageContent({
       className: "desc"
     }, pageMeta?.desc)), /*#__PURE__*/React.createElement("div", {
       className: "page-main-full"
-    }, /*#__PURE__*/React.createElement(SheetSelfLevelingFloor, null)));
+    }, /*#__PURE__*/React.createElement(SheetConcrete, null)));
   }
   if (page === "timesheet") {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
