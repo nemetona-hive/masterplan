@@ -134,16 +134,26 @@ function NumInput({
   value,
   onChange,
   step = 1,
-  min = 1,
+  min = 0,
   unit
 }) {
-  const [local, setLocal] = React.useState(String(value));
+  const [local, setLocal] = React.useState(value === "" ? "" : String(value));
   React.useEffect(() => {
-    setLocal(String(value));
+    setLocal(value === "" ? "" : String(value));
   }, [value]);
   const commit = () => {
+    if (local === "") {
+      onChange("");
+      return;
+    }
     const n = Number(local);
-    if (!isNaN(n) && n >= min) onChange(Math.max(min, Math.round(n * 100) / 100));else setLocal(String(value));
+    if (!isNaN(n)) {
+      const val = Math.max(min, Math.round(n * 100) / 100);
+      onChange(val);
+      setLocal(String(val));
+    } else {
+      setLocal(value === "" ? "" : String(value));
+    }
   };
   return /*#__PURE__*/React.createElement("div", {
     className: "num-wrap"
@@ -899,16 +909,70 @@ function SheetConcrete() {
   const [widMm, setWidMm] = React.useState(1000);
 
   // Thickness inputs
-  const [avgH, setAvgH] = React.useState(10);
-  const [ca, setCa] = React.useState(10);
-  const [cb, setCb] = React.useState(15);
-  const [cc, setCc] = React.useState(8);
-  const [cd, setCd] = React.useState(12);
+  const [avgH, setAvgH] = React.useState("");
+  const [ca, setCa] = React.useState("");
+  const [cb, setCb] = React.useState("");
+  const [cc, setCc] = React.useState("");
+  const [cd, setCd] = React.useState("");
 
   // Consumption & packaging
-  const [rate, setRate] = React.useState(1.7);
-  const [bagKg, setBagKg] = React.useState(25);
+  const [rate, setRate] = React.useState("");
+  const [bagKg, setBagKg] = React.useState("");
   const [bagPrice, setBagPrice] = React.useState("");
+
+  // Product presets (quick fill)
+  const [presets, setPresets] = React.useState([{
+    name: "weber S-100",
+    rate: 2,
+    bagKg: 25,
+    bagPrice: 4
+  }, {
+    name: "weberfloor 200 RAPID",
+    rate: 1.7,
+    bagKg: 20,
+    bagPrice: 15
+  }, {
+    name: "",
+    rate: 1.7,
+    bagKg: 25,
+    bagPrice: ""
+  }]);
+  const resetAll = () => {
+    setAreaMode("direct");
+    setThickMode("avg");
+    setAreaManual("");
+    setLenMm(1000);
+    setWidMm(1000);
+    setAvgH("");
+    setCa("");
+    setCb("");
+    setCc("");
+    setCd("");
+    setRate("");
+    setBagKg("");
+    setBagPrice("");
+  };
+  const updatePreset = (idx, field, val) => {
+    const next = [...presets];
+    next[idx] = {
+      ...next[idx],
+      [field]: val
+    };
+    setPresets(next);
+  };
+  const addPreset = () => {
+    setPresets([...presets, {
+      name: "",
+      rate: 1.7,
+      bagKg: 25,
+      bagPrice: ""
+    }]);
+  };
+  const applyPreset = p => {
+    setRate(parseFloat(p.rate) || 0);
+    setBagKg(parseFloat(p.bagKg) || 0);
+    setBagPrice(p.bagPrice);
+  };
 
   // ── Derived values ─────────────────────────────────────────────────────────
 
@@ -916,14 +980,18 @@ function SheetConcrete() {
   const computedDimsArea = lenMm * widMm / 1_000_000;
   let computedAvgH, diff;
   if (thickMode === "avg") {
-    computedAvgH = avgH;
+    computedAvgH = parseFloat(avgH) || 0;
     diff = null;
   } else {
-    computedAvgH = (ca + cb + cc + cd) / 4;
-    diff = Math.max(ca, cb, cc, cd) - Math.min(ca, cb, cc, cd);
+    const va = parseFloat(ca) || 0;
+    const vb = parseFloat(cb) || 0;
+    const vc = parseFloat(cc) || 0;
+    const vd = parseFloat(cd) || 0;
+    computedAvgH = (va + vb + vc + vd) / 4;
+    diff = Math.max(va, vb, vc, vd) - Math.min(va, vb, vc, vd);
   }
-  const mass = area * computedAvgH * rate;
-  const bags = bagKg > 0 ? Math.ceil(mass / bagKg) : 0;
+  const mass = area * computedAvgH * (parseFloat(rate) || 0);
+  const bags = (parseFloat(bagKg) || 0) > 0 ? Math.ceil(mass / (parseFloat(bagKg) || 0)) : 0;
   const totalPrice = bags > 0 && parseFloat(bagPrice) > 0 ? bags * parseFloat(bagPrice) : null;
   const fmtEur = n => n.toLocaleString("et-EE", {
     minimumFractionDigits: 2,
@@ -955,7 +1023,7 @@ function SheetConcrete() {
   }, "Room dimensions")), areaMode === "direct" && /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-area",
     label: "Area (m\xB2)",
-    value: parseFloat(areaManual) || 0,
+    value: areaManual,
     min: 0,
     step: 0.1,
     unit: "m\xB2",
@@ -1046,6 +1114,82 @@ function SheetConcrete() {
     unit: "mm",
     onChange: setCd
   }))))), /*#__PURE__*/React.createElement(Section, {
+    title: "Product Presets"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "section-pad",
+    gap: 4
+  }, /*#__PURE__*/React.createElement(Stack, {
+    gap: 3
+  }, presets.map((p, idx) => /*#__PURE__*/React.createElement("div", {
+    key: idx,
+    className: "pw-preset-row"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "pw-preset-fields"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "num-wrap"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: `num-lbl ${idx > 0 ? "pw-preset-lbl-hide" : ""}`
+  }, "Product Name"), /*#__PURE__*/React.createElement("input", {
+    id: `preset-name-${idx}`,
+    name: `preset-name-${idx}`,
+    type: "text",
+    className: "num-input",
+    placeholder: "Product name...",
+    value: p.name,
+    onChange: e => updatePreset(idx, "name", e.target.value)
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "num-wrap"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: `num-lbl ${idx > 0 ? "pw-preset-lbl-hide" : ""}`
+  }, "kg/m\xB2\xB7mm"), /*#__PURE__*/React.createElement("input", {
+    id: `preset-rate-${idx}`,
+    name: `preset-rate-${idx}`,
+    type: "number",
+    className: "num-input",
+    value: p.rate,
+    onChange: e => updatePreset(idx, "rate", e.target.value)
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "num-wrap"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: `num-lbl ${idx > 0 ? "pw-preset-lbl-hide" : ""}`
+  }, "Bag kg"), /*#__PURE__*/React.createElement("input", {
+    id: `preset-bagkg-${idx}`,
+    name: `preset-bagkg-${idx}`,
+    type: "number",
+    className: "num-input",
+    value: p.bagKg,
+    onChange: e => updatePreset(idx, "bagKg", e.target.value)
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "num-wrap"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: `num-lbl ${idx > 0 ? "pw-preset-lbl-hide" : ""}`
+  }, "Price \u20AC"), /*#__PURE__*/React.createElement("input", {
+    id: `preset-price-${idx}`,
+    name: `preset-price-${idx}`,
+    type: "number",
+    className: "num-input",
+    value: p.bagPrice,
+    onChange: e => updatePreset(idx, "bagPrice", e.target.value)
+  }))), /*#__PURE__*/React.createElement("button", {
+    className: "ctrl-dir on pw-preset-apply",
+    onClick: () => applyPreset(p),
+    title: "Apply these values to the calculator"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "check"
+  }), " Apply")))), /*#__PURE__*/React.createElement(Stack, {
+    direction: "row",
+    gap: 2
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "ctrl-dir",
+    onClick: addPreset
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "plus"
+  }), " Add Row")), /*#__PURE__*/React.createElement("div", {
+    className: "pw-formula-text",
+    style: {
+      opacity: 0.7
+    }
+  }, "Fill product data above and click \"Apply\" to update the calculator values."))), /*#__PURE__*/React.createElement(Section, {
     title: "Consumption & Packaging"
   }, /*#__PURE__*/React.createElement(Stack, {
     className: "section-pad",
@@ -1070,7 +1214,7 @@ function SheetConcrete() {
   })), /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-bagprice",
     label: "Bag price (\u20AC)",
-    value: parseFloat(bagPrice) || 0,
+    value: bagPrice,
     min: 0,
     step: 0.01,
     onChange: v => setBagPrice(String(v))
@@ -1108,7 +1252,22 @@ function SheetConcrete() {
     className: "pw-formula-wrap"
   }, /*#__PURE__*/React.createElement("span", {
     className: "pw-formula-text"
-  }, "mass = area \xD7 avg thickness \xD7 consumption rate")))), /*#__PURE__*/React.createElement("div", {
+  }, "mass = area \xD7 avg thickness \xD7 consumption rate")), /*#__PURE__*/React.createElement(Stack, {
+    direction: "row",
+    gap: 2,
+    style: {
+      marginTop: "1rem"
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "ctrl-dir",
+    onClick: resetAll,
+    style: {
+      width: "auto",
+      padding: "8px 16px"
+    }
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "refresh-cw"
+  }), " Global Reset")))), /*#__PURE__*/React.createElement("div", {
     className: "pw-formula-wrap",
     style: {
       paddingBottom: "1rem"
@@ -1294,6 +1453,8 @@ function PipeWrapCalculator() {
     className: "pw-adj-range",
     onChange: e => setOverlap(e.target.value)
   }), /*#__PURE__*/React.createElement("input", {
+    id: "input-overlap-val",
+    name: "input-overlap-val",
     type: "number",
     className: "num-input pw-adj-val",
     min: 0,
@@ -1320,6 +1481,8 @@ function PipeWrapCalculator() {
     className: "pw-adj-range",
     onChange: e => setGap(e.target.value)
   }), /*#__PURE__*/React.createElement("input", {
+    id: "input-gap-val",
+    name: "input-gap-val",
     type: "number",
     className: "num-input pw-adj-val",
     min: 0,
