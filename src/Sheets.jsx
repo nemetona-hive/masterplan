@@ -44,14 +44,6 @@ function SheetHome({ page, setPage }) {
   );
 }
 
-function SheetConcrete() {
-  return (
-    <>
-      <div id="data-control" className="data-control" />
-      <div id="data-preview" className="data-preview" />
-    </>
-  );
-}
 
 function SheetGoldenRatio({ grItems: baseItems, setGrItems: setBaseItems }) {
   const [baseOpen, setBaseOpen] = React.useState(true);
