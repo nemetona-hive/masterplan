@@ -764,8 +764,6 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	margin-bottom: 22px;
 }
 
-.section {
-}
 
 .section-head {
 	border-radius: 6px 6px 0 0;
@@ -849,7 +847,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	padding: 6px 8px;
 	flex: 1;
 	min-width: 0;
-	width: 0;
+	width: 100%;
 }
 
 .num-btn {
@@ -2612,6 +2610,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 }
 .pw-adj-val {
 	-moz-appearance: textfield;
+	appearance: textfield;
 }
 
 .pw-res-wrap {
@@ -2638,6 +2637,52 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	font-family: var(--mono);
 	font-size: var(--fs-sm);
 	color: var(--color-gray-opa80);
+}
+
+/* Product Preset Row */
+.pw-preset-row {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sp-3);
+	padding-bottom: var(--sp-4);
+	border-bottom: 1px solid color-mix(in srgb, var(--color-gray) 15%, transparent);
+}
+
+.pw-preset-row:last-child {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.pw-preset-fields {
+	display: grid;
+	grid-template-columns: 2fr 1fr 1fr 1fr;
+	gap: var(--sp-2);
+}
+
+.pw-preset-apply {
+	align-self: flex-end;
+	padding: 8px 24px !important;
+	height: auto !important;
+	font-weight: var(--fw-bold) !important;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.pw-preset-lbl-hide {
+	visibility: hidden;
+}
+
+@media (max-width: 600px) {
+	.pw-preset-fields {
+		grid-template-columns: 1fr 1fr;
+	}
+	.pw-preset-apply {
+		align-self: stretch;
+	}
+	.pw-preset-lbl-hide {
+		visibility: visible;
+		display: block;
+	}
 }
 
 
