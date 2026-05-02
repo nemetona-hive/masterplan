@@ -864,6 +864,12 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	color: var(--color-primary);
 	font-family: var(--mono);
 	font-size: var(--fs-md);
+	transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.num-btn--ok {
+	border-color: #5da06a;
+	color: #6fbf73;
 }
 
 .num-btn svg {
@@ -1798,6 +1804,13 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 	gap: var(--sp-3);
+}
+
+.home-cards-sep {
+	grid-column: 1 / -1;
+	height: 1px;
+	background: color-mix(in srgb, var(--color-gray-light) 30%, transparent);
+	margin: var(--sp-1) 0;
 }
 
 .home-card {
