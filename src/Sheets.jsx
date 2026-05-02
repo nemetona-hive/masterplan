@@ -19,17 +19,20 @@ function SheetHome({ page, setPage }) {
 
             const isActive = page === pg.id;
             return (
-              <Stack key={pg.id}
-                as="button"
-                className={"home-card" + (isActive ? " home-card-active" : "")}
-                gap={3}
-                onClick={() => setPage(pg.id)}
-                onKeyDown={e => (e.key === "Enter" || e.key === " ") && setPage(pg.id)}>
-                <span className="home-card-icon"><Icon name={pg.icon} /></span>
-                <span className="home-card-title">{pg.title}</span>
-                <span className="home-card-desc">{pg.desc}</span>
-                <span className="home-card-arrow"><Icon name="chevron-right" /></span>
-              </Stack>
+              <React.Fragment key={pg.id}>
+                {pg.id === "timesheet" && <div className="home-cards-sep" />}
+                <Stack
+                  as="button"
+                  className={"home-card" + (isActive ? " home-card-active" : "")}
+                  gap={3}
+                  onClick={() => setPage(pg.id)}
+                  onKeyDown={e => (e.key === "Enter" || e.key === " ") && setPage(pg.id)}>
+                  <span className="home-card-icon"><Icon name={pg.icon} /></span>
+                  <span className="home-card-title">{pg.title}</span>
+                  <span className="home-card-desc">{pg.desc}</span>
+                  <span className="home-card-arrow"><Icon name="chevron-right" /></span>
+                </Stack>
+              </React.Fragment>
             );
           })}
         </div>
@@ -49,6 +52,19 @@ function SheetGoldenRatio({ grItems: baseItems, setGrItems: setBaseItems }) {
   const link = useLinkedCardHighlight("golden-ratio");
   const PHI = 1.6180339887499;
 
+  const [committedIds, setCommittedIds] = React.useState(() => new Set());
+  const commitTimers = React.useRef({});
+
+  const flashCommit = id => {
+    setCommittedIds(prev => new Set([...prev, id]));
+    clearTimeout(commitTimers.current[id]);
+    commitTimers.current[id] = setTimeout(() => {
+      setCommittedIds(prev => { const next = new Set(prev); next.delete(id); return next; });
+    }, 600);
+  };
+
+  React.useEffect(() => () => Object.values(commitTimers.current).forEach(clearTimeout), []);
+
   const setItemField = (id, key, value) => {
     setBaseItems(items => items.map(item => (item.id === id ? { ...item, [key]: value } : item)));
   };
@@ -67,7 +83,7 @@ function SheetGoldenRatio({ grItems: baseItems, setGrItems: setBaseItems }) {
     )));
   };
 
-  const commitBaseValue = id => {
+  const commitBaseValue = (id, flash = false) => {
     setBaseItems(items => items.map(item => {
       if (item.id !== id) return item;
       const raw = String(item.value ?? "").trim().replace(",", ".");
@@ -77,6 +93,7 @@ function SheetGoldenRatio({ grItems: baseItems, setGrItems: setBaseItems }) {
       const rounded = Math.max(1, Math.round(n * 100) / 100);
       return { ...item, value: String(rounded) };
     }));
+    if (flash) flashCommit(id);
   };
 
   const buildSteps = base => {
@@ -122,10 +139,14 @@ function SheetGoldenRatio({ grItems: baseItems, setGrItems: setBaseItems }) {
                           min={1}
                           step={10}
                           onChange={e => setItemField(item.id, "value", e.target.value)}
-                          onBlur={() => commitBaseValue(item.id)}
+                          onBlur={() => commitBaseValue(item.id, false)}
+                          onKeyDown={e => e.key === "Enter" && commitBaseValue(item.id, true)}
                         />
-                        <button type="button" className="num-btn" onClick={() => commitBaseValue(item.id)}>
-                          <Icon name="corner-down-left" />
+                        <button
+                          type="button"
+                          className={"num-btn" + (committedIds.has(item.id) ? " num-btn--ok" : "")}
+                          onClick={() => commitBaseValue(item.id, true)}>
+                          <Icon name={committedIds.has(item.id) ? "check" : "corner-down-left"} />
                         </button>
                       </div>
                     </Stack>
