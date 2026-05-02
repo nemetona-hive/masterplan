@@ -2759,3 +2759,28 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	border: 1px solid var(--color-gray-light);
 }
 
+/* Concrete Side-by-Side Layout */
+.concrete-split-wrap {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	gap: var(--sp-5);
+	align-items: flex-start;
+}
+
+.concrete-split-divider {
+	width: 1px;
+	background: color-mix(in srgb, var(--color-gray-light) 25%, transparent);
+	align-self: stretch;
+}
+
+@media (max-width: 768px) {
+	.concrete-split-wrap {
+		grid-template-columns: 1fr;
+		gap: var(--sp-4);
+	}
+	.concrete-split-divider {
+		height: 1px;
+		width: 100%;
+	}
+}
+
