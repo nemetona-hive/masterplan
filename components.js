@@ -138,23 +138,31 @@ function NumInput({
   unit
 }) {
   const [local, setLocal] = React.useState(value === "" ? "" : String(value));
+  const [committed, setCommitted] = React.useState(false);
+  const commitTimer = React.useRef(null);
   React.useEffect(() => {
     setLocal(value === "" ? "" : String(value));
   }, [value]);
-  const commit = () => {
+  const commit = (flash = false) => {
     if (local === "") {
       onChange("");
-      return;
-    }
-    const n = Number(local);
-    if (!isNaN(n)) {
-      const val = Math.max(min, Math.round(n * 100) / 100);
-      onChange(val);
-      setLocal(String(val));
     } else {
-      setLocal(value === "" ? "" : String(value));
+      const n = Number(local);
+      if (!isNaN(n)) {
+        const val = Math.max(min, Math.round(n * 100) / 100);
+        onChange(val);
+        setLocal(String(val));
+      } else {
+        setLocal(value === "" ? "" : String(value));
+      }
+    }
+    if (flash) {
+      setCommitted(true);
+      clearTimeout(commitTimer.current);
+      commitTimer.current = setTimeout(() => setCommitted(false), 600);
     }
   };
+  React.useEffect(() => () => clearTimeout(commitTimer.current), []);
   return /*#__PURE__*/React.createElement("div", {
     className: "num-wrap"
   }, /*#__PURE__*/React.createElement("span", {
@@ -170,15 +178,15 @@ function NumInput({
     min: min,
     step: step,
     onChange: e => setLocal(e.target.value),
-    onKeyDown: e => e.key === "Enter" && commit(),
-    onBlur: commit
+    onKeyDown: e => e.key === "Enter" && commit(true),
+    onBlur: () => commit(false)
   }), unit && /*#__PURE__*/React.createElement("span", {
     className: "data-row-unit num-unit-span"
   }, unit), /*#__PURE__*/React.createElement("button", {
-    className: "num-btn",
-    onClick: commit
+    className: "num-btn" + (committed ? " num-btn--ok" : ""),
+    onClick: () => commit(true)
   }, /*#__PURE__*/React.createElement(Icon, {
-    name: "corner-down-left"
+    name: committed ? "check" : "corner-down-left"
   }))));
 }
 function SLabel({
@@ -1553,8 +1561,11 @@ function SheetHome({
   }, items.map(pg => {
     if (pg.isParent) return null;
     const isActive = page === pg.id;
-    return /*#__PURE__*/React.createElement(Stack, {
-      key: pg.id,
+    return /*#__PURE__*/React.createElement(React.Fragment, {
+      key: pg.id
+    }, pg.id === "timesheet" && /*#__PURE__*/React.createElement("div", {
+      className: "home-cards-sep"
+    }), /*#__PURE__*/React.createElement(Stack, {
       as: "button",
       className: "home-card" + (isActive ? " home-card-active" : ""),
       gap: 3,
@@ -1572,7 +1583,7 @@ function SheetHome({
       className: "home-card-arrow"
     }, /*#__PURE__*/React.createElement(Icon, {
       name: "chevron-right"
-    })));
+    }))));
   })), /*#__PURE__*/React.createElement("div", {
     className: "home-divider"
   }), /*#__PURE__*/React.createElement("div", {
@@ -1586,6 +1597,20 @@ function SheetGoldenRatio({
   const [baseOpen, setBaseOpen] = React.useState(true);
   const link = useLinkedCardHighlight("golden-ratio");
   const PHI = 1.6180339887499;
+  const [committedIds, setCommittedIds] = React.useState(() => new Set());
+  const commitTimers = React.useRef({});
+  const flashCommit = id => {
+    setCommittedIds(prev => new Set([...prev, id]));
+    clearTimeout(commitTimers.current[id]);
+    commitTimers.current[id] = setTimeout(() => {
+      setCommittedIds(prev => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }, 600);
+  };
+  React.useEffect(() => () => Object.values(commitTimers.current).forEach(clearTimeout), []);
   const setItemField = (id, key, value) => {
     setBaseItems(items => items.map(item => item.id === id ? {
       ...item,
@@ -1610,7 +1635,7 @@ function SheetGoldenRatio({
       savedCommitted: false
     } : item));
   };
-  const commitBaseValue = id => {
+  const commitBaseValue = (id, flash = false) => {
     setBaseItems(items => items.map(item => {
       if (item.id !== id) return item;
       const raw = String(item.value ?? "").trim().replace(",", ".");
@@ -1629,6 +1654,7 @@ function SheetGoldenRatio({
         value: String(rounded)
       };
     }));
+    if (flash) flashCommit(id);
   };
   const buildSteps = base => {
     const rows = [];
@@ -1683,13 +1709,14 @@ function SheetGoldenRatio({
       min: 1,
       step: 10,
       onChange: e => setItemField(item.id, "value", e.target.value),
-      onBlur: () => commitBaseValue(item.id)
+      onBlur: () => commitBaseValue(item.id, false),
+      onKeyDown: e => e.key === "Enter" && commitBaseValue(item.id, true)
     }), /*#__PURE__*/React.createElement("button", {
       type: "button",
-      className: "num-btn",
-      onClick: () => commitBaseValue(item.id)
+      className: "num-btn" + (committedIds.has(item.id) ? " num-btn--ok" : ""),
+      onClick: () => commitBaseValue(item.id, true)
     }, /*#__PURE__*/React.createElement(Icon, {
-      name: "corner-down-left"
+      name: committedIds.has(item.id) ? "check" : "corner-down-left"
     })))), /*#__PURE__*/React.createElement(Stack, {
       gap: 1,
       className: "ctrl-lbl"
