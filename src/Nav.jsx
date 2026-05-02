@@ -11,7 +11,7 @@ function NavButton({ page, item, navOpen, setPage, openGroups, setOpenGroups, on
   const isOpen      = isGroup && hasChildren && !!openGroups[item.id];
   const childActive = isGroup && PAGES.some(pg => pg.parentId === item.id && pg.id === page);
   const isActive    = isNavPageActive(page, item);
-  const isGroupActive = isGroup && hasChildren && isOpen && (page === "home" || childActive);
+  const isGroupActive = isGroup && hasChildren && isOpen && childActive;
 
   const classes = ["nav-btn"];
   if (isActive || isGroupActive) classes.push("active");
