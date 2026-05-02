@@ -135,7 +135,8 @@ function NumInput({
   onChange,
   step = 1,
   min = 0,
-  unit
+  unit,
+  req = false
 }) {
   const [local, setLocal] = React.useState(value === "" ? "" : String(value));
   const [committed, setCommitted] = React.useState(false);
@@ -172,7 +173,7 @@ function NumInput({
   }, /*#__PURE__*/React.createElement("input", {
     id: id,
     name: id,
-    className: "num-input",
+    className: "num-input" + (req ? " num-input--req" : ""),
     type: "number",
     value: local,
     min: min,
@@ -981,28 +982,34 @@ function SheetConcrete() {
   };
 
   // ── Derived values ─────────────────────────────────────────────────────────
-
-  const area = areaMode === "dims" ? (parseFloat(lenMm) || 0) * (parseFloat(widMm) || 0) / 1_000_000 : parseFloat(areaManual) || 0;
-  const computedDimsArea = (parseFloat(lenMm) || 0) * (parseFloat(widMm) || 0) / 1_000_000;
+  const parseNum = v => {
+    if (v === "" || v === null || v === undefined) return 0;
+    const n = parseFloat(v);
+    return isNaN(n) ? 0 : n;
+  };
+  const area = areaMode === "dims" ? parseNum(lenMm) * parseNum(widMm) / 1_000_000 : parseNum(areaManual);
+  const computedDimsArea = parseNum(lenMm) * parseNum(widMm) / 1_000_000;
   let computedAvgH, diff;
   if (thickMode === "avg") {
-    computedAvgH = parseFloat(avgH) || 0;
+    computedAvgH = parseNum(avgH);
     diff = null;
   } else {
-    const va = parseFloat(ca) || 0;
-    const vb = parseFloat(cb) || 0;
-    const vc = parseFloat(cc) || 0;
-    const vd = parseFloat(cd) || 0;
+    const va = parseNum(ca);
+    const vb = parseNum(cb);
+    const vc = parseNum(cc);
+    const vd = parseNum(cd);
     computedAvgH = (va + vb + vc + vd) / 4;
     diff = Math.max(va, vb, vc, vd) - Math.min(va, vb, vc, vd);
   }
-  const mass = area * computedAvgH * (parseFloat(rate) || 0);
-  const bags = (parseFloat(bagKg) || 0) > 0 ? Math.ceil(mass / (parseFloat(bagKg) || 0)) : 0;
-  const totalPrice = bags > 0 && parseFloat(bagPrice) > 0 ? bags * parseFloat(bagPrice) : null;
+  const mass = area * computedAvgH * parseNum(rate);
+  const bags = parseNum(bagKg) > 0 ? Math.ceil(mass / parseNum(bagKg)) : 0;
+  const bPrice = parseNum(bagPrice);
+  const totalPrice = bags > 0 && bPrice > 0 ? bags * bPrice : null;
   const fmtEur = n => n.toLocaleString("et-EE", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
+  const hasAnyInput = Boolean(areaManual || lenMm || widMm || avgH || ca || cb || cc || cd || rate || bagKg || bagPrice);
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
@@ -1036,7 +1043,8 @@ function SheetConcrete() {
     min: 0,
     step: 0.1,
     unit: "m\xB2",
-    onChange: v => setAreaManual(String(v))
+    onChange: v => setAreaManual(String(v)),
+    req: hasAnyInput && !areaManual
   }), areaMode === "dims" && /*#__PURE__*/React.createElement(Stack, {
     gap: 3
   }, /*#__PURE__*/React.createElement("div", {
@@ -1051,7 +1059,8 @@ function SheetConcrete() {
     min: 1,
     step: 10,
     unit: "mm",
-    onChange: setLenMm
+    onChange: setLenMm,
+    req: hasAnyInput && !lenMm
   }), /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-wid",
     label: "Width (mm)",
@@ -1059,7 +1068,8 @@ function SheetConcrete() {
     min: 1,
     step: 10,
     unit: "mm",
-    onChange: setWidMm
+    onChange: setWidMm,
+    req: hasAnyInput && !widMm
   })), /*#__PURE__*/React.createElement(Row, {
     label: "Calculated area",
     value: computedDimsArea.toFixed(1),
@@ -1087,7 +1097,8 @@ function SheetConcrete() {
     min: 1,
     step: 1,
     unit: "mm",
-    onChange: setAvgH
+    onChange: setAvgH,
+    req: hasAnyInput && !avgH
   }), thickMode === "corners" && /*#__PURE__*/React.createElement(Stack, {
     gap: 3
   }, /*#__PURE__*/React.createElement("div", {
@@ -1102,7 +1113,8 @@ function SheetConcrete() {
     min: 0,
     step: 1,
     unit: "mm",
-    onChange: setCa
+    onChange: setCa,
+    req: hasAnyInput && !ca
   }), /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-cb",
     label: "Corner B (mm)",
@@ -1110,7 +1122,8 @@ function SheetConcrete() {
     min: 0,
     step: 1,
     unit: "mm",
-    onChange: setCb
+    onChange: setCb,
+    req: hasAnyInput && !cb
   })), /*#__PURE__*/React.createElement("div", {
     className: "pw-grid-2col",
     style: {
@@ -1123,7 +1136,8 @@ function SheetConcrete() {
     min: 0,
     step: 1,
     unit: "mm",
-    onChange: setCc
+    onChange: setCc,
+    req: hasAnyInput && !cc
   }), /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-cd",
     label: "Corner D (mm)",
@@ -1131,7 +1145,8 @@ function SheetConcrete() {
     min: 0,
     step: 1,
     unit: "mm",
-    onChange: setCd
+    onChange: setCd,
+    req: hasAnyInput && !cd
   }))))))), /*#__PURE__*/React.createElement(Section, {
     title: "Product Presets"
   }, /*#__PURE__*/React.createElement(Stack, {
@@ -1189,13 +1204,17 @@ function SheetConcrete() {
     className: "num-input",
     value: p.bagPrice,
     onChange: e => updatePreset(idx, "bagPrice", e.target.value)
-  }))), /*#__PURE__*/React.createElement("button", {
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "num-wrap"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: `num-lbl ${idx > 0 ? "pw-preset-lbl-hide" : ""}`
+  }, "\xA0"), /*#__PURE__*/React.createElement("button", {
     className: "ctrl-dir on pw-preset-apply",
     onClick: () => applyPreset(p),
     title: "Apply these values to the calculator"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "check"
-  }), " Apply")))), /*#__PURE__*/React.createElement(Stack, {
+  }), " Apply")))))), /*#__PURE__*/React.createElement(Stack, {
     direction: "row",
     gap: 2
   }, /*#__PURE__*/React.createElement("button", {
@@ -1221,7 +1240,8 @@ function SheetConcrete() {
     value: rate,
     min: 0.1,
     step: 0.1,
-    onChange: setRate
+    onChange: setRate,
+    req: hasAnyInput && !rate
   }), /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-bagkg",
     label: "Bag weight (kg)",
@@ -1229,7 +1249,8 @@ function SheetConcrete() {
     min: 1,
     step: 1,
     unit: "kg",
-    onChange: setBagKg
+    onChange: setBagKg,
+    req: hasAnyInput && !bagKg
   })), /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-bagprice",
     label: "Bag price (\u20AC)",
@@ -1256,13 +1277,13 @@ function SheetConcrete() {
     unit: "mm"
   }), /*#__PURE__*/React.createElement(Row, {
     label: "Total mix mass",
-    value: mass > 0 ? mass.toFixed(1) : "—",
-    unit: mass > 0 ? "kg" : ""
+    value: mass > 0 ? mass.toFixed(1) : "0.0",
+    unit: "kg"
   }), /*#__PURE__*/React.createElement(Row, {
     label: "Bags needed",
-    value: bags || "—",
-    unit: bags ? "pcs" : "",
-    hi: true
+    value: bags || "0",
+    unit: "pcs",
+    hi: bags > 0
   }), /*#__PURE__*/React.createElement(Row, {
     label: "Total price",
     value: totalPrice !== null ? "€\u202f" + fmtEur(totalPrice) : "—",
