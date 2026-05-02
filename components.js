@@ -1012,9 +1012,10 @@ function SheetConcrete() {
     className: "page-inner",
     gap: 5
   }, /*#__PURE__*/React.createElement(Section, {
-    title: "Floor Area"
+    title: "Area & Thickness"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "concrete-split-wrap section-pad"
   }, /*#__PURE__*/React.createElement(Stack, {
-    className: "section-pad",
     gap: 3
   }, /*#__PURE__*/React.createElement(Stack, {
     direction: "row",
@@ -1026,7 +1027,9 @@ function SheetConcrete() {
   }, "Enter area"), /*#__PURE__*/React.createElement("button", {
     className: "ctrl-dir" + (areaMode === "dims" ? " on" : ""),
     onClick: () => setAreaMode("dims")
-  }, "Room dimensions")), areaMode === "direct" && /*#__PURE__*/React.createElement(NumInput, {
+  }, "Room dimensions")), /*#__PURE__*/React.createElement("div", {
+    className: "concrete-split-content"
+  }, areaMode === "direct" && /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-area",
     label: "Area (m\xB2)",
     value: areaManual,
@@ -1037,7 +1040,10 @@ function SheetConcrete() {
   }), areaMode === "dims" && /*#__PURE__*/React.createElement(Stack, {
     gap: 3
   }, /*#__PURE__*/React.createElement("div", {
-    className: "pw-grid-2col"
+    className: "pw-grid-2col",
+    style: {
+      marginBottom: 0
+    }
   }, /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-len",
     label: "Length (mm)",
@@ -1058,10 +1064,9 @@ function SheetConcrete() {
     label: "Calculated area",
     value: computedDimsArea.toFixed(1),
     unit: "m\xB2"
-  })))), /*#__PURE__*/React.createElement(Section, {
-    title: "Layer Thickness"
-  }, /*#__PURE__*/React.createElement(Stack, {
-    className: "section-pad",
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "concrete-split-divider"
+  }), /*#__PURE__*/React.createElement(Stack, {
     gap: 3
   }, /*#__PURE__*/React.createElement(Stack, {
     direction: "row",
@@ -1073,7 +1078,9 @@ function SheetConcrete() {
   }, "Average thickness"), /*#__PURE__*/React.createElement("button", {
     className: "ctrl-dir" + (thickMode === "corners" ? " on" : ""),
     onClick: () => setThickMode("corners")
-  }, "4 corners")), thickMode === "avg" && /*#__PURE__*/React.createElement(NumInput, {
+  }, "4 corners")), /*#__PURE__*/React.createElement("div", {
+    className: "concrete-split-content"
+  }, thickMode === "avg" && /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-havg",
     label: "Average thickness (mm)",
     value: avgH,
@@ -1084,7 +1091,10 @@ function SheetConcrete() {
   }), thickMode === "corners" && /*#__PURE__*/React.createElement(Stack, {
     gap: 3
   }, /*#__PURE__*/React.createElement("div", {
-    className: "pw-grid-2col"
+    className: "pw-grid-2col",
+    style: {
+      marginBottom: "var(--sp-3)"
+    }
   }, /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-ca",
     label: "Corner A (mm)",
@@ -1102,7 +1112,10 @@ function SheetConcrete() {
     unit: "mm",
     onChange: setCb
   })), /*#__PURE__*/React.createElement("div", {
-    className: "pw-grid-2col"
+    className: "pw-grid-2col",
+    style: {
+      marginBottom: 0
+    }
   }, /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-cc",
     label: "Corner C (mm)",
@@ -1119,7 +1132,7 @@ function SheetConcrete() {
     step: 1,
     unit: "mm",
     onChange: setCd
-  }))))), /*#__PURE__*/React.createElement(Section, {
+  }))))))), /*#__PURE__*/React.createElement(Section, {
     title: "Product Presets"
   }, /*#__PURE__*/React.createElement(Stack, {
     className: "section-pad",
