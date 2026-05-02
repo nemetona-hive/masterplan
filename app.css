@@ -290,7 +290,7 @@ input[type=number]:focus,
 	outline: none;
 }
 
-::-webkit-scrollbar {
+ ::-webkit-scrollbar {
 	width: 5px;
 	height: 5px;
 }
@@ -845,9 +845,15 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	font-family: var(--mono);
 	font-size: var(--fs-md);
 	padding: 6px 8px;
-	flex: 1;
-	min-width: 0;
 	width: 100%;
+	min-width: 0;
+	transition: border-color 0.15s ease;
+}
+
+.num-input--req {
+	border-color: #ff4444 !important;
+	background: color-mix(in srgb, #ff4444 10%, var(--color-darkblue-light)) !important;
+	box-shadow: 0 0 4px rgba(255, 68, 68, 0.3);
 }
 
 .num-btn {
@@ -2660,9 +2666,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 /* Product Preset Row */
 .pw-preset-row {
-	display: flex;
-	flex-direction: column;
-	gap: var(--sp-3);
+	display: block;
 	padding-bottom: var(--sp-4);
 	border-bottom: 1px solid color-mix(in srgb, var(--color-gray) 15%, transparent);
 }
@@ -2674,17 +2678,19 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 .pw-preset-fields {
 	display: grid;
-	grid-template-columns: 2fr 1fr 1fr 1fr;
+	grid-template-columns: 2fr 1fr 1fr 1fr auto;
 	gap: var(--sp-2);
 }
 
 .pw-preset-apply {
-	align-self: flex-end;
-	padding: 8px 24px !important;
-	height: auto !important;
+	padding: 8px 16px !important;
+	height: 32px !important;
 	font-weight: var(--fw-bold) !important;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .pw-preset-lbl-hide {
