@@ -114,21 +114,33 @@ function RangeSlider({ id, value, onChange, min, max, step, className = "" }) {
 
 function NumInput({ id, label, value, onChange, step = 1, min = 0, unit }) {
   const [local, setLocal] = React.useState(value === "" ? "" : String(value));
+  const [committed, setCommitted] = React.useState(false);
+  const commitTimer = React.useRef(null);
+
   React.useEffect(() => { setLocal(value === "" ? "" : String(value)); }, [value]);
-  const commit = () => {
+
+  const commit = (flash = false) => {
     if (local === "") {
       onChange("");
-      return;
-    }
-    const n = Number(local);
-    if (!isNaN(n)) {
-      const val = Math.max(min, Math.round(n * 100) / 100);
-      onChange(val);
-      setLocal(String(val));
     } else {
-      setLocal(value === "" ? "" : String(value));
+      const n = Number(local);
+      if (!isNaN(n)) {
+        const val = Math.max(min, Math.round(n * 100) / 100);
+        onChange(val);
+        setLocal(String(val));
+      } else {
+        setLocal(value === "" ? "" : String(value));
+      }
+    }
+    if (flash) {
+      setCommitted(true);
+      clearTimeout(commitTimer.current);
+      commitTimer.current = setTimeout(() => setCommitted(false), 600);
     }
   };
+
+  React.useEffect(() => () => clearTimeout(commitTimer.current), []);
+
   return (
     <div className="num-wrap">
       <span className="num-lbl">{label}</span>
@@ -142,10 +154,14 @@ function NumInput({ id, label, value, onChange, step = 1, min = 0, unit }) {
           min={min}
           step={step}
           onChange={e => setLocal(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && commit()}
-          onBlur={commit} />
+          onKeyDown={e => e.key === "Enter" && commit(true)}
+          onBlur={() => commit(false)} />
         {unit && <span className="data-row-unit num-unit-span">{unit}</span>}
-        <button className="num-btn" onClick={commit}><Icon name="corner-down-left" /></button>
+        <button
+          className={"num-btn" + (committed ? " num-btn--ok" : "")}
+          onClick={() => commit(true)}>
+          <Icon name={committed ? "check" : "corner-down-left"} />
+        </button>
       </div>
     </div>
   );
