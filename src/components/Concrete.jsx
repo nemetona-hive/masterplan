@@ -56,33 +56,44 @@ function SheetConcrete() {
   };
 
   // ── Derived values ─────────────────────────────────────────────────────────
+  const parseNum = (v) => {
+    if (v === "" || v === null || v === undefined) return 0;
+    const n = parseFloat(v);
+    return isNaN(n) ? 0 : n;
+  };
 
   const area = areaMode === "dims"
-    ? ((parseFloat(lenMm) || 0) * (parseFloat(widMm) || 0)) / 1_000_000
-    : (parseFloat(areaManual) || 0);
+    ? (parseNum(lenMm) * parseNum(widMm)) / 1_000_000
+    : parseNum(areaManual);
 
-  const computedDimsArea = ((parseFloat(lenMm) || 0) * (parseFloat(widMm) || 0)) / 1_000_000;
+  const computedDimsArea = (parseNum(lenMm) * parseNum(widMm)) / 1_000_000;
 
   let computedAvgH, diff;
   if (thickMode === "avg") {
-    computedAvgH = parseFloat(avgH) || 0;
+    computedAvgH = parseNum(avgH);
     diff = null;
   } else {
-    const va = parseFloat(ca) || 0;
-    const vb = parseFloat(cb) || 0;
-    const vc = parseFloat(cc) || 0;
-    const vd = parseFloat(cd) || 0;
+    const va = parseNum(ca);
+    const vb = parseNum(cb);
+    const vc = parseNum(cc);
+    const vd = parseNum(cd);
     computedAvgH = (va + vb + vc + vd) / 4;
     diff = Math.max(va, vb, vc, vd) - Math.min(va, vb, vc, vd);
   }
 
-  const mass = area * computedAvgH * (parseFloat(rate) || 0);
-  const bags = (parseFloat(bagKg) || 0) > 0 ? Math.ceil(mass / (parseFloat(bagKg) || 0)) : 0;
-  const totalPrice = bags > 0 && parseFloat(bagPrice) > 0
-    ? bags * parseFloat(bagPrice)
-    : null;
+  const mass = area * computedAvgH * parseNum(rate);
+  const bags = parseNum(bagKg) > 0 ? Math.ceil(mass / parseNum(bagKg)) : 0;
+  
+  const bPrice = parseNum(bagPrice);
+  const totalPrice = (bags > 0 && bPrice > 0) ? (bags * bPrice) : null;
 
   const fmtEur = n => n.toLocaleString("et-EE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const hasAnyInput = Boolean(
+    areaManual || lenMm || widMm || 
+    avgH || ca || cb || cc || cd || 
+    rate || bagKg || bagPrice
+  );
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
@@ -115,14 +126,15 @@ function SheetConcrete() {
                     step={0.1}
                     unit="m²"
                     onChange={v => setAreaManual(String(v))}
+                    req={hasAnyInput && !areaManual}
                   />
                 )}
 
                 {areaMode === "dims" && (
                   <Stack gap={3}>
                     <div className="pw-grid-2col" style={{ marginBottom: 0 }}>
-                      <NumInput id="input-slf-len" label="Length (mm)" value={lenMm} min={1} step={10} unit="mm" onChange={setLenMm} />
-                      <NumInput id="input-slf-wid" label="Width (mm)"  value={widMm} min={1} step={10} unit="mm" onChange={setWidMm} />
+                      <NumInput id="input-slf-len" label="Length (mm)" value={lenMm} min={1} step={10} unit="mm" onChange={setLenMm} req={hasAnyInput && !lenMm} />
+                      <NumInput id="input-slf-wid" label="Width (mm)"  value={widMm} min={1} step={10} unit="mm" onChange={setWidMm} req={hasAnyInput && !widMm} />
                     </div>
                     <Row label="Calculated area" value={computedDimsArea.toFixed(1)} unit="m²" />
                   </Stack>
@@ -145,18 +157,18 @@ function SheetConcrete() {
 
               <div className="concrete-split-content">
                 {thickMode === "avg" && (
-                  <NumInput id="input-slf-havg" label="Average thickness (mm)" value={avgH} min={1} step={1} unit="mm" onChange={setAvgH} />
+                  <NumInput id="input-slf-havg" label="Average thickness (mm)" value={avgH} min={1} step={1} unit="mm" onChange={setAvgH} req={hasAnyInput && !avgH} />
                 )}
 
                 {thickMode === "corners" && (
                   <Stack gap={3}>
                     <div className="pw-grid-2col" style={{ marginBottom: "var(--sp-3)" }}>
-                      <NumInput id="input-slf-ca" label="Corner A (mm)" value={ca} min={0} step={1} unit="mm" onChange={setCa} />
-                      <NumInput id="input-slf-cb" label="Corner B (mm)" value={cb} min={0} step={1} unit="mm" onChange={setCb} />
+                      <NumInput id="input-slf-ca" label="Corner A (mm)" value={ca} min={0} step={1} unit="mm" onChange={setCa} req={hasAnyInput && !ca} />
+                      <NumInput id="input-slf-cb" label="Corner B (mm)" value={cb} min={0} step={1} unit="mm" onChange={setCb} req={hasAnyInput && !cb} />
                     </div>
                     <div className="pw-grid-2col" style={{ marginBottom: 0 }}>
-                      <NumInput id="input-slf-cc" label="Corner C (mm)" value={cc} min={0} step={1} unit="mm" onChange={setCc} />
-                      <NumInput id="input-slf-cd" label="Corner D (mm)" value={cd} min={0} step={1} unit="mm" onChange={setCd} />
+                      <NumInput id="input-slf-cc" label="Corner C (mm)" value={cc} min={0} step={1} unit="mm" onChange={setCc} req={hasAnyInput && !cc} />
+                      <NumInput id="input-slf-cd" label="Corner D (mm)" value={cd} min={0} step={1} unit="mm" onChange={setCd} req={hasAnyInput && !cd} />
                     </div>
                   </Stack>
                 )}
@@ -218,14 +230,17 @@ function SheetConcrete() {
                         onChange={e => updatePreset(idx, "bagPrice", e.target.value)}
                       />
                     </div>
+                    <div className="num-wrap">
+                      <span className={`num-lbl ${idx > 0 ? "pw-preset-lbl-hide" : ""}`}>&nbsp;</span>
+                      <button 
+                        className="ctrl-dir on pw-preset-apply" 
+                        onClick={() => applyPreset(p)}
+                        title="Apply these values to the calculator"
+                      >
+                        <Icon name="check" /> Apply
+                      </button>
+                    </div>
                   </div>
-                  <button 
-                    className="ctrl-dir on pw-preset-apply" 
-                    onClick={() => applyPreset(p)}
-                    title="Apply these values to the calculator"
-                  >
-                    <Icon name="check" /> Apply
-                  </button>
                 </div>
               ))}
             </Stack>
@@ -246,8 +261,8 @@ function SheetConcrete() {
         <Section title="Consumption &amp; Packaging">
           <Stack className="section-pad" gap={3}>
             <div className="pw-grid-2col">
-              <NumInput id="input-slf-rate"   label="Consumption (kg/m²·mm)" value={rate}   min={0.1} step={0.1} onChange={setRate} />
-              <NumInput id="input-slf-bagkg"  label="Bag weight (kg)"        value={bagKg}  min={1}   step={1}   unit="kg" onChange={setBagKg} />
+              <NumInput id="input-slf-rate"   label="Consumption (kg/m²·mm)" value={rate}   min={0.1} step={0.1} onChange={setRate} req={hasAnyInput && !rate} />
+              <NumInput id="input-slf-bagkg"  label="Bag weight (kg)"        value={bagKg}  min={1}   step={1}   unit="kg" onChange={setBagKg} req={hasAnyInput && !bagKg} />
             </div>
             <NumInput
               id="input-slf-bagprice"
@@ -268,8 +283,8 @@ function SheetConcrete() {
             {diff !== null && (
               <Row label="Height difference" value={Math.round(diff)}          unit="mm" />
             )}
-            <Row label="Total mix mass"   value={mass > 0 ? mass.toFixed(1) : "—"} unit={mass > 0 ? "kg" : ""} />
-            <Row label="Bags needed"      value={bags || "—"}                  unit={bags ? "pcs" : ""} hi />
+            <Row label="Total mix mass"   value={mass > 0 ? mass.toFixed(1) : "0.0"} unit="kg" />
+            <Row label="Bags needed"      value={bags || "0"}                  unit="pcs" hi={bags > 0} />
             <Row
               label="Total price"
               value={totalPrice !== null ? ("€\u202f" + fmtEur(totalPrice)) : "—"}
