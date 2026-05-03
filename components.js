@@ -874,7 +874,7 @@ function SheetTimesheet() {
     className: "ts-pill-lbl"
   }, "Lunch:"), LUNCH_PRESETS.map(([label, val]) => /*#__PURE__*/React.createElement("button", {
     key: val,
-    className: "ts-pill",
+    className: "pill-btn",
     onClick: () => applyLunchPreset(val)
   }, label))), /*#__PURE__*/React.createElement(Stack, {
     direction: "row",
@@ -1062,10 +1062,8 @@ function SheetConcrete() {
     className: "concrete-split-wrap section-pad"
   }, /*#__PURE__*/React.createElement(Stack, {
     gap: 3
-  }, /*#__PURE__*/React.createElement(Stack, {
-    direction: "row",
-    gap: 1,
-    className: "ctrl-btns"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "seg-group"
   }, /*#__PURE__*/React.createElement("button", {
     className: "ctrl-dir" + (areaMode === "direct" ? " on" : ""),
     onClick: () => setAreaMode("direct")
@@ -1116,10 +1114,8 @@ function SheetConcrete() {
     className: "concrete-split-divider"
   }), /*#__PURE__*/React.createElement(Stack, {
     gap: 3
-  }, /*#__PURE__*/React.createElement(Stack, {
-    direction: "row",
-    gap: 1,
-    className: "ctrl-btns"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "seg-group"
   }, /*#__PURE__*/React.createElement("button", {
     className: "ctrl-dir" + (thickMode === "avg" ? " on" : ""),
     onClick: () => setThickMode("avg")
@@ -1513,13 +1509,11 @@ function PipeWrapCalculator() {
     gap: 2
   }, /*#__PURE__*/React.createElement("div", {
     className: "num-lbl pw-preset-label"
-  }, "Pipe diameter presets"), /*#__PURE__*/React.createElement(Stack, {
-    direction: "row",
-    gap: 1,
+  }, "Pipe diameter presets"), /*#__PURE__*/React.createElement("div", {
     className: "ctrl-btns"
   }, PRESETS.map(p => /*#__PURE__*/React.createElement("button", {
     key: p,
-    className: `ctrl-dir${pipeDiam === p ? " on" : ""}`,
+    className: `pill-btn${pipeDiam === p ? " on" : ""}`,
     onClick: () => setPipeDiam(p)
   }, "\xD8 ", p))))))), /*#__PURE__*/React.createElement(Section, {
     title: "Adjustments",
@@ -1952,10 +1946,8 @@ function SheetSymmetricLayout({
     className: "ctrl-lbl"
   }, /*#__PURE__*/React.createElement("span", {
     className: "ctrl-sublbl"
-  }, "Layout style"), /*#__PURE__*/React.createElement(Stack, {
-    direction: "row",
-    gap: 1,
-    className: "ctrl-btns"
+  }, "Layout style"), /*#__PURE__*/React.createElement("div", {
+    className: "seg-group"
   }, /*#__PURE__*/React.createElement("button", {
     className: "ctrl-dir " + (sym.oneFullEdge ? "on" : ""),
     onClick: () => setSym(s => ({
@@ -2151,11 +2143,9 @@ function SheetSurfaceLayout({
     className: "ctrl-lbl"
   }, /*#__PURE__*/React.createElement("span", {
     className: "ctrl-sublbl"
-  }, "Direction"), /*#__PURE__*/React.createElement(Stack, {
+  }, "Direction"), /*#__PURE__*/React.createElement("div", {
     id: "ctrl-direction",
-    direction: "row",
-    gap: 1,
-    className: "ctrl-btns"
+    className: "seg-group"
   }, ["V", "H"].map(s => /*#__PURE__*/React.createElement("button", {
     key: s,
     className: "ctrl-dir " + (direction === s ? "on" : ""),
@@ -2168,11 +2158,9 @@ function SheetSurfaceLayout({
     className: "ctrl-lbl"
   }, /*#__PURE__*/React.createElement("span", {
     className: "ctrl-sublbl"
-  }, "Row order"), /*#__PURE__*/React.createElement(Stack, {
+  }, "Row order"), /*#__PURE__*/React.createElement("div", {
     id: "ctrl-row-order",
-    direction: "row",
-    gap: 1,
-    className: "ctrl-btns"
+    className: "seg-group"
   }, /*#__PURE__*/React.createElement("button", {
     className: "ctrl-dir " + (rowStart === "top" ? "on" : ""),
     onClick: () => setSh(st => ({
