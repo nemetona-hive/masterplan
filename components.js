@@ -928,6 +928,13 @@ function SheetConcrete() {
   const [rate, setRate] = React.useState("");
   const [bagKg, setBagKg] = React.useState("");
   const [bagPrice, setBagPrice] = React.useState("");
+  const [activePreset, setActivePreset] = React.useState(null);
+  const [flashIdx, setFlashIdx] = React.useState(null);
+  const [fieldFlash, setFieldFlash] = React.useState(false);
+  const [showUpdated, setShowUpdated] = React.useState(false);
+  const flashTimerRef = React.useRef(null);
+  const noteTimerRef = React.useRef(null);
+  const fieldTimerRef = React.useRef(null);
 
   // Product presets (quick fill)
   const [presets, setPresets] = React.useState([{
@@ -942,8 +949,8 @@ function SheetConcrete() {
     bagPrice: 15
   }, {
     name: "",
-    rate: 1.7,
-    bagKg: 25,
+    rate: "",
+    bagKg: "",
     bagPrice: ""
   }]);
   const resetAll = () => {
@@ -958,6 +965,10 @@ function SheetConcrete() {
     setRate("");
     setBagKg("");
     setBagPrice("");
+    setActivePreset(null);
+    setFlashIdx(null);
+    setFieldFlash(false);
+    setShowUpdated(false);
   };
   const updatePreset = (idx, field, val) => {
     const next = [...presets];
@@ -970,16 +981,43 @@ function SheetConcrete() {
   const addPreset = () => {
     setPresets([...presets, {
       name: "",
-      rate: 1.7,
-      bagKg: 25,
+      rate: "",
+      bagKg: "",
       bagPrice: ""
     }]);
   };
-  const applyPreset = p => {
+  const applyPreset = (p, idx) => {
     setRate(p.rate === "" ? "" : parseFloat(p.rate) || 0);
     setBagKg(p.bagKg === "" ? "" : parseFloat(p.bagKg) || 0);
     setBagPrice(p.bagPrice);
+    setActivePreset(idx);
+    clearTimeout(flashTimerRef.current);
+    setFlashIdx(idx);
+    flashTimerRef.current = setTimeout(() => setFlashIdx(null), 1200);
+    clearTimeout(fieldTimerRef.current);
+    setFieldFlash(true);
+    fieldTimerRef.current = setTimeout(() => setFieldFlash(false), 900);
+    clearTimeout(noteTimerRef.current);
+    setShowUpdated(true);
+    noteTimerRef.current = setTimeout(() => setShowUpdated(false), 2500);
   };
+  const handleRateChange = v => {
+    setRate(v);
+    setActivePreset(null);
+  };
+  const handleBagKgChange = v => {
+    setBagKg(v);
+    setActivePreset(null);
+  };
+  const handleBagPriceChange = v => {
+    setBagPrice(v);
+    setActivePreset(null);
+  };
+  React.useEffect(() => () => {
+    clearTimeout(flashTimerRef.current);
+    clearTimeout(noteTimerRef.current);
+    clearTimeout(fieldTimerRef.current);
+  }, []);
 
   // ── Derived values ─────────────────────────────────────────────────────────
   const parseNum = v => {
@@ -1156,7 +1194,7 @@ function SheetConcrete() {
     gap: 3
   }, presets.map((p, idx) => /*#__PURE__*/React.createElement("div", {
     key: idx,
-    className: "pw-preset-row"
+    className: "pw-preset-row" + (activePreset === idx ? " pw-preset-active" : "")
   }, /*#__PURE__*/React.createElement("div", {
     className: "pw-preset-fields"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1208,13 +1246,17 @@ function SheetConcrete() {
     className: "num-wrap"
   }, /*#__PURE__*/React.createElement("span", {
     className: `num-lbl ${idx > 0 ? "pw-preset-lbl-hide" : ""}`
-  }, "\xA0"), /*#__PURE__*/React.createElement("button", {
-    className: "ctrl-dir on pw-preset-apply",
-    onClick: () => applyPreset(p),
+  }, "\xA0"), activePreset === idx ? /*#__PURE__*/React.createElement("div", {
+    className: "pw-preset-badge"
+  }, "active") : /*#__PURE__*/React.createElement("button", {
+    className: "ctrl-dir on pw-preset-apply" + (flashIdx === idx ? " pw-preset-flash" : ""),
+    onClick: () => applyPreset(p, idx),
     title: "Apply these values to the calculator"
-  }, /*#__PURE__*/React.createElement(Icon, {
+  }, flashIdx === idx ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Icon, {
     name: "check"
-  }), " Apply")))))), /*#__PURE__*/React.createElement(Stack, {
+  }), " Applied") : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Icon, {
+    name: "check"
+  }), " Apply"))))))), /*#__PURE__*/React.createElement(Stack, {
     direction: "row",
     gap: 2
   }, /*#__PURE__*/React.createElement("button", {
@@ -1228,37 +1270,45 @@ function SheetConcrete() {
       opacity: 0.7
     }
   }, "Fill product data above and click \"Apply\" to update the calculator values."))), /*#__PURE__*/React.createElement(Section, {
-    title: "Consumption & Packaging"
+    title: /*#__PURE__*/React.createElement(React.Fragment, null, "Consumption & Packaging", /*#__PURE__*/React.createElement("span", {
+      className: "pw-updated-note" + (showUpdated ? " pw-updated-note-visible" : "")
+    }, "updated"))
   }, /*#__PURE__*/React.createElement(Stack, {
     className: "section-pad",
     gap: 3
   }, /*#__PURE__*/React.createElement("div", {
     className: "pw-grid-2col"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: fieldFlash ? "num-input-flash" : ""
   }, /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-rate",
     label: "Consumption (kg/m\xB2\xB7mm)",
     value: rate,
     min: 0.1,
     step: 0.1,
-    onChange: setRate,
+    onChange: handleRateChange,
     req: hasAnyInput && !rate
-  }), /*#__PURE__*/React.createElement(NumInput, {
+  })), /*#__PURE__*/React.createElement("div", {
+    className: fieldFlash ? "num-input-flash" : ""
+  }, /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-bagkg",
     label: "Bag weight (kg)",
     value: bagKg,
     min: 1,
     step: 1,
     unit: "kg",
-    onChange: setBagKg,
+    onChange: handleBagKgChange,
     req: hasAnyInput && !bagKg
-  })), /*#__PURE__*/React.createElement(NumInput, {
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: fieldFlash ? "num-input-flash" : ""
+  }, /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-bagprice",
     label: "Bag price (\u20AC)",
     value: bagPrice,
     min: 0,
     step: 0.01,
-    onChange: v => setBagPrice(String(v))
-  }))), /*#__PURE__*/React.createElement(Section, {
+    onChange: handleBagPriceChange
+  })))), /*#__PURE__*/React.createElement(Section, {
     title: "Results"
   }, /*#__PURE__*/React.createElement(Stack, {
     className: "section-pad",
