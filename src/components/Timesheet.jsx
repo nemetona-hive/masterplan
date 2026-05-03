@@ -167,7 +167,7 @@ function SheetTimesheet() {
           <Stack direction="row" gap={1} className="ts-pills">
             <span className="ts-pill-lbl">Lunch:</span>
             {LUNCH_PRESETS.map(([label, val]) => (
-              <button key={val} className="ts-pill"
+              <button key={val} className="pill-btn"
                 onClick={() => applyLunchPreset(val)}>{label}</button>
             ))}
           </Stack>
