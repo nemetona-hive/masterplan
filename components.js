@@ -179,15 +179,16 @@ function NumInput({
     min: min,
     step: step,
     onChange: e => setLocal(e.target.value),
-    onKeyDown: e => e.key === "Enter" && commit(true),
-    onBlur: () => commit(false)
+    onKeyDown: e => e.key === "Enter" && commit(),
+    onBlur: () => commit()
   }), unit && /*#__PURE__*/React.createElement("span", {
     className: "data-row-unit num-unit-span"
   }, unit), /*#__PURE__*/React.createElement("button", {
-    className: "num-btn" + (committed ? " num-btn--ok" : ""),
-    onClick: () => commit(true)
+    className: "num-btn",
+    type: "button",
+    onClick: () => commit()
   }, /*#__PURE__*/React.createElement(Icon, {
-    name: committed ? "check" : "corner-down-left"
+    name: "corner-down-left"
   }))));
 }
 function SLabel({
@@ -1188,61 +1189,48 @@ function SheetConcrete() {
     gap: 4
   }, /*#__PURE__*/React.createElement(Stack, {
     gap: 3
-  }, presets.map((p, idx) => /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "pw-preset-header"
+  }, /*#__PURE__*/React.createElement("span", null, "Product Name"), /*#__PURE__*/React.createElement("span", null, "kg/m\xB2\xB7mm"), /*#__PURE__*/React.createElement("span", null, "Bag kg"), /*#__PURE__*/React.createElement("span", null, "Price \u20AC"), /*#__PURE__*/React.createElement("span", null, "\xA0")), presets.map((p, idx) => /*#__PURE__*/React.createElement("div", {
     key: idx,
     className: "pw-preset-row" + (activePreset === idx ? " pw-preset-active" : "")
   }, /*#__PURE__*/React.createElement("div", {
     className: "pw-preset-fields"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "num-wrap"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: `num-lbl ${idx > 0 ? "pw-preset-lbl-hide" : ""}`
-  }, "Product Name"), /*#__PURE__*/React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     id: `preset-name-${idx}`,
     name: `preset-name-${idx}`,
     type: "text",
     className: "num-input",
-    placeholder: "Product name...",
+    placeholder: "Product description...",
     value: p.name,
     onChange: e => updatePreset(idx, "name", e.target.value)
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "num-wrap"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: `num-lbl ${idx > 0 ? "pw-preset-lbl-hide" : ""}`
-  }, "kg/m\xB2\xB7mm"), /*#__PURE__*/React.createElement("input", {
+  }), /*#__PURE__*/React.createElement("input", {
     id: `preset-rate-${idx}`,
     name: `preset-rate-${idx}`,
     type: "number",
     className: "num-input",
     value: p.rate,
     onChange: e => updatePreset(idx, "rate", e.target.value)
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "num-wrap"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: `num-lbl ${idx > 0 ? "pw-preset-lbl-hide" : ""}`
-  }, "Bag kg"), /*#__PURE__*/React.createElement("input", {
+  }), /*#__PURE__*/React.createElement("input", {
     id: `preset-bagkg-${idx}`,
     name: `preset-bagkg-${idx}`,
     type: "number",
     className: "num-input",
     value: p.bagKg,
     onChange: e => updatePreset(idx, "bagKg", e.target.value)
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "num-wrap"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: `num-lbl ${idx > 0 ? "pw-preset-lbl-hide" : ""}`
-  }, "Price \u20AC"), /*#__PURE__*/React.createElement("input", {
+  }), /*#__PURE__*/React.createElement("input", {
     id: `preset-price-${idx}`,
     name: `preset-price-${idx}`,
     type: "number",
     className: "num-input",
     value: p.bagPrice,
     onChange: e => updatePreset(idx, "bagPrice", e.target.value)
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "num-wrap"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: `num-lbl ${idx > 0 ? "pw-preset-lbl-hide" : ""}`
-  }, "\xA0"), activePreset === idx ? /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "num-wrap",
+    style: {
+      justifyContent: "center"
+    }
+  }, activePreset === idx ? /*#__PURE__*/React.createElement("div", {
     className: "pw-preset-badge"
   }, "active") : /*#__PURE__*/React.createElement("button", {
     className: "ctrl-dir on pw-preset-apply" + (flashIdx === idx ? " pw-preset-flash" : ""),
@@ -1788,10 +1776,10 @@ function SheetGoldenRatio({
       onKeyDown: e => e.key === "Enter" && commitBaseValue(item.id, true)
     }), /*#__PURE__*/React.createElement("button", {
       type: "button",
-      className: "num-btn" + (committedIds.has(item.id) ? " num-btn--ok" : ""),
+      className: "num-btn",
       onClick: () => commitBaseValue(item.id, true)
     }, /*#__PURE__*/React.createElement(Icon, {
-      name: committedIds.has(item.id) ? "check" : "corner-down-left"
+      name: "corner-down-left"
     })))), /*#__PURE__*/React.createElement(Stack, {
       gap: 1,
       className: "ctrl-lbl"
