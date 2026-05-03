@@ -146,9 +146,9 @@ function SheetGoldenRatio({ grItems: baseItems, setGrItems: setBaseItems }) {
                         />
                         <button
                           type="button"
-                          className={"num-btn" + (committedIds.has(item.id) ? " num-btn--ok" : "")}
+                          className="num-btn"
                           onClick={() => commitBaseValue(item.id, true)}>
-                          <Icon name={committedIds.has(item.id) ? "check" : "corner-down-left"} />
+                          <Icon name="corner-down-left" />
                         </button>
                       </div>
                     </Stack>
