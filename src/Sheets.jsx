@@ -271,12 +271,12 @@ function SheetSymmetricLayout({ sym, setSym }) {
             <NumInput id="input-sym-panel-width" label="Panel width (mm)" value={sym.panelWidth} onChange={v => setSym(s => ({ ...s, panelWidth: v }))} step={10} />
             <Stack gap={1} className="ctrl-lbl">
               <span className="ctrl-sublbl">Layout style</span>
-              <Stack direction="row" gap={1} className="ctrl-btns">
+              <div className="seg-group">
                 <button className={"ctrl-dir " + (sym.oneFullEdge ? "on" : "")}
                   onClick={() => setSym(s => ({ ...s, oneFullEdge: true }))}>Asymmetric</button>
                 <button className={"ctrl-dir " + (!sym.oneFullEdge ? "on" : "")}
                   onClick={() => setSym(s => ({ ...s, oneFullEdge: false }))}>Symmetric</button>
-              </Stack>
+              </div>
             </Stack>
             {sym.oneFullEdge && (
               <NumInput id="input-sym-custom-first" label="First piece width (mm)" value={sym.customFirstPieceWidth ?? ""} onChange={v => setSym(s => ({ ...s, customFirstPieceWidth: v }))} step={10} />
@@ -359,21 +359,21 @@ function SheetSurfaceLayout({ sh, setSh }) {
           <Stack gap={3}>
             <Stack gap={1} className="ctrl-lbl">
               <span className="ctrl-sublbl">Direction</span>
-              <Stack id="ctrl-direction" direction="row" gap={1} className="ctrl-btns">
+              <div id="ctrl-direction" className="seg-group">
                 {["V", "H"].map(s => (
                   <button key={s} className={"ctrl-dir " + (direction === s ? "on" : "")}
                     onClick={() => setSh(st => ({ ...st, direction: s }))}>{s}</button>
                 ))}
-              </Stack>
+              </div>
             </Stack>
             <Stack gap={1} className="ctrl-lbl">
               <span className="ctrl-sublbl">Row order</span>
-              <Stack id="ctrl-row-order" direction="row" gap={1} className="ctrl-btns">
+              <div id="ctrl-row-order" className="seg-group">
                 <button className={"ctrl-dir " + (rowStart === "top" ? "on" : "")}
                   onClick={() => setSh(st => ({ ...st, rowStart: "top" }))}>R1 top</button>
                 <button className={"ctrl-dir " + (rowStart === "bottom" ? "on" : "")}
                   onClick={() => setSh(st => ({ ...st, rowStart: "bottom" }))}>R1 bottom</button>
-              </Stack>
+              </div>
             </Stack>
             <NumInput id="input-minJ"     label="Min remainder (mm)"  value={minJ}     onChange={set("minJ")}    step={10} />
             <NumInput id="input-startOff" label="R1 start point (mm)" value={startOff}
