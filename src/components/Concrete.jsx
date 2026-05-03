@@ -144,14 +144,14 @@ function SheetConcrete() {
             
             {/* Left Column: Floor Area */}
             <Stack gap={3}>
-              <Stack direction="row" gap={1} className="ctrl-btns">
+              <div className="seg-group">
                 <button
                   className={"ctrl-dir" + (areaMode === "direct" ? " on" : "")}
                   onClick={() => setAreaMode("direct")}>Enter area</button>
                 <button
                   className={"ctrl-dir" + (areaMode === "dims" ? " on" : "")}
                   onClick={() => setAreaMode("dims")}>Room dimensions</button>
-              </Stack>
+              </div>
 
               <div className="concrete-split-content">
                 {areaMode === "direct" && (
@@ -183,14 +183,14 @@ function SheetConcrete() {
 
             {/* Right Column: Layer Thickness */}
             <Stack gap={3}>
-              <Stack direction="row" gap={1} className="ctrl-btns">
+              <div className="seg-group">
                 <button
                   className={"ctrl-dir" + (thickMode === "avg" ? " on" : "")}
                   onClick={() => setThickMode("avg")}>Average thickness</button>
                 <button
                   className={"ctrl-dir" + (thickMode === "corners" ? " on" : "")}
                   onClick={() => setThickMode("corners")}>4 corners</button>
-              </Stack>
+              </div>
 
               <div className="concrete-split-content">
                 {thickMode === "avg" && (
