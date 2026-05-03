@@ -1595,11 +1595,8 @@ function SheetHome({
   }, items.map(pg => {
     if (pg.isParent) return null;
     const isActive = page === pg.id;
-    return /*#__PURE__*/React.createElement(React.Fragment, {
-      key: pg.id
-    }, pg.id === "timesheet" && /*#__PURE__*/React.createElement("div", {
-      className: "home-cards-sep"
-    }), /*#__PURE__*/React.createElement(Stack, {
+    return /*#__PURE__*/React.createElement(Stack, {
+      key: pg.id,
       as: "button",
       className: "home-card" + (isActive ? " home-card-active" : ""),
       gap: 3,
@@ -1617,7 +1614,7 @@ function SheetHome({
       className: "home-card-arrow"
     }, /*#__PURE__*/React.createElement(Icon, {
       name: "chevron-right"
-    }))));
+    })));
   })), /*#__PURE__*/React.createElement("div", {
     className: "home-divider"
   }), /*#__PURE__*/React.createElement("div", {
