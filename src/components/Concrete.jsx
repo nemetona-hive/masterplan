@@ -21,11 +21,20 @@ function SheetConcrete() {
   const [bagKg,    setBagKg]    = React.useState("");
   const [bagPrice, setBagPrice] = React.useState("");
 
+  const [activePreset, setActivePreset] = React.useState(null);
+  const [flashIdx,     setFlashIdx]     = React.useState(null);
+  const [fieldFlash,   setFieldFlash]   = React.useState(false);
+  const [showUpdated,  setShowUpdated]  = React.useState(false);
+
+  const flashTimerRef  = React.useRef(null);
+  const noteTimerRef   = React.useRef(null);
+  const fieldTimerRef  = React.useRef(null);
+
   // Product presets (quick fill)
   const [presets, setPresets] = React.useState([
     { name: "weber S-100", rate: 2, bagKg: 25, bagPrice: 4 },
     { name: "weberfloor 200 RAPID", rate: 1.7, bagKg: 20, bagPrice: 15 },
-    { name: "", rate: 1.7, bagKg: 25, bagPrice: "" }
+    { name: "", rate: "", bagKg: "", bagPrice: "" }
   ]);
   
   const resetAll = () => {
@@ -37,6 +46,10 @@ function SheetConcrete() {
     setRate("");
     setBagKg("");
     setBagPrice("");
+    setActivePreset(null);
+    setFlashIdx(null);
+    setFieldFlash(false);
+    setShowUpdated(false);
   };
 
   const updatePreset = (idx, field, val) => {
@@ -46,14 +59,38 @@ function SheetConcrete() {
   };
 
   const addPreset = () => {
-    setPresets([...presets, { name: "", rate: 1.7, bagKg: 25, bagPrice: "" }]);
+    setPresets([...presets, { name: "", rate: "", bagKg: "", bagPrice: "" }]);
   };
 
-  const applyPreset = (p) => {
+  const applyPreset = (p, idx) => {
     setRate(p.rate === "" ? "" : (parseFloat(p.rate) || 0));
     setBagKg(p.bagKg === "" ? "" : (parseFloat(p.bagKg) || 0));
     setBagPrice(p.bagPrice);
+
+    setActivePreset(idx);
+
+    clearTimeout(flashTimerRef.current);
+    setFlashIdx(idx);
+    flashTimerRef.current = setTimeout(() => setFlashIdx(null), 1200);
+
+    clearTimeout(fieldTimerRef.current);
+    setFieldFlash(true);
+    fieldTimerRef.current = setTimeout(() => setFieldFlash(false), 900);
+
+    clearTimeout(noteTimerRef.current);
+    setShowUpdated(true);
+    noteTimerRef.current = setTimeout(() => setShowUpdated(false), 2500);
   };
+
+  const handleRateChange     = v => { setRate(v);     setActivePreset(null); };
+  const handleBagKgChange    = v => { setBagKg(v);    setActivePreset(null); };
+  const handleBagPriceChange = v => { setBagPrice(v); setActivePreset(null); };
+
+  React.useEffect(() => () => {
+    clearTimeout(flashTimerRef.current);
+    clearTimeout(noteTimerRef.current);
+    clearTimeout(fieldTimerRef.current);
+  }, []);
 
   // ── Derived values ─────────────────────────────────────────────────────────
   const parseNum = (v) => {
@@ -183,7 +220,7 @@ function SheetConcrete() {
           <Stack className="section-pad" gap={4}>
             <Stack gap={3}>
               {presets.map((p, idx) => (
-                <div key={idx} className="pw-preset-row">
+                <div key={idx} className={"pw-preset-row" + (activePreset === idx ? " pw-preset-active" : "")}>
                   <div className="pw-preset-fields">
                     <div className="num-wrap">
                       <span className={`num-lbl ${idx > 0 ? "pw-preset-lbl-hide" : ""}`}>Product Name</span>
@@ -232,13 +269,16 @@ function SheetConcrete() {
                     </div>
                     <div className="num-wrap">
                       <span className={`num-lbl ${idx > 0 ? "pw-preset-lbl-hide" : ""}`}>&nbsp;</span>
-                      <button 
-                        className="ctrl-dir on pw-preset-apply" 
-                        onClick={() => applyPreset(p)}
-                        title="Apply these values to the calculator"
-                      >
-                        <Icon name="check" /> Apply
-                      </button>
+                      {activePreset === idx
+                        ? <div className="pw-preset-badge">active</div>
+                        : <button 
+                            className={"ctrl-dir on pw-preset-apply" + (flashIdx === idx ? " pw-preset-flash" : "")} 
+                            onClick={() => applyPreset(p, idx)}
+                            title="Apply these values to the calculator"
+                          >
+                            {flashIdx === idx ? <><Icon name="check" /> Applied</> : <><Icon name="check" /> Apply</>}
+                          </button>
+                      }
                     </div>
                   </div>
                 </div>
@@ -258,20 +298,33 @@ function SheetConcrete() {
         </Section>
 
         {/* ── Consumption & packaging ── */}
-        <Section title="Consumption &amp; Packaging">
+        <Section title={
+          <>
+            Consumption &amp; Packaging
+            <span className={"pw-updated-note" + (showUpdated ? " pw-updated-note-visible" : "")}>
+              updated
+            </span>
+          </>
+        }>
           <Stack className="section-pad" gap={3}>
             <div className="pw-grid-2col">
-              <NumInput id="input-slf-rate"   label="Consumption (kg/m²·mm)" value={rate}   min={0.1} step={0.1} onChange={setRate} req={hasAnyInput && !rate} />
-              <NumInput id="input-slf-bagkg"  label="Bag weight (kg)"        value={bagKg}  min={1}   step={1}   unit="kg" onChange={setBagKg} req={hasAnyInput && !bagKg} />
+              <div className={fieldFlash ? "num-input-flash" : ""}>
+                <NumInput id="input-slf-rate"   label="Consumption (kg/m²·mm)" value={rate}   min={0.1} step={0.1} onChange={handleRateChange} req={hasAnyInput && !rate} />
+              </div>
+              <div className={fieldFlash ? "num-input-flash" : ""}>
+                <NumInput id="input-slf-bagkg"  label="Bag weight (kg)"        value={bagKg}  min={1}   step={1}   unit="kg" onChange={handleBagKgChange} req={hasAnyInput && !bagKg} />
+              </div>
             </div>
-            <NumInput
-              id="input-slf-bagprice"
-              label="Bag price (€)"
-              value={bagPrice}
-              min={0}
-              step={0.01}
-              onChange={v => setBagPrice(String(v))}
-            />
+            <div className={fieldFlash ? "num-input-flash" : ""}>
+              <NumInput
+                id="input-slf-bagprice"
+                label="Bag price (€)"
+                value={bagPrice}
+                min={0}
+                step={0.01}
+                onChange={handleBagPriceChange}
+              />
+            </div>
           </Stack>
         </Section>
 
