@@ -87,39 +87,39 @@ var PAGES = [{
   id: "pattern-layout",
   label: "Pattern Layouts",
   title: "Pattern Layouts",
-  desc: "2D Layout Calculator",
+  desc: "Compare straight, shifted, stepped and long-short panel strategies. Highlights the fewest-piece option automatically.",
   icon: "rows-3",
   parentId: "layout"
 }, {
   id: "symmetric-layout",
   label: "Symmetric Layout",
   title: "Symmetric Layout",
-  desc: "Standalone symmetric layout",
+  desc: "Equal edge pieces with full panels in the center. Asymmetric and custom first-piece modes included.",
   icon: "columns-2",
   parentId: "layout"
 }, {
   id: "concrete",
   label: "Concrete",
   title: "Concrete",
-  desc: "Concrete consumption and bag cost estimator",
+  desc: "Self-levelling compound — calculate bags, mass and total price from area and layer thickness.",
   icon: "layer-group"
 }, {
   id: "golden-ratio",
   label: "Golden Ratio φ",
   title: "Golden Ratio φ",
-  desc: "Small is to big as big is to Whole",
+  desc: "Generate phi-based proportion sequences from any base value. Up to 4 parallel series.",
   icon: "golden-phi"
 }, {
   id: "pipe-wrap",
   label: "Pipe Wrap",
   title: "Pipe Wrap Calculator",
-  desc: "Material length needed to wrap around a pipe",
+  desc: "Material length to wrap around a pipe. Overlap and gap adjustments with live SVG diagram.",
   icon: "ring"
 }, {
   id: "timesheet",
   label: "Timesheet",
   title: "Timesheet",
-  desc: "Calculate and sum work hours",
+  desc: "Work hours from start, end and lunch. Multi-row, decimal output and one-tap clipboard copy.",
   icon: "clock"
 }];
 
