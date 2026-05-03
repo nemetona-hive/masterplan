@@ -154,13 +154,14 @@ function NumInput({ id, label, value, onChange, step = 1, min = 0, unit, req = f
           min={min}
           step={step}
           onChange={e => setLocal(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && commit(true)}
-          onBlur={() => commit(false)} />
+          onKeyDown={e => e.key === "Enter" && commit()}
+          onBlur={() => commit()} />
         {unit && <span className="data-row-unit num-unit-span">{unit}</span>}
         <button
-          className={"num-btn" + (committed ? " num-btn--ok" : "")}
-          onClick={() => commit(true)}>
-          <Icon name={committed ? "check" : "corner-down-left"} />
+          className="num-btn"
+          type="button"
+          onClick={() => commit()}>
+          <Icon name="corner-down-left" />
         </button>
       </div>
     </div>
