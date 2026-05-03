@@ -94,13 +94,16 @@ Current pages: `home`, `layout` (parent), `pattern-layout`, `symmetric-layout`,
 - `<SLabel>` — simple label div for section headings in controls
 - `<Stack gap direction className as>` — flex layout primitive; gap uses spacing scale (0.5–7); direction = "column"|"row"
 - `<Text size weight variant color as>` — typography primitive; size = xs–xxl, weight = reg–black, variant = sans|mono
+- `.seg-group` — Container for exclusive mode-switch toggles; provides a unified border/boundary for grouped buttons.
+- `.pill-btn` — Minimalist, rounded buttons used for quick-select presets.
+- `.ctrl-dir` / `.ts-btn` — Standardized button styles with "premium glow" hover/active feedback. Standalone buttons use `var(--fs-md)` while segmented controls are bumped for legibility.
 
 ## Standalone page components
 
 | Page ID | Component | Location | Description |
 |---|---|---|---|
 | `pipe-wrap` | `PipeWrapCalculator` | `components/PipeWrapCalculator.jsx` | Pipe wrap length calculator with SVG diagram; uses presets, RangeSlider for overlap/gap |
-| `concrete` | `SheetConcrete` | `components/Concrete.jsx` | Concrete consumption and bag cost estimator; area/thickness modes, bag count, pricing |
+| `concrete` | `SheetConcrete` | `components/Concrete.jsx` | Concrete consumption estimator; features a table-like preset system with a single header row for product details. |
 | `timesheet` | `SheetTimesheet` | `components/Timesheet.jsx` | Work hours calculator; dynamic rows, lunch presets, decimal copy |
 
 ## Layout systems
@@ -149,7 +152,8 @@ Cards use tone system (a/b/c/d) for visual identity.
 
 - `useState` destructured from React at top of shared.jsx — use directly
 - All other React hooks via `React.useXxx`
-- Enter key in inputs triggers blur (global handler in App.jsx) — do not add separate Enter handlers
+- Enter key in inputs triggers data commit/blur. The visual "icon flash" (switching to a checkmark) has been removed to maintain UI stability.
+- Buttons use the "Premium Glow" interaction language — subtle box-shadows and color-mix transitions.
 - No CSS-in-JS except inline style for dynamic values; use className strings
 - CSS class names follow BEM-ish patterns: block, block-element, modifier
 
