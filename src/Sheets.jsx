@@ -16,23 +16,25 @@ function SheetHome({ page, setPage }) {
         <div className="home-cards">
           {items.map(pg => {
             if (pg.isParent) return null;
-
             const isActive = page === pg.id;
             return (
-              <React.Fragment key={pg.id}>
-                {pg.id === "timesheet" && <div className="home-cards-sep" />}
-                <Stack
-                  as="button"
-                  className={"home-card" + (isActive ? " home-card-active" : "")}
-                  gap={3}
-                  onClick={() => setPage(pg.id)}
-                  onKeyDown={e => (e.key === "Enter" || e.key === " ") && setPage(pg.id)}>
-                  <span className="home-card-icon"><Icon name={pg.icon} /></span>
-                  <span className="home-card-title">{pg.title}</span>
-                  <span className="home-card-desc">{pg.desc}</span>
-                  <span className="home-card-arrow"><Icon name="chevron-right" /></span>
-                </Stack>
-              </React.Fragment>
+              <Stack
+                key={pg.id}
+                as="button"
+                className={"home-card" + (isActive ? " home-card-active" : "")}
+                gap={3}
+                onClick={() => setPage(pg.id)}
+                onKeyDown={e => (e.key === "Enter" || e.key === " ") && setPage(pg.id)}
+              >
+                <span className="home-card-icon">
+                  <Icon name={pg.icon} />
+                </span>
+                <span className="home-card-title">{pg.title}</span>
+                <span className="home-card-desc">{pg.desc}</span>
+                <span className="home-card-arrow">
+                  <Icon name="chevron-right" />
+                </span>
+              </Stack>
             );
           })}
         </div>
