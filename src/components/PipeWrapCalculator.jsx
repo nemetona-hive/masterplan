@@ -164,17 +164,17 @@ function PipeWrapCalculator() {
               {/* presets */}
               <Stack gap={2}>
                 <div className="num-lbl pw-preset-label">Pipe diameter presets</div>
-                <Stack direction="row" gap={1} className="ctrl-btns">
+                <div className="ctrl-btns">
                   {PRESETS.map(p => (
                     <button
                       key={p}
-                      className={`ctrl-dir${pipeDiam === p ? " on" : ""}`}
+                      className={`pill-btn${pipeDiam === p ? " on" : ""}`}
                       onClick={() => setPipeDiam(p)}
                     >
                       Ø {p}
                     </button>
                   ))}
-                </Stack>
+                </div>
               </Stack>
             </Stack>
           </div>
