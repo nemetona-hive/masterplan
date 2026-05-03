@@ -1024,7 +1024,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
   background: transparent;
   color: var(--color-gray-opa80);
   font-family: var(--mono);
-  font-size: var(--fs-sm);          /* Match pill-btn */
+  font-size: var(--fs-md);          /* Bumped back up for legibility */
   font-weight: var(--fw-reg);
   transition: background 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
   white-space: nowrap;
@@ -1110,7 +1110,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 @media (max-width: 768px), (max-height: 500px) {
   .seg-group .ctrl-dir {
     padding: 8px 6px;              /* taller touch target */
-    font-size: var(--fs-xs);       /* Reverted from sm */
+    font-size: var(--fs-sm);       /* Reverted to keep readable */
   }
 
   .pill-btn {
