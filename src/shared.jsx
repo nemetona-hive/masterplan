@@ -172,15 +172,25 @@ function SLabel({ children }) {
 }
 
 // Single collapsible replaces both Section and ControlPanel
-function Collapsible({ id, title, bg, open: openProp, setOpen: setOpenProp, children, variant = "section", className = "" }) {
+function Collapsible({ id, title, bg, open: openProp, setOpen: setOpenProp, children, variant = "section", className = "", noToggle = false }) {
   const [openLocal, setOpenLocal] = React.useState(true);
-  const open = setOpenProp ? openProp : openLocal;
+  const open = noToggle ? true : (setOpenProp ? openProp : openLocal);
   const setOpen = setOpenProp ? setOpenProp : setOpenLocal;
+
+  const headStyle = {
+    ...(bg ? { background: bg } : {}),
+    cursor: noToggle ? "default" : "pointer"
+  };
+
   if (variant === "panel") {
     return (
       <div id={id} className={["control-panel", className].filter(Boolean).join(" ")}>
-        <div className="panel-head" onClick={() => setOpen(!open)}>
-          <span className="sys-head-toggle"><Icon name={open ? "chevron-down" : "chevron-right"} /></span>
+        <div className="panel-head" style={headStyle} onClick={noToggle ? undefined : () => setOpen(!open)}>
+          {!noToggle && (
+            <span className="sys-head-toggle">
+              <Icon name={open ? "chevron-down" : "chevron-right"} />
+            </span>
+          )}
           {title}
         </div>
         {open && <div className="panel-data">{children}</div>}
@@ -189,8 +199,12 @@ function Collapsible({ id, title, bg, open: openProp, setOpen: setOpenProp, chil
   }
   return (
     <div className="section">
-      <div className="section-head" style={bg ? { background: bg } : undefined} onClick={() => setOpen(!open)}>
-        <span className="sys-head-toggle"><Icon name={open ? "chevron-down" : "chevron-right"} /></span>
+      <div className="section-head" style={headStyle} onClick={noToggle ? undefined : () => setOpen(!open)}>
+        {!noToggle && (
+          <span className="sys-head-toggle">
+            <Icon name={open ? "chevron-down" : "chevron-right"} />
+          </span>
+        )}
         {title}
       </div>
       {open && <div className="section-body">{children}</div>}
