@@ -1607,6 +1607,26 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	align-items: center;
 }
 
+@media (max-width: 768px) {
+	.ts-grid-hd {
+		display: none;
+	}
+	.ts-grid-row {
+		grid-template-columns: 1fr 1fr;
+		gap: var(--sp-3) var(--sp-2);
+		padding: 12px 8px;
+		border-bottom: 1px solid color-mix(in srgb, var(--color-gray-light) 40%, transparent);
+	}
+	/* Grid items layout on mobile */
+	.ts-grid-row > .ts-col-dec {
+		grid-column: span 1;
+	}
+	.ts-grid-row > .ts-remove {
+		grid-column: span 1;
+		justify-self: end;
+	}
+}
+
 .ts-grid-hd {
 	margin-bottom: 2px;
 }
@@ -2317,9 +2337,11 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	/* Keep 16px to prevent iOS auto-zoom; reduce padding for compactness */
 	input[type="number"],
 	input[type="text"],
-	.num-input {
+	.num-input,
+	.num-btn {
 		font-size: 16px !important;
 		min-height: 38px;
+		height: auto;
 	}
 
 	.data-row {
@@ -2432,8 +2454,10 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 	input[type="number"],
 	input[type="range"],
-	.num-input {
+	.num-input,
+	.num-btn {
 		min-height: 38px;
+		height: auto;
 		font-size: 16px;
 	}
 
