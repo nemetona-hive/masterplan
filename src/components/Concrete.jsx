@@ -162,7 +162,6 @@ function SheetConcrete() {
                     value={areaManual}
                     min={0}
                     step={0.1}
-                    unit="m²"
                     onChange={v => setAreaManual(String(v))}
                     req={hasAnyInput && !areaManual}
                   />
@@ -171,8 +170,8 @@ function SheetConcrete() {
                 {areaMode === "dims" && (
                   <Stack gap={3}>
                     <div className="pw-grid-2col" style={{ marginBottom: 0 }}>
-                      <NumInput id="input-slf-len" label="Length (mm)" value={lenMm} min={1} step={10} unit="mm" onChange={setLenMm} req={hasAnyInput && !lenMm} />
-                      <NumInput id="input-slf-wid" label="Width (mm)"  value={widMm} min={1} step={10} unit="mm" onChange={setWidMm} req={hasAnyInput && !widMm} />
+                      <NumInput id="input-slf-len" label="Length (mm)" value={lenMm} min={1} step={10} onChange={setLenMm} req={hasAnyInput && !lenMm} />
+                      <NumInput id="input-slf-wid" label="Width (mm)"  value={widMm} min={1} step={10} onChange={setWidMm} req={hasAnyInput && !widMm} />
                     </div>
                     <Row label="Calculated area" value={computedDimsArea.toFixed(1)} unit="m²" />
                   </Stack>
@@ -195,18 +194,18 @@ function SheetConcrete() {
 
               <div className="concrete-split-content">
                 {thickMode === "avg" && (
-                  <NumInput id="input-slf-havg" label="Average thickness (mm)" value={avgH} min={1} step={1} unit="mm" onChange={setAvgH} req={hasAnyInput && !avgH} />
+                  <NumInput id="input-slf-havg" label="Average thickness (mm)" value={avgH} min={1} step={1} onChange={setAvgH} req={hasAnyInput && !avgH} />
                 )}
 
                 {thickMode === "corners" && (
                   <Stack gap={3}>
                     <div className="pw-grid-2col" style={{ marginBottom: "var(--sp-3)" }}>
-                      <NumInput id="input-slf-ca" label="Corner A (mm)" value={ca} min={0} step={1} unit="mm" onChange={setCa} req={hasAnyInput && !ca} />
-                      <NumInput id="input-slf-cb" label="Corner B (mm)" value={cb} min={0} step={1} unit="mm" onChange={setCb} req={hasAnyInput && !cb} />
+                      <NumInput id="input-slf-ca" label="Corner A (mm)" value={ca} min={0} step={1} onChange={setCa} req={hasAnyInput && !ca} />
+                      <NumInput id="input-slf-cb" label="Corner B (mm)" value={cb} min={0} step={1} onChange={setCb} req={hasAnyInput && !cb} />
                     </div>
                     <div className="pw-grid-2col" style={{ marginBottom: 0 }}>
-                      <NumInput id="input-slf-cc" label="Corner C (mm)" value={cc} min={0} step={1} unit="mm" onChange={setCc} req={hasAnyInput && !cc} />
-                      <NumInput id="input-slf-cd" label="Corner D (mm)" value={cd} min={0} step={1} unit="mm" onChange={setCd} req={hasAnyInput && !cd} />
+                      <NumInput id="input-slf-cc" label="Corner C (mm)" value={cc} min={0} step={1} onChange={setCc} req={hasAnyInput && !cc} />
+                      <NumInput id="input-slf-cd" label="Corner D (mm)" value={cd} min={0} step={1} onChange={setCd} req={hasAnyInput && !cd} />
                     </div>
                   </Stack>
                 )}
@@ -307,7 +306,7 @@ function SheetConcrete() {
                 <NumInput id="input-slf-rate"   label="Consumption (kg/m²·mm)" value={rate}   min={0.1} step={0.1} onChange={handleRateChange} req={hasAnyInput && !rate} />
               </div>
               <div className={fieldFlash ? "num-input-flash" : ""}>
-                <NumInput id="input-slf-bagkg"  label="Bag weight (kg)"        value={bagKg}  min={1}   step={1}   unit="kg" onChange={handleBagKgChange} req={hasAnyInput && !bagKg} />
+                <NumInput id="input-slf-bagkg"  label="Bag weight (kg)"        value={bagKg}  min={1}   step={1}   onChange={handleBagKgChange} req={hasAnyInput && !bagKg} />
               </div>
             </div>
             <div className={fieldFlash ? "num-input-flash" : ""}>
