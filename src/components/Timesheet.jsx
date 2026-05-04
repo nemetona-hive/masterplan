@@ -40,6 +40,7 @@ function SheetTimesheet() {
   const [calcRows,    setCalcRows]    = useState(makeCalcRows);
   const [activeRowId, setActiveRowId] = useState(null);
   const [copied,      setCopied]      = useState(false);
+  const [copyError,   setCopyError]   = useState(false);
 
   const nextCalcId = React.useRef(4);
   const startRefs  = React.useRef({});
@@ -58,7 +59,10 @@ function SheetTimesheet() {
     return id;
   };
 
-  const removeCalcRow  = id => setCalcRows(prev => prev.filter(r => r.id !== id));
+  const removeCalcRow = id => {
+    setCalcRows(prev => prev.filter(r => r.id !== id));
+    if (activeRowId === id) setActiveRowId(null);
+  };
   const updateCalcRow  = (id, field, value) =>
     setCalcRows(prev => prev.map(r => r.id === id ? { ...r, [field]: value } : r));
 
@@ -103,6 +107,10 @@ function SheetTimesheet() {
     navigator.clipboard.writeText(fmtDecimal(calcTotalMins)).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
+    }).catch(err => {
+      console.error('Clipboard copy failed:', err);
+      setCopyError(true);
+      setTimeout(() => setCopyError(false), 1800);
     });
   };
 
@@ -200,9 +208,9 @@ function SheetTimesheet() {
             <Stack direction="row" gap={3} className="ts-total-vals">
               <span className="ts-total-val">{fmtHHMM(calcTotalMins)}</span>
               <span className="ts-total-dec">= {fmtDecimal(calcTotalMins)}</span>
-              <button className={"ts-copy" + (copied ? " ts-copy--done" : "")}
+              <button className={"ts-copy" + (copied ? " ts-copy--done" : "") + (copyError ? " ts-copy--error" : "")}
                 onClick={handleCopy}>
-                {copied ? 'Copied!' : 'Copy decimal'}
+                {copied ? 'Copied!' : copyError ? 'Error' : 'Copy decimal'}
               </button>
             </Stack>
           </Stack>
