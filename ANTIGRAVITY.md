@@ -21,11 +21,15 @@ and is available as globals — do NOT import them.
 3.  Controls.jsx               → S2Controls, S4Controls, LAYOUT_REGISTRY
 4.  utils/timesheet.js         → parseTime, parseLunch, parseSumTime, roundMins, fmtHHMM, fmtDecimal
 5.  components/Timesheet.jsx   → SheetTimesheet
-6.  components/Concrete.jsx → SheetConcrete
-7.  Sheets.jsx                 → SheetHome, SheetGoldenRatio, SheetSymmetricLayout, SheetSurfaceLayout
-8.  Nav.jsx                    → isNavPageActive, NavButton, initOpenGroups, AppNav
-9.  themes.js                  → THEMES, getThemeOrder, getNextTheme, applyTheme
-10. App.jsx                    → MainPageContent, App, ReactDOM.createRoot
+6.  components/Concrete.jsx    → SheetConcrete
+7.  components/PipeWrapCalculator.jsx → PipeWrapCalculator
+8.  components/Home.jsx        → SheetHome
+9.  components/GoldenRatio.jsx → SheetGoldenRatio
+10. components/SymmetricLayout.jsx → SheetSymmetricLayout
+11. components/SurfaceLayout.jsx → SheetSurfaceLayout
+12. Nav.jsx                    → isNavPageActive, NavButton, initOpenGroups, AppNav
+13. themes.js                  → THEMES, getThemeOrder, getNextTheme, applyTheme
+14. App.jsx                    → MainPageContent, App, ReactDOM.createRoot
 ```
 
 `components.jsx` is the manifest — it documents order but contains no logic.
@@ -40,7 +44,7 @@ and is available as globals — do NOT import them.
 | `DEFAULT_SH` | Default state for surface layout (W, H, PPi, PLa, offset, direction, minJ, startOff, s4Long, s4Short, rowStart) |
 | `DEFAULT_SYM` | Default state for symmetric layout (roomWidth, panelWidth, oneFullEdge, customFirstPieceWidth) |
 | `DEFAULT_GR` | Default items for golden ratio tool |
-| `ICONS` | Map of icon name → FontAwesome class string |
+| `ICONS` | Map of icon name → FontAwesome class string (defined in config.js) |
 | `PAL_CLASSES` | Palette class maps for segment coloring (s1, s4l, s4s) |
 | `fmt` | Formatting helpers: fmt.decimals(v,n), fmt.area(v), fmt.decimal(v), fmt.mm(v) |
 | `SUMMARY_LABELS` | Label maps for result summary rows (s0, s1s2s3, s4 keys) |
@@ -98,13 +102,19 @@ Current pages: `home`, `layout` (parent), `pattern-layout`, `symmetric-layout`,
 - `.pill-btn` — Minimalist, rounded buttons used for quick-select presets.
 - `.ctrl-dir` / `.ts-btn` — Standardized button styles with "premium glow" hover/active feedback. Standalone buttons use `var(--fs-md)` while segmented controls are bumped for legibility.
 
-## Standalone page components
+## Page components
+
+All calculators and pages are stored as standalone files inside `src/components/`:
 
 | Page ID | Component | Location | Description |
 |---|---|---|---|
-| `pipe-wrap` | `PipeWrapCalculator` | `components/PipeWrapCalculator.jsx` | Pipe wrap length calculator with SVG diagram; uses presets, RangeSlider for overlap/gap |
-| `concrete` | `SheetConcrete` | `components/Concrete.jsx` | Concrete consumption estimator; features a table-like preset system with a single header row for product details. |
-| `timesheet` | `SheetTimesheet` | `components/Timesheet.jsx` | Work hours calculator; dynamic rows, lunch presets, decimal copy |
+| `home` | `SheetHome` | `components/Home.jsx` | Main landing page menu |
+| `layout` | `SheetSurfaceLayout` | `components/SurfaceLayout.jsx` | Compares straight, shifted, stepped, and long-short layout strategies |
+| `symmetric-layout` | `SheetSymmetricLayout` | `components/SymmetricLayout.jsx` | Equal edge pieces with full panels in the center |
+| `golden-ratio` | `SheetGoldenRatio` | `components/GoldenRatio.jsx` | Calculates Phi sequences |
+| `pipe-wrap` | `PipeWrapCalculator` | `components/PipeWrapCalculator.jsx` | Pipe wrap length calculator with SVG diagram |
+| `concrete` | `SheetConcrete` | `components/Concrete.jsx` | Concrete consumption estimator |
+| `timesheet` | `SheetTimesheet` | `components/Timesheet.jsx` | Work hours calculator |
 
 ## Layout systems
 
