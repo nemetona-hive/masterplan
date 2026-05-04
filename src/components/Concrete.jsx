@@ -229,40 +229,53 @@ function SheetConcrete() {
               {presets.map((p, idx) => (
                 <div key={idx} className={"pw-preset-row" + (activePreset === idx ? " pw-preset-active" : "")}>
                   <div className="pw-preset-fields">
-                    <input
-                      id={`preset-name-${idx}`}
-                      name={`preset-name-${idx}`}
-                      type="text"
-                      className="num-input"
-                      placeholder="Product description..."
-                      value={p.name}
-                      onChange={e => updatePreset(idx, "name", e.target.value)}
-                    />
-                    <input
-                      id={`preset-rate-${idx}`}
-                      name={`preset-rate-${idx}`}
-                      type="number"
-                      className="num-input"
-                      value={p.rate}
-                      onChange={e => updatePreset(idx, "rate", e.target.value)}
-                    />
-                    <input
-                      id={`preset-bagkg-${idx}`}
-                      name={`preset-bagkg-${idx}`}
-                      type="number"
-                      className="num-input"
-                      value={p.bagKg}
-                      onChange={e => updatePreset(idx, "bagKg", e.target.value)}
-                    />
-                    <input
-                      id={`preset-price-${idx}`}
-                      name={`preset-price-${idx}`}
-                      type="number"
-                      className="num-input"
-                      value={p.bagPrice}
-                      onChange={e => updatePreset(idx, "bagPrice", e.target.value)}
-                    />
+                    <div>
+                      <span className="pw-preset-lbl-hide">Product Name</span>
+                      <input
+                        id={`preset-name-${idx}`}
+                        name={`preset-name-${idx}`}
+                        type="text"
+                        className="num-input"
+                        placeholder="Product description..."
+                        value={p.name}
+                        onChange={e => updatePreset(idx, "name", e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <span className="pw-preset-lbl-hide">kg/m²·mm</span>
+                      <input
+                        id={`preset-rate-${idx}`}
+                        name={`preset-rate-${idx}`}
+                        type="number"
+                        className="num-input"
+                        value={p.rate}
+                        onChange={e => updatePreset(idx, "rate", e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <span className="pw-preset-lbl-hide">Bag kg</span>
+                      <input
+                        id={`preset-bagkg-${idx}`}
+                        name={`preset-bagkg-${idx}`}
+                        type="number"
+                        className="num-input"
+                        value={p.bagKg}
+                        onChange={e => updatePreset(idx, "bagKg", e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <span className="pw-preset-lbl-hide">Price €</span>
+                      <input
+                        id={`preset-price-${idx}`}
+                        name={`preset-price-${idx}`}
+                        type="number"
+                        className="num-input"
+                        value={p.bagPrice}
+                        onChange={e => updatePreset(idx, "bagPrice", e.target.value)}
+                      />
+                    </div>
                     <div className="num-wrap" style={{ justifyContent: "center" }}>
+                      <span className="pw-preset-lbl-hide">&nbsp;</span>
                       {activePreset === idx
                         ? <div className="pw-preset-badge">active</div>
                         : <button 
