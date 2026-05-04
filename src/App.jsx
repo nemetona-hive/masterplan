@@ -8,10 +8,10 @@ const getHashPage = () => {
   return PAGES.some(p => p.id === hash) ? hash : "home";
 };
 
-function MainPageContent({ page, setPage, sh, setSh, sym, setSym, grItems, setGrItems }) {
+function MainPageContent({ page, setPage, sh, setSh, sym, setSym, grItems, setGrItems, theme, setTheme }) {
   const pageMeta = PAGES.find(pg => pg.id === page);
   if (page === "home") {
-    return <div id="page-home" className="page-main-full"><SheetHome page={page} setPage={setPage} /></div>;
+    return <div id="page-home" className="page-main-full"><SheetHome page={page} setPage={setPage} theme={theme} setTheme={setTheme} /></div>;
   }
   if (page === "concrete") {
     return (
@@ -157,7 +157,7 @@ function App() {
         <div id="page-main" className="page-main"
           onClick={() => mobileMenuOpen && setMobileMenuOpen(false)}>
         <MainPageContent page={page} setPage={setPage} sh={sh} setSh={setSh} sym={sym} setSym={setSym}
-          grItems={grItems} setGrItems={setGrItems} />
+          grItems={grItems} setGrItems={setGrItems} theme={theme} setTheme={setTheme} />
         </div>
       </div>
     </div>
