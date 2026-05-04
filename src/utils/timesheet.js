@@ -5,10 +5,22 @@ function parseTime(raw) {
   if (!raw || !raw.trim()) return null;
   let s = raw.trim().replace(',', '.');
   let m;
-  if ((m = s.match(/^(\d{1,2})[:\.](\d{2})$/))) return +m[1] * 60 + +m[2];
-  if (/^\d{3}$/.test(s))                        return +s[0] * 60 + +s.slice(1);
-  if (/^\d{4}$/.test(s))                        return +s.slice(0, 2) * 60 + +s.slice(2);
-  if (/^\d{1,2}$/.test(s))                      return +s * 60;
+  if ((m = s.match(/^(\d{1,2})[:\.](\d{2})$/))) {
+    const h = +m[1], mm = +m[2];
+    if (mm >= 60) return null;
+    return h * 60 + mm;
+  }
+  if (/^\d{3}$/.test(s)) {
+    const h = +s[0], mm = +s.slice(1);
+    if (mm >= 60) return null;
+    return h * 60 + mm;
+  }
+  if (/^\d{4}$/.test(s)) {
+    const h = +s.slice(0, 2), mm = +s.slice(2);
+    if (mm >= 60) return null;
+    return h * 60 + mm;
+  }
+  if (/^\d{1,2}$/.test(s)) return +s * 60;
   return null;
 }
 
@@ -19,10 +31,22 @@ function parseLunch(raw) {
   let m;
   if ((m = s.match(/^\.(\d+)$/))) return +m[1];
   s = s.replace(',', '.');
-  if ((m = s.match(/^(\d{1,2})[:\.](\d{2})$/))) return +m[1] * 60 + +m[2];
-  if (/^\d{3}$/.test(s))                        return +s[0] * 60 + +s.slice(1);
-  if (/^\d{4}$/.test(s))                        return +s.slice(0, 2) * 60 + +s.slice(2);
-  if (/^\d{1,2}$/.test(s))                      return +s * 60;
+  if ((m = s.match(/^(\d{1,2})[:\.](\d{2})$/))) {
+    const h = +m[1], mm = +m[2];
+    if (mm >= 60) return null;
+    return h * 60 + mm;
+  }
+  if (/^\d{3}$/.test(s)) {
+    const h = +s[0], mm = +s.slice(1);
+    if (mm >= 60) return null;
+    return h * 60 + mm;
+  }
+  if (/^\d{4}$/.test(s)) {
+    const h = +s.slice(0, 2), mm = +s.slice(2);
+    if (mm >= 60) return null;
+    return h * 60 + mm;
+  }
+  if (/^\d{1,2}$/.test(s)) return +s * 60;
   return null;
 }
 
