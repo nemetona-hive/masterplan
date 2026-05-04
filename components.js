@@ -823,7 +823,9 @@ function SheetTimesheet() {
     return /*#__PURE__*/React.createElement("div", {
       key: row.id,
       className: "ts-grid-row" + (row.id === activeRowId ? " ts-grid-row--active" : "")
-    }, /*#__PURE__*/React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+      className: "pw-preset-lbl-hide"
+    }, "Start"), /*#__PURE__*/React.createElement("input", {
       id: `ts-start-${row.id}`,
       name: `ts-start-${row.id}`,
       className: "num-input ts-input",
@@ -836,7 +838,9 @@ function SheetTimesheet() {
       onFocus: () => setActiveRowId(row.id),
       onChange: e => updateCalcRow(row.id, 'start', e.target.value),
       onBlur: e => formatTimeInput(row.id, 'start', e.target.value)
-    }), /*#__PURE__*/React.createElement("input", {
+    })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+      className: "pw-preset-lbl-hide"
+    }, "End"), /*#__PURE__*/React.createElement("input", {
       id: `ts-end-${row.id}`,
       name: `ts-end-${row.id}`,
       className: "num-input ts-input",
@@ -846,7 +850,9 @@ function SheetTimesheet() {
       onFocus: () => setActiveRowId(row.id),
       onChange: e => updateCalcRow(row.id, 'end', e.target.value),
       onBlur: e => formatTimeInput(row.id, 'end', e.target.value)
-    }), /*#__PURE__*/React.createElement("input", {
+    })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+      className: "pw-preset-lbl-hide"
+    }, "Lunch"), /*#__PURE__*/React.createElement("input", {
       id: `ts-lunch-${row.id}`,
       name: `ts-lunch-${row.id}`,
       className: "num-input ts-input",
@@ -856,15 +862,25 @@ function SheetTimesheet() {
       onFocus: () => setActiveRowId(row.id),
       onKeyDown: e => handleLunchTab(e, idx),
       onChange: e => updateCalcRow(row.id, 'lunch', e.target.value)
-    }), /*#__PURE__*/React.createElement("div", {
+    })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+      className: "pw-preset-lbl-hide"
+    }, "Duration"), /*#__PURE__*/React.createElement("div", {
       className: "ts-duration" + (res.status === 'error' ? " ts-duration--error" : res.status === 'warn' ? " ts-duration--warn" : "")
-    }, res.dur), /*#__PURE__*/React.createElement("div", {
-      className: "ts-decimal ts-col-dec"
-    }, res.dec), /*#__PURE__*/React.createElement("button", {
+    }, res.dur)), /*#__PURE__*/React.createElement("div", {
+      className: "ts-col-dec"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "pw-preset-lbl-hide"
+    }, "Decimal"), /*#__PURE__*/React.createElement("div", {
+      className: "ts-decimal"
+    }, res.dec)), /*#__PURE__*/React.createElement("div", {
+      className: "ts-remove-wrap"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "pw-preset-lbl-hide"
+    }, "\xA0"), /*#__PURE__*/React.createElement("button", {
       className: "num-btn ts-remove",
       tabIndex: -1,
       onClick: () => removeCalcRow(row.id)
-    }, "\xD7"));
+    }, "\xD7")));
   }), /*#__PURE__*/React.createElement(Stack, {
     direction: "row",
     gap: 1,
