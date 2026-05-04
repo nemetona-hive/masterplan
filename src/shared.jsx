@@ -156,7 +156,6 @@ function NumInput({ id, label, value, onChange, step = 1, min = 0, unit, req = f
           onChange={e => setLocal(e.target.value)}
           onKeyDown={e => e.key === "Enter" && commit()}
           onBlur={() => commit()} />
-        {unit && <span className="data-row-unit num-unit-span">{unit}</span>}
         <button
           className="num-btn"
           type="button"
