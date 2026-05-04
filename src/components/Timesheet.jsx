@@ -127,39 +127,57 @@ function SheetTimesheet() {
             return (
               <div key={row.id}
                 className={"ts-grid-row" + (row.id === activeRowId ? " ts-grid-row--active" : "")}>
-                <input 
-                  id={`ts-start-${row.id}`}
-                  name={`ts-start-${row.id}`}
-                  className="num-input ts-input" type="text" placeholder="9, 9:30, 0930"
-                  value={row.start}
-                  ref={el => { startRefs.current[row.id] = el; }}
-                  onFocus={() => setActiveRowId(row.id)}
-                  onChange={e => updateCalcRow(row.id, 'start', e.target.value)}
-                  onBlur={e => formatTimeInput(row.id, 'start', e.target.value)} />
-                <input 
-                  id={`ts-end-${row.id}`}
-                  name={`ts-end-${row.id}`}
-                  className="num-input ts-input" type="text" placeholder="17, 17:30"
-                  value={row.end}
-                  onFocus={() => setActiveRowId(row.id)}
-                  onChange={e => updateCalcRow(row.id, 'end', e.target.value)}
-                  onBlur={e => formatTimeInput(row.id, 'end', e.target.value)} />
-                <input 
-                  id={`ts-lunch-${row.id}`}
-                  name={`ts-lunch-${row.id}`}
-                  className="num-input ts-input" type="text" placeholder=".30"
-                  value={row.lunch}
-                  onFocus={() => setActiveRowId(row.id)}
-                  onKeyDown={e => handleLunchTab(e, idx)}
-                  onChange={e => updateCalcRow(row.id, 'lunch', e.target.value)} />
-                <div className={
-                  "ts-duration" +
-                  (res.status === 'error' ? " ts-duration--error" :
-                   res.status === 'warn'  ? " ts-duration--warn"  : "")
-                }>{res.dur}</div>
-                <div className="ts-decimal ts-col-dec">{res.dec}</div>
-                <button className="num-btn ts-remove" tabIndex={-1}
-                  onClick={() => removeCalcRow(row.id)}>×</button>
+                  <div>
+                    <span className="pw-preset-lbl-hide">Start</span>
+                    <input 
+                      id={`ts-start-${row.id}`}
+                      name={`ts-start-${row.id}`}
+                      className="num-input ts-input" type="text" placeholder="9, 9:30, 0930"
+                      value={row.start}
+                      ref={el => { startRefs.current[row.id] = el; }}
+                      onFocus={() => setActiveRowId(row.id)}
+                      onChange={e => updateCalcRow(row.id, 'start', e.target.value)}
+                      onBlur={e => formatTimeInput(row.id, 'start', e.target.value)} />
+                  </div>
+                  <div>
+                    <span className="pw-preset-lbl-hide">End</span>
+                    <input 
+                      id={`ts-end-${row.id}`}
+                      name={`ts-end-${row.id}`}
+                      className="num-input ts-input" type="text" placeholder="17, 17:30"
+                      value={row.end}
+                      onFocus={() => setActiveRowId(row.id)}
+                      onChange={e => updateCalcRow(row.id, 'end', e.target.value)}
+                      onBlur={e => formatTimeInput(row.id, 'end', e.target.value)} />
+                  </div>
+                  <div>
+                    <span className="pw-preset-lbl-hide">Lunch</span>
+                    <input 
+                      id={`ts-lunch-${row.id}`}
+                      name={`ts-lunch-${row.id}`}
+                      className="num-input ts-input" type="text" placeholder=".30"
+                      value={row.lunch}
+                      onFocus={() => setActiveRowId(row.id)}
+                      onKeyDown={e => handleLunchTab(e, idx)}
+                      onChange={e => updateCalcRow(row.id, 'lunch', e.target.value)} />
+                  </div>
+                  <div>
+                    <span className="pw-preset-lbl-hide">Duration</span>
+                    <div className={
+                      "ts-duration" +
+                      (res.status === 'error' ? " ts-duration--error" :
+                       res.status === 'warn'  ? " ts-duration--warn"  : "")
+                    }>{res.dur}</div>
+                  </div>
+                  <div className="ts-col-dec">
+                    <span className="pw-preset-lbl-hide">Decimal</span>
+                    <div className="ts-decimal">{res.dec}</div>
+                  </div>
+                  <div className="ts-remove-wrap">
+                    <span className="pw-preset-lbl-hide">&nbsp;</span>
+                    <button className="num-btn ts-remove" tabIndex={-1}
+                      onClick={() => removeCalcRow(row.id)}>×</button>
+                  </div>
               </div>
             );
           })}
