@@ -1,3 +1,51 @@
+/* ============================================================
+ * ICON CONFIGURATION
+ * Edit the Font Awesome class on the right to change any icon.
+ * Format: "fa-solid fa-[name]" or "fa-regular fa-[name]"
+ * Reference: https://fontawesome.com/icons
+ * ============================================================ */
+const ICONS = {
+  // UI Actions
+  "corner-down-left": "fa-solid fa-arrow-rotate-right",       // Confirm / Enter button
+  "check": "fa-solid fa-check",                     // Commit confirmation flash
+  "home": "fa-solid fa-compass-drafting",           // Home icon
+
+  // Collapse / Expand toggles
+  "chevron-down": "fa-solid fa-chevron-down",     // Section open
+  "chevron-right": "fa-solid fa-chevron-right",    // Section closed
+
+  // Navigation sidebar
+  "panel-left-close": "fa-solid fa-kaaba",   // Toggle sidebar
+  "layout-template": "fa-solid fa-table-cells-large",// Nav: Layout
+  "rows-3": "fa-solid fa-table-list",       // Nav: Pattern Layouts
+  "columns-2": "fa-solid fa-columns",          // Nav: Symmetric Layout
+  "layer-group": "fa-solid fa-layer-group",       // Nav: Concrete
+  "golden-phi": "fa-solid fa-dharmachakra",     // Nav: Golden Ratio
+
+  // Layout system title icons
+  "s0": "fa-solid fa-circle-0",         // S0: Symmetric layout
+  "s1": "fa-solid fa-1",                // S1: Straight layout
+  "s2": "fa-solid fa-2",                // S2: Shifted layout
+  "s3": "fa-solid fa-3",                // S3: Stepped layout
+  "s4": "fa-solid fa-4",                // S4: Long-Short
+
+  // Best layout badge
+  "best-badge": "fa-solid fa-star-of-david",             // Best layout indicator
+
+  // Timesheet
+  "clock": "fa-solid fa-clock",                     // Timesheet page
+
+  // Pipe Wrap
+  "ring": "fa-solid fa-circle-notch",                       // Pipe Wrap page
+  "palette": "fa-solid fa-palette",                         // Theme toggle
+
+  "plus": "fa-solid fa-plus",
+  "refresh-cw": "fa-solid fa-arrows-rotate",
+  // Lock / Unlock
+  "lock": "fa-solid fa-lock",
+  "unlock": "fa-solid fa-lock-open"
+};
+
 const PAL_CLASSES = {
   s1: ["color-s1"],
   s2: ["color-s1"],
