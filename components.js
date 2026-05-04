@@ -206,19 +206,27 @@ function Collapsible({
   setOpen: setOpenProp,
   children,
   variant = "section",
-  className = ""
+  className = "",
+  noToggle = false
 }) {
   const [openLocal, setOpenLocal] = React.useState(true);
-  const open = setOpenProp ? openProp : openLocal;
+  const open = noToggle ? true : setOpenProp ? openProp : openLocal;
   const setOpen = setOpenProp ? setOpenProp : setOpenLocal;
+  const headStyle = {
+    ...(bg ? {
+      background: bg
+    } : {}),
+    cursor: noToggle ? "default" : "pointer"
+  };
   if (variant === "panel") {
     return /*#__PURE__*/React.createElement("div", {
       id: id,
       className: ["control-panel", className].filter(Boolean).join(" ")
     }, /*#__PURE__*/React.createElement("div", {
       className: "panel-head",
-      onClick: () => setOpen(!open)
-    }, /*#__PURE__*/React.createElement("span", {
+      style: headStyle,
+      onClick: noToggle ? undefined : () => setOpen(!open)
+    }, !noToggle && /*#__PURE__*/React.createElement("span", {
       className: "sys-head-toggle"
     }, /*#__PURE__*/React.createElement(Icon, {
       name: open ? "chevron-down" : "chevron-right"
@@ -230,11 +238,9 @@ function Collapsible({
     className: "section"
   }, /*#__PURE__*/React.createElement("div", {
     className: "section-head",
-    style: bg ? {
-      background: bg
-    } : undefined,
-    onClick: () => setOpen(!open)
-  }, /*#__PURE__*/React.createElement("span", {
+    style: headStyle,
+    onClick: noToggle ? undefined : () => setOpen(!open)
+  }, !noToggle && /*#__PURE__*/React.createElement("span", {
     className: "sys-head-toggle"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: open ? "chevron-down" : "chevron-right"
@@ -1073,7 +1079,8 @@ function SheetConcrete() {
     className: "page-inner",
     gap: 5
   }, /*#__PURE__*/React.createElement(Section, {
-    title: "Area & Thickness"
+    title: "Area & Thickness",
+    noToggle: true
   }, /*#__PURE__*/React.createElement("div", {
     className: "concrete-split-wrap section-pad"
   }, /*#__PURE__*/React.createElement(Stack, {
@@ -1271,9 +1278,17 @@ function SheetConcrete() {
       opacity: 0.7
     }
   }, "Fill product data above and click \"Apply\" to update the calculator values."))), /*#__PURE__*/React.createElement(Section, {
-    title: /*#__PURE__*/React.createElement(React.Fragment, null, "Consumption & Packaging", /*#__PURE__*/React.createElement("span", {
+    title: /*#__PURE__*/React.createElement("div", {
+      className: "u-flex-row",
+      style: {
+        flex: 1
+      }
+    }, /*#__PURE__*/React.createElement("span", null, "Consumption & Packaging"), /*#__PURE__*/React.createElement("span", {
       className: "pw-updated-note" + (showUpdated ? " pw-updated-note-visible" : "")
-    }, "updated"))
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "check"
+    }), " updated")),
+    noToggle: true
   }, /*#__PURE__*/React.createElement(Stack, {
     className: "section-pad",
     gap: 3
@@ -1309,7 +1324,8 @@ function SheetConcrete() {
     step: 0.01,
     onChange: handleBagPriceChange
   })))), /*#__PURE__*/React.createElement(Section, {
-    title: "Results"
+    title: "Results",
+    noToggle: true
   }, /*#__PURE__*/React.createElement(Stack, {
     className: "section-pad",
     gap: 1
