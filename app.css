@@ -1964,6 +1964,13 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	box-shadow: 0 0 8px color-mix(in srgb, #6fbf73 25%, transparent);
 }
 
+.ts-copy--error {
+	color: #ff6666;
+	border-color: color-mix(in srgb, #ff6666 50%, transparent);
+	background: color-mix(in srgb, #ff6666 8%, transparent);
+	box-shadow: 0 0 8px color-mix(in srgb, #ff6666 25%, transparent);
+}
+
 /* Mobile ------------------------------------------------------------------ */
 
 @media (max-width: 768px), (max-height: 500px) {
