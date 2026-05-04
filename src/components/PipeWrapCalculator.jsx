@@ -5,7 +5,6 @@ function PipeWrapCalculator() {
   const [matThick, setMatThick] = React.useState("");
   const [overlap, setOverlap] = React.useState("");
   const [gap, setGap] = React.useState("");
-  const svgRef = React.useRef(null);
 
   const d = parseFloat(pipeDiam) || 0;
   const t = parseFloat(matThick) || 0;
@@ -18,112 +17,31 @@ function PipeWrapCalculator() {
 
   const [adjOpen, setAdjOpen] = React.useState(false);
 
-  React.useEffect(() => {
-    drawDiagram();
-  }, [pipeDiam, matThick, overlap, gap]);
+  // ── Diagram calculations ───────────────────────────────────────────────────
+  const cx = 100, cy = 90, maxR = 72;
+  const totalR_mm = (d / 2 + t) || 1;
+  const refR_mm = 110;
+  const scale = maxR / Math.max(refR_mm, totalR_mm);
+  const rP = (d / 2) * scale;
+  const rO = totalR_mm * scale;
 
-  function drawDiagram() {
-    const svg = svgRef.current;
-    if (!svg) return;
+  const gapAngle = outer > 0 ? (g / (Math.PI * outer)) * Math.PI * 2 : 0;
+  const overAngle = outer > 0 ? (o / (Math.PI * outer)) * Math.PI * 2 : 0;
 
-    const cx = 100, cy = 90, maxR = 72;
-    const totalR_mm = (d / 2 + t) || 1;
-    // Lower reference radius = more "zoom" for smaller pipes
-    const refR_mm = 110;
-    const scale = maxR / Math.max(refR_mm, totalR_mm);
-    const rP = (d / 2) * scale;
-    const rO = totalR_mm * scale;
+  const getArcPath = (r, startA, endA) => {
+    const x1 = cx + r * Math.cos(startA), y1 = cy + r * Math.sin(startA);
+    const x2 = cx + r * Math.cos(endA), y2 = cy + r * Math.sin(endA);
+    const lg = (endA - startA) > Math.PI ? 1 : 0;
+    return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${lg} 1 ${x2} ${y2} Z`;
+  };
 
-    const gapAngle = outer > 0 ? (g / (Math.PI * outer)) * Math.PI * 2 : 0;
-    const overAngle = outer > 0 ? (o / (Math.PI * outer)) * Math.PI * 2 : 0;
+  // Text vertical positions
+  const ty1 = 28;
+  const ty2 = ty1 + 20;
+  const ty3 = ty2 + (o > 0 ? 20 : 0);
+  const tyTotal = ty1 + (o > 0 ? 20 : 0) + (g > 0 ? 20 : 0) + 22;
+  const tyLegend = tyTotal + 14;
 
-    const arc = (r, startA, endA) => {
-      const x1 = cx + r * Math.cos(startA), y1 = cy + r * Math.sin(startA);
-      const x2 = cx + r * Math.cos(endA), y2 = cy + r * Math.sin(endA);
-      const lg = (endA - startA) > Math.PI ? 1 : 0;
-      return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${lg} 1 ${x2} ${y2} Z`;
-    };
-
-    let ty = 28;
-    const lines = [
-      `<text x="230" y="${ty}" style="font-family:var(--mono);font-size:11px;fill:var(--color-gray-opa80)">` +
-      `π × (${d} + 2×${t}) = ${base.toFixed(1)} mm</text>`
-    ];
-    if (o > 0) {
-      ty += 20;
-      lines.push(
-        `<text x="230" y="${ty}" style="font-family:var(--mono);font-size:11px;fill:var(--color-blue)">` +
-        `+ overlap  ${o} mm</text>`
-      );
-    }
-    if (g > 0) {
-      ty += 20;
-      lines.push(
-        `<text x="230" y="${ty}" style="font-family:var(--mono);font-size:11px;fill:var(--color-gray-opa80)">` +
-        `− gap  ${g} mm</text>`
-      );
-    }
-    ty += 22;
-    lines.push(
-      `<text x="230" y="${ty}" style="font-family:var(--mono);font-size:14px;font-weight:700;fill:var(--color-primary)">` +
-      `= ${total.toFixed(1)} mm</text>`
-    );
-
-    const cmResult = `
-      <g transform="translate(230, 155)">
-        <rect x="-8" y="-22" width="120" height="30" rx="6" 
-          fill="color-mix(in srgb, var(--color-primary) 8%, transparent)"
-          stroke="color-mix(in srgb, var(--color-primary) 20%, transparent)"
-          stroke-width="0.5" />
-        <text x="8" y="2" style="font-family:var(--mono);font-size:22px;font-weight:800;fill:var(--color-primary)">
-          ${(total / 10).toFixed(1)} cm
-        </text>
-      </g>
-    `;
-
-    svg.innerHTML = `
-      <circle cx="${cx}" cy="${cy}" r="${rO}"
-        fill="color-mix(in srgb, var(--color-gray-light) 80%, transparent)"
-        stroke="var(--color-gray)" stroke-width="0.5"/>
-
-      ${g > 0 ? `<path d="${arc(rO, -Math.PI / 2, -Math.PI / 2 + gapAngle)}"
-        fill="color-mix(in srgb, var(--color-gray-opa80) 40%, transparent)"
-        stroke="var(--color-gray)" stroke-width="0.5"/>` : ""}
-
-      ${o > 0 ? `<path d="${arc(rO, -Math.PI / 2 + gapAngle, -Math.PI / 2 + gapAngle + overAngle)}"
-        fill="color-mix(in srgb, var(--color-blue) 35%, transparent)"
-        stroke="var(--color-blue)" stroke-width="0.5" opacity="0.9"/>` : ""}
-
-      <circle cx="${cx}" cy="${cy}" r="${rP}"
-        fill="var(--color-darkblue)"
-        stroke="var(--color-gray)" stroke-width="0.5"/>
-
-      <text x="${cx}" y="${cy - 4}"
-        style="font-family:var(--mono);font-size:9px;fill:var(--color-gray-opa80)"
-        text-anchor="middle">pipe</text>
-      <text x="${cx}" y="${cy + 8}"
-        style="font-family:var(--mono);font-size:9px;fill:var(--color-gray-opa80)"
-        text-anchor="middle">Ø${d}mm</text>
-
-      ${lines.join("\n")}
-      ${cmResult}
-
-      ${g > 0 ? `
-        <rect x="230" y="${ty + 14}" width="9" height="9" rx="2"
-          fill="color-mix(in srgb, var(--color-gray-opa80) 40%, transparent)"
-          stroke="var(--color-gray)" stroke-width="0.5"/>
-        <text x="243" y="${ty + 22}"
-          style="font-family:var(--mono);font-size:10px;fill:var(--color-gray-opa80)">gap</text>
-      ` : ""}
-      ${o > 0 ? `
-        <rect x="230" y="${ty + (g > 0 ? 30 : 14)}" width="9" height="9" rx="2"
-          fill="color-mix(in srgb, var(--color-blue) 35%, transparent)"
-          stroke="var(--color-blue)" stroke-width="0.5"/>
-        <text x="243" y="${ty + (g > 0 ? 38 : 22)}"
-          style="font-family:var(--mono);font-size:10px;fill:var(--color-blue)">overlap</text>
-      ` : ""}
-    `;
-  }
   return (
     <div className="page-scroll">
       <Stack className="page-inner" gap={5}>
@@ -250,12 +168,82 @@ function PipeWrapCalculator() {
 
             {/* diagram */}
             <div className="pw-diag-wrap">
-              <svg
-                ref={svgRef}
-                viewBox="0 0 420 180"
-                width="100%"
-                className="pw-diag-svg"
-              />
+              <svg viewBox="0 0 420 180" width="100%" className="pw-diag-svg">
+                {/* Outer ring */}
+                <circle cx={cx} cy={cy} r={rO}
+                  fill="color-mix(in srgb, var(--color-gray-light) 80%, transparent)"
+                  stroke="var(--color-gray)" strokeWidth="0.5"/>
+
+                {/* Gap arc */}
+                {g > 0 && (
+                  <path d={getArcPath(rO, -Math.PI / 2, -Math.PI / 2 + gapAngle)}
+                    fill="color-mix(in srgb, var(--color-gray-opa80) 40%, transparent)"
+                    stroke="var(--color-gray)" strokeWidth="0.5"/>
+                )}
+
+                {/* Overlap arc */}
+                {o > 0 && (
+                  <path d={getArcPath(rO, -Math.PI / 2 + gapAngle, -Math.PI / 2 + gapAngle + overAngle)}
+                    fill="color-mix(in srgb, var(--color-blue) 35%, transparent)"
+                    stroke="var(--color-blue)" strokeWidth="0.5" opacity="0.9"/>
+                )}
+
+                {/* Pipe circle */}
+                <circle cx={cx} cy={cy} r={rP}
+                  fill="var(--color-darkblue)"
+                  stroke="var(--color-gray)" strokeWidth="0.5"/>
+
+                {/* Pipe labels */}
+                <text x={cx} y={cy - 4} style={{ fontFamily: 'var(--mono)', fontSize: '9px', fill: 'var(--color-gray-opa80)' }} textAnchor="middle">pipe</text>
+                <text x={cx} y={cy + 8} style={{ fontFamily: 'var(--mono)', fontSize: '9px', fill: 'var(--color-gray-opa80)' }} textAnchor="middle">Ø{d}mm</text>
+
+                {/* Calculation lines */}
+                <text x="230" y={ty1} style={{ fontFamily: 'var(--mono)', fontSize: '11px', fill: 'var(--color-gray-opa80)' }}>
+                  π × ({d} + 2×{t}) = {base.toFixed(1)} mm
+                </text>
+                {o > 0 && (
+                  <text x="230" y={ty2} style={{ fontFamily: 'var(--mono)', fontSize: '11px', fill: 'var(--color-blue)' }}>
+                    + overlap {o} mm
+                  </text>
+                )}
+                {g > 0 && (
+                  <text x="230" y={ty3} style={{ fontFamily: 'var(--mono)', fontSize: '11px', fill: 'var(--color-gray-opa80)' }}>
+                    − gap {g} mm
+                  </text>
+                )}
+                <text x="230" y={tyTotal} style={{ fontFamily: 'var(--mono)', fontSize: '14px', fontWeight: 700, fill: 'var(--color-primary)' }}>
+                  = {total.toFixed(1)} mm
+                </text>
+
+                {/* CM Result pill */}
+                <g transform="translate(230, 155)">
+                  <rect x="-8" y="-22" width="120" height="30" rx="6" 
+                    fill="color-mix(in srgb, var(--color-primary) 8%, transparent)"
+                    stroke="color-mix(in srgb, var(--color-primary) 20%, transparent)"
+                    strokeWidth="0.5" />
+                  <text x="8" y="2" style={{ fontFamily: 'var(--mono)', fontSize: '22px', fontWeight: 800, fill: 'var(--color-primary)' }}>
+                    {(total / 10).toFixed(1)} cm
+                  </text>
+                </g>
+
+                {/* Legend */}
+                {g > 0 && (
+                  <g>
+                    <rect x="230" y={tyLegend} width="9" height="9" rx="2"
+                      fill="color-mix(in srgb, var(--color-gray-opa80) 40%, transparent)"
+                      stroke="var(--color-gray)" strokeWidth="0.5"/>
+                    <text x="243" y={tyLegend + 8} style={{ fontFamily: 'var(--mono)', fontSize: '10px', fill: 'var(--color-gray-opa80)' }}>gap</text>
+                  </g>
+                )}
+                {o > 0 && (
+                  <g>
+                    <rect x="230" y={tyLegend + (g > 0 ? 16 : 0)} width="9" height="9" rx="2"
+                      fill="color-mix(in srgb, var(--color-blue) 35%, transparent)"
+                      stroke="var(--color-blue)" strokeWidth="0.5"/>
+                    <text x="243" y={tyLegend + 8 + (g > 0 ? 16 : 0)} style={{ fontFamily: 'var(--mono)', fontSize: '10px', fill: 'var(--color-blue)' }}>overlap</text>
+                  </g>
+                )}
+              </svg>
             </div>
 
             <div className="pw-formula-wrap">
