@@ -25,38 +25,12 @@ const THEMES = {
       '--color-white':          '#fff',
     },
   },
-
-  // TEMPLATE FOR NEW THEMES:
-  // themeName: {
-  //   name: 'themeName',
-  //   label: 'Display Label',
-  //   icon: '✦',
-  //   colors: {
-  //     '--color-darkblue':       '#XXXXXX',
-  //     '--color-darkblue-light': '#XXXXXX',
-  //     '--color-gray':           '#XXXXXX',
-  //     '--color-gray-light':     '#XXXXXX',
-  //     '--color-gray-opa80':     '#XXXXXX',
-  //     '--color-blue':           '#XXXXXX',
-  //     '--color-white':          '#XXXXXX',
-  //   },
-  // },
 };
 
 /**
  * Get ordered list of theme names
  */
 const getThemeOrder = () => Object.keys(THEMES);
-
-/**
- * Get next theme in rotation
- */
-const getNextTheme = (currentTheme) => {
-  const themes = getThemeOrder();
-  const currentIndex = themes.indexOf(currentTheme);
-  const nextIndex = (currentIndex + 1) % themes.length;
-  return themes[nextIndex];
-};
 
 /**
  * Apply theme by name
