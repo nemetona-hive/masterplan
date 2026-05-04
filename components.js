@@ -1187,7 +1187,9 @@ function SheetConcrete() {
     className: "pw-preset-row" + (activePreset === idx ? " pw-preset-active" : "")
   }, /*#__PURE__*/React.createElement("div", {
     className: "pw-preset-fields"
-  }, /*#__PURE__*/React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+    className: "pw-preset-lbl-hide"
+  }, "Product Name"), /*#__PURE__*/React.createElement("input", {
     id: `preset-name-${idx}`,
     name: `preset-name-${idx}`,
     type: "text",
@@ -1195,33 +1197,41 @@ function SheetConcrete() {
     placeholder: "Product description...",
     value: p.name,
     onChange: e => updatePreset(idx, "name", e.target.value)
-  }), /*#__PURE__*/React.createElement("input", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+    className: "pw-preset-lbl-hide"
+  }, "kg/m\xB2\xB7mm"), /*#__PURE__*/React.createElement("input", {
     id: `preset-rate-${idx}`,
     name: `preset-rate-${idx}`,
     type: "number",
     className: "num-input",
     value: p.rate,
     onChange: e => updatePreset(idx, "rate", e.target.value)
-  }), /*#__PURE__*/React.createElement("input", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+    className: "pw-preset-lbl-hide"
+  }, "Bag kg"), /*#__PURE__*/React.createElement("input", {
     id: `preset-bagkg-${idx}`,
     name: `preset-bagkg-${idx}`,
     type: "number",
     className: "num-input",
     value: p.bagKg,
     onChange: e => updatePreset(idx, "bagKg", e.target.value)
-  }), /*#__PURE__*/React.createElement("input", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+    className: "pw-preset-lbl-hide"
+  }, "Price \u20AC"), /*#__PURE__*/React.createElement("input", {
     id: `preset-price-${idx}`,
     name: `preset-price-${idx}`,
     type: "number",
     className: "num-input",
     value: p.bagPrice,
     onChange: e => updatePreset(idx, "bagPrice", e.target.value)
-  }), /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "num-wrap",
     style: {
       justifyContent: "center"
     }
-  }, activePreset === idx ? /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "pw-preset-lbl-hide"
+  }, "\xA0"), activePreset === idx ? /*#__PURE__*/React.createElement("div", {
     className: "pw-preset-badge"
   }, "active") : /*#__PURE__*/React.createElement("button", {
     className: "ctrl-dir on pw-preset-apply" + (flashIdx === idx ? " pw-preset-flash" : ""),
