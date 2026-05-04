@@ -140,7 +140,7 @@ function SheetConcrete() {
       <Stack className="page-inner" gap={5}>
 
         {/* ── Area & Thickness ── */}
-        <Section title="Area & Thickness">
+        <Section title="Area & Thickness" noToggle>
           <div className="concrete-split-wrap section-pad">
             
             {/* Left Column: Floor Area */}
@@ -306,13 +306,13 @@ function SheetConcrete() {
 
         {/* ── Consumption & packaging ── */}
         <Section title={
-          <>
-            Consumption &amp; Packaging
+          <div className="u-flex-row" style={{ flex: 1 }}>
+            <span>Consumption &amp; Packaging</span>
             <span className={"pw-updated-note" + (showUpdated ? " pw-updated-note-visible" : "")}>
-              updated
+              <Icon name="check" /> updated
             </span>
-          </>
-        }>
+          </div>
+        } noToggle>
           <Stack className="section-pad" gap={3}>
             <div className="pw-grid-2col">
               <div className={fieldFlash ? "num-input-flash" : ""}>
@@ -336,7 +336,7 @@ function SheetConcrete() {
         </Section>
 
         {/* ── Results ── */}
-        <Section title="Results">
+        <Section title="Results" noToggle>
           <Stack className="section-pad" gap={1}>
             <Row label="Floor area"       value={area.toFixed(1)}              unit="m²" />
             <Row label="Avg thickness"    value={Math.round(computedAvgH)}     unit="mm" />
