@@ -1041,7 +1041,8 @@ function SheetConcrete() {
     diff = Math.max(va, vb, vc, vd) - Math.min(va, vb, vc, vd);
   }
   const mass = area * computedAvgH * parseNum(rate);
-  const bags = parseNum(bagKg) > 0 ? Math.ceil(mass / parseNum(bagKg)) : 0;
+  const bagsExact = parseNum(bagKg) > 0 ? mass / parseNum(bagKg) : 0;
+  const bags = Math.ceil(bagsExact);
   const bPrice = parseNum(bagPrice);
   const totalPrice = bags > 0 && bPrice > 0 ? bags * bPrice : null;
   const fmtEur = n => n.toLocaleString("et-EE", {
@@ -1315,7 +1316,22 @@ function SheetConcrete() {
     unit: "kg"
   }), /*#__PURE__*/React.createElement(Row, {
     label: "Bags needed",
-    value: bags || "0",
+    value: bagsExact > 0 ? /*#__PURE__*/React.createElement("span", {
+      style: {
+        display: 'flex',
+        gap: '0.5rem',
+        alignItems: 'center'
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        opacity: 0.5,
+        fontSize: '0.9em'
+      }
+    }, bagsExact.toFixed(2)), /*#__PURE__*/React.createElement("span", {
+      style: {
+        opacity: 0.3
+      }
+    }, "\u2192"), /*#__PURE__*/React.createElement("span", null, bags)) : "0",
     unit: "pcs",
     hi: bags > 0
   }), /*#__PURE__*/React.createElement(Row, {
