@@ -1,7 +1,27 @@
 // ── Page sheets ───────────────────────────────────────────────────────────────
 
-function SheetHome({ page, setPage }) {
+function SheetHome({ page, setPage, theme, setTheme }) {
   const items = PAGES.filter(pg => !pg.noNav);
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  
+  const handleToggleMenu = (e) => {
+    e.stopPropagation();
+    setMenuOpen(!menuOpen);
+  };
+
+  const selectTheme = (id) => {
+    setTheme(id);
+    setMenuOpen(false);
+  };
+
+  // Close menu when clicking elsewhere
+  React.useEffect(() => {
+    if (!menuOpen) return;
+    const close = () => setMenuOpen(false);
+    window.addEventListener("click", close);
+    return () => window.removeEventListener("click", close);
+  }, [menuOpen]);
+
   return (
     <div className="home-scroll">
       <Stack className="home-inner" gap={3}>
@@ -44,6 +64,30 @@ function SheetHome({ page, setPage }) {
         <div className="home-footer">NEMETONA HIVE</div>
 
       </Stack>
+
+      {menuOpen && (
+        <div className="theme-menu" onClick={e => e.stopPropagation()}>
+          {Object.keys(THEMES).map(id => (
+            <button 
+              key={id}
+              className={"theme-item" + (theme === id ? " active" : "")}
+              onClick={() => selectTheme(id)}
+            >
+              <span className="theme-item-icon">{THEMES[id].icon}</span>
+              <span className="theme-item-label">{THEMES[id].label}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      <button 
+        className="theme-toggle" 
+        onClick={handleToggleMenu}
+        title="Switch Color Theme"
+        aria-label="Switch Color Theme"
+      >
+        <Icon name="palette" />
+      </button>
     </div>
   );
 }
