@@ -181,9 +181,7 @@ function NumInput({
     onChange: e => setLocal(e.target.value),
     onKeyDown: e => e.key === "Enter" && commit(),
     onBlur: () => commit()
-  }), unit && /*#__PURE__*/React.createElement("span", {
-    className: "data-row-unit num-unit-span"
-  }, unit), /*#__PURE__*/React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("button", {
     className: "num-btn",
     type: "button",
     onClick: () => commit()
@@ -1080,7 +1078,6 @@ function SheetConcrete() {
     value: areaManual,
     min: 0,
     step: 0.1,
-    unit: "m\xB2",
     onChange: v => setAreaManual(String(v)),
     req: hasAnyInput && !areaManual
   }), areaMode === "dims" && /*#__PURE__*/React.createElement(Stack, {
@@ -1096,7 +1093,6 @@ function SheetConcrete() {
     value: lenMm,
     min: 1,
     step: 10,
-    unit: "mm",
     onChange: setLenMm,
     req: hasAnyInput && !lenMm
   }), /*#__PURE__*/React.createElement(NumInput, {
@@ -1105,7 +1101,6 @@ function SheetConcrete() {
     value: widMm,
     min: 1,
     step: 10,
-    unit: "mm",
     onChange: setWidMm,
     req: hasAnyInput && !widMm
   })), /*#__PURE__*/React.createElement(Row, {
@@ -1132,7 +1127,6 @@ function SheetConcrete() {
     value: avgH,
     min: 1,
     step: 1,
-    unit: "mm",
     onChange: setAvgH,
     req: hasAnyInput && !avgH
   }), thickMode === "corners" && /*#__PURE__*/React.createElement(Stack, {
@@ -1148,7 +1142,6 @@ function SheetConcrete() {
     value: ca,
     min: 0,
     step: 1,
-    unit: "mm",
     onChange: setCa,
     req: hasAnyInput && !ca
   }), /*#__PURE__*/React.createElement(NumInput, {
@@ -1157,7 +1150,6 @@ function SheetConcrete() {
     value: cb,
     min: 0,
     step: 1,
-    unit: "mm",
     onChange: setCb,
     req: hasAnyInput && !cb
   })), /*#__PURE__*/React.createElement("div", {
@@ -1171,7 +1163,6 @@ function SheetConcrete() {
     value: cc,
     min: 0,
     step: 1,
-    unit: "mm",
     onChange: setCc,
     req: hasAnyInput && !cc
   }), /*#__PURE__*/React.createElement(NumInput, {
@@ -1180,7 +1171,6 @@ function SheetConcrete() {
     value: cd,
     min: 0,
     step: 1,
-    unit: "mm",
     onChange: setCd,
     req: hasAnyInput && !cd
   }))))))), /*#__PURE__*/React.createElement(Section, {
@@ -1281,7 +1271,6 @@ function SheetConcrete() {
     value: bagKg,
     min: 1,
     step: 1,
-    unit: "kg",
     onChange: handleBagKgChange,
     req: hasAnyInput && !bagKg
   }))), /*#__PURE__*/React.createElement("div", {
@@ -1497,17 +1486,15 @@ function PipeWrapCalculator() {
     className: "pw-grid-2col"
   }, /*#__PURE__*/React.createElement(NumInput, {
     id: "input-pipeDiam",
-    label: "Pipe outer diameter",
+    label: "Pipe outer diameter (mm)",
     value: pipeDiam,
     min: 1,
-    unit: "mm",
     onChange: setPipeDiam
   }), /*#__PURE__*/React.createElement(NumInput, {
     id: "input-matThick",
-    label: "Material thickness",
+    label: "Material thickness (mm)",
     value: matThick,
     min: 0,
-    unit: "mm",
     onChange: setMatThick
   })), /*#__PURE__*/React.createElement(Stack, {
     gap: 2
