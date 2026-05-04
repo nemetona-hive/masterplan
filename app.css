@@ -2911,19 +2911,40 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 }
 
 .pw-preset-lbl-hide {
-	visibility: hidden;
+	display: none;
 }
 
 @media (max-width: 600px) {
+	.pw-preset-header {
+		display: none; /* Hide shared header on mobile, use per-field labels instead */
+	}
 	.pw-preset-fields {
 		grid-template-columns: 1fr 1fr;
+		gap: var(--sp-3) var(--sp-2);
 	}
-	.pw-preset-apply {
-		align-self: stretch;
+	/* Name field takes full width */
+	.pw-preset-fields > *:first-child {
+		grid-column: span 2;
+	}
+	/* Price and Button on the same row */
+	.pw-preset-fields > *:nth-child(4) {
+		grid-column: span 1;
+	}
+	.pw-preset-fields > *:last-child {
+		grid-column: span 1;
+		display: flex;
+		align-items: flex-end;
+	}
+	.pw-preset-apply, .pw-preset-badge {
+		width: 100% !important;
 	}
 	.pw-preset-lbl-hide {
-		visibility: visible;
 		display: block;
+		font-family: var(--mono);
+		font-size: var(--fs-xs);
+		color: var(--color-gray-opa80);
+		text-transform: uppercase;
+		margin-bottom: 4px;
 	}
 }
 
