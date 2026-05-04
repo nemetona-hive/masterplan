@@ -144,19 +144,17 @@ function PipeWrapCalculator() {
               <div className="pw-grid-2col">
                 <NumInput
                   id="input-pipeDiam"
-                  label="Pipe outer diameter"
+                  label="Pipe outer diameter (mm)"
                   value={pipeDiam}
                   min={1}
-                  unit="mm"
                   onChange={setPipeDiam}
                 />
 
                 <NumInput
                   id="input-matThick"
-                  label="Material thickness"
+                  label="Material thickness (mm)"
                   value={matThick}
                   min={0}
-                  unit="mm"
                   onChange={setMatThick}
                 />
               </div>
