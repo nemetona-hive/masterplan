@@ -13,7 +13,10 @@ const SOURCES = [
   "src/components/Timesheet.jsx",
   "src/components/Concrete.jsx",
   "src/components/PipeWrapCalculator.jsx",
-  "src/Sheets.jsx",
+  "src/components/Home.jsx",
+  "src/components/GoldenRatio.jsx",
+  "src/components/SymmetricLayout.jsx",
+  "src/components/SurfaceLayout.jsx",
   "src/Nav.jsx",
   "themes.js",
   "src/App.jsx"
