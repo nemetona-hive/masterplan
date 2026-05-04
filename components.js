@@ -1747,9 +1747,6 @@ function PipeWrapCalculator() {
     className: "pw-formula-text"
   }, "formula: \u03C0 \xD7 (pipe \xD8 + 2 \xD7 thickness) + overlap \u2212 gap"))))));
 }
-
-// ── Page sheets ───────────────────────────────────────────────────────────────
-
 function SheetHome({
   page,
   setPage,
