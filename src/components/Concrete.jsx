@@ -119,7 +119,8 @@ function SheetConcrete() {
   }
 
   const mass = area * computedAvgH * parseNum(rate);
-  const bags = parseNum(bagKg) > 0 ? Math.ceil(mass / parseNum(bagKg)) : 0;
+  const bagsExact = parseNum(bagKg) > 0 ? (mass / parseNum(bagKg)) : 0;
+  const bags = Math.ceil(bagsExact);
   
   const bPrice = parseNum(bagPrice);
   const totalPrice = (bags > 0 && bPrice > 0) ? (bags * bPrice) : null;
@@ -331,7 +332,20 @@ function SheetConcrete() {
               <Row label="Height difference" value={Math.round(diff)}          unit="mm" />
             )}
             <Row label="Total mix mass"   value={mass > 0 ? mass.toFixed(1) : "0.0"} unit="kg" />
-            <Row label="Bags needed"      value={bags || "0"}                  unit="pcs" hi={bags > 0} />
+            <Row 
+              label="Bags needed" 
+              value={
+                bagsExact > 0 ? (
+                  <span style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <span style={{ opacity: 0.5, fontSize: '0.9em' }}>{bagsExact.toFixed(2)}</span>
+                    <span style={{ opacity: 0.3 }}>→</span>
+                    <span>{bags}</span>
+                  </span>
+                ) : "0"
+              } 
+              unit="pcs" 
+              hi={bags > 0} 
+            />
             <Row
               label="Total price"
               value={totalPrice !== null ? ("€\u202f" + fmtEur(totalPrice)) : "—"}
