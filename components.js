@@ -1650,9 +1650,28 @@ function PipeWrapCalculator() {
 
 function SheetHome({
   page,
-  setPage
+  setPage,
+  theme,
+  setTheme
 }) {
   const items = PAGES.filter(pg => !pg.noNav);
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const handleToggleMenu = e => {
+    e.stopPropagation();
+    setMenuOpen(!menuOpen);
+  };
+  const selectTheme = id => {
+    setTheme(id);
+    setMenuOpen(false);
+  };
+
+  // Close menu when clicking elsewhere
+  React.useEffect(() => {
+    if (!menuOpen) return;
+    const close = () => setMenuOpen(false);
+    window.addEventListener("click", close);
+    return () => window.removeEventListener("click", close);
+  }, [menuOpen]);
   return /*#__PURE__*/React.createElement("div", {
     className: "home-scroll"
   }, /*#__PURE__*/React.createElement(Stack, {
@@ -1696,7 +1715,25 @@ function SheetHome({
     className: "home-divider"
   }), /*#__PURE__*/React.createElement("div", {
     className: "home-footer"
-  }, "NEMETONA HIVE")));
+  }, "NEMETONA HIVE")), menuOpen && /*#__PURE__*/React.createElement("div", {
+    className: "theme-menu",
+    onClick: e => e.stopPropagation()
+  }, Object.keys(THEMES).map(id => /*#__PURE__*/React.createElement("button", {
+    key: id,
+    className: "theme-item" + (theme === id ? " active" : ""),
+    onClick: () => selectTheme(id)
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "theme-item-icon"
+  }, THEMES[id].icon), /*#__PURE__*/React.createElement("span", {
+    className: "theme-item-label"
+  }, THEMES[id].label)))), /*#__PURE__*/React.createElement("button", {
+    className: "theme-toggle",
+    onClick: handleToggleMenu,
+    title: "Switch Color Theme",
+    "aria-label": "Switch Color Theme"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "palette"
+  })));
 }
 function SheetGoldenRatio({
   grItems: baseItems,
@@ -2502,38 +2539,12 @@ const THEMES = {
       '--color-white': '#fff'
     }
   }
-
-  // TEMPLATE FOR NEW THEMES:
-  // themeName: {
-  //   name: 'themeName',
-  //   label: 'Display Label',
-  //   icon: '✦',
-  //   colors: {
-  //     '--color-darkblue':       '#XXXXXX',
-  //     '--color-darkblue-light': '#XXXXXX',
-  //     '--color-gray':           '#XXXXXX',
-  //     '--color-gray-light':     '#XXXXXX',
-  //     '--color-gray-opa80':     '#XXXXXX',
-  //     '--color-blue':           '#XXXXXX',
-  //     '--color-white':          '#XXXXXX',
-  //   },
-  // },
 };
 
 /**
  * Get ordered list of theme names
  */
 const getThemeOrder = () => Object.keys(THEMES);
-
-/**
- * Get next theme in rotation
- */
-const getNextTheme = currentTheme => {
-  const themes = getThemeOrder();
-  const currentIndex = themes.indexOf(currentTheme);
-  const nextIndex = (currentIndex + 1) % themes.length;
-  return themes[nextIndex];
-};
 
 /**
  * Apply theme by name
@@ -2571,7 +2582,9 @@ function MainPageContent({
   sym,
   setSym,
   grItems,
-  setGrItems
+  setGrItems,
+  theme,
+  setTheme
 }) {
   const pageMeta = PAGES.find(pg => pg.id === page);
   if (page === "home") {
@@ -2580,7 +2593,9 @@ function MainPageContent({
       className: "page-main-full"
     }, /*#__PURE__*/React.createElement(SheetHome, {
       page: page,
-      setPage: setPage
+      setPage: setPage,
+      theme: theme,
+      setTheme: setTheme
     }));
   }
   if (page === "concrete") {
@@ -2796,7 +2811,9 @@ function App() {
     sym: sym,
     setSym: setSym,
     grItems: grItems,
-    setGrItems: setGrItems
+    setGrItems: setGrItems,
+    theme: theme,
+    setTheme: setTheme
   }))));
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/*#__PURE__*/React.createElement(App, null));
