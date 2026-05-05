@@ -173,9 +173,19 @@ function SLabel({ children }) {
 
 // Single collapsible replaces both Section and ControlPanel
 function Collapsible({ id, title, bg, open: openProp, setOpen: setOpenProp, children, variant = "section", className = "", noToggle = false }) {
-  const [openLocal, setOpenLocal] = React.useState(openProp !== undefined ? openProp : true);
-  const open = noToggle ? true : (setOpenProp !== undefined ? openProp : openLocal);
-  const setOpen = setOpenProp !== undefined ? setOpenProp : setOpenLocal;
+  const isControlled = openProp !== undefined && setOpenProp !== undefined;
+  const defaultOpen = variant === "detail" ? false : true;
+  const [openLocal, setOpenLocal] = React.useState(openProp !== undefined ? openProp : defaultOpen);
+
+  // Sync local state if openProp changes and we are not in controlled mode
+  React.useEffect(() => {
+    if (openProp !== undefined && !isControlled) {
+      setOpenLocal(openProp);
+    }
+  }, [openProp, isControlled]);
+
+  const open = noToggle ? true : (isControlled ? openProp : openLocal);
+  const setOpen = isControlled ? setOpenProp : setOpenLocal;
 
   const headStyle = {
     ...(bg ? { background: bg } : {}),
