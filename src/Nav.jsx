@@ -189,6 +189,23 @@ function AppNav({ page, setPage, navOpen, setNavOpen, mobileMenuOpen, setMobileM
 
         {/* Bottom pinned section — add utility items here */}
         <div className="nav-bottom" role="menubar" aria-orientation="vertical">
+          <div className="nav-btn-wrap">
+            <button
+              className={"nav-btn" + (!navOpen ? " nav-btn-icon-only" : "")}
+              onClick={() => setTheme(getNextTheme(theme))}
+              title={`Theme: ${THEMES[theme]?.label}`}
+            >
+              <span className="nav-btn-icon">
+                {THEMES[theme]?.icon ?? '◇'}
+              </span>
+              <span className="nav-btn-label">
+                {THEMES[theme]?.label}
+              </span>
+              <span className="nav-tooltip">
+                Theme: {THEMES[theme]?.label}
+              </span>
+            </button>
+          </div>
         </div>
 
       </nav>
