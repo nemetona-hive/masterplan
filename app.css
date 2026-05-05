@@ -879,9 +879,12 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 }
 
 
+.section {
+	overflow: hidden;
+}
+
 .section-head {
-	border-radius: 6px 6px 0 0;
-	padding: 10px 14px;
+	padding: 10px 0;
 	font-family: var(--mono);
 	font-size: var(--fs-md);
 	font-weight: var(--fw-bold);
@@ -895,15 +898,16 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	user-select: none;
 }
 
-.section-head svg {
-	width: 14px;
-	height: 14px;
-}
-
 .section-body {
 	background: var(--color-darkblue);
-	border: 1px solid color-mix(in srgb, var(--color-gray-light) 40%, transparent);
+	border: 1px solid var(--color-gray-light);
 	border-radius: 8px;
+}
+
+.section.unboxed .section-body {
+	background: transparent;
+	border: none;
+	border-radius: 0;
 }
 
 .section-pad {
@@ -1230,8 +1234,11 @@ html, .nav, .data-control, .data-preview, .page-scroll {
   }
 
   .pill-btn {
-    padding: 6px 12px;
-    min-height: 36px;
+    padding: 6px 16px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -1703,14 +1710,16 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 
 /* Section card ------------------------------------------------------------ */
 
-.ts-section {
+.ts-section,
+.calc-main-stack {
 	background: var(--color-darkblue);
 	border: 1px solid var(--color-gray-light);
-	border-radius: 8px;
-	padding: 14px;
+	border-radius: 10px;
+	padding: var(--sp-4);
 	display: flex;
 	flex-direction: column;
-	gap: var(--sp-1);
+	gap: var(--sp-5);
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 /* Grid -------------------------------------------------------------------- */
@@ -1718,7 +1727,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .ts-grid-hd,
 .ts-grid-row {
 	display: grid;
-	grid-template-columns: 1fr 1fr 68px 86px 62px 34px;
+	grid-template-columns: 1fr 1fr 72px 94px 70px 44px;
 	gap: var(--sp-2);
 	align-items: center;
 }
@@ -1740,6 +1749,10 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	.ts-grid-row > .ts-remove {
 		grid-column: span 1;
 		justify-self: end;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
 	}
 }
 
@@ -1870,13 +1883,23 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 .ts-btn {
 	font-family: var(--mono);
 	font-size: var(--fs-md);
-	padding: 5px 12px;
+	padding: 5px 14px;
 	border: 1px solid var(--color-gray-light);
 	border-radius: 6px;
 	background: transparent;
 	color: var(--color-gray-opa80);
 	cursor: pointer;
 	transition: border-color 0.12s ease, background 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+@media (max-width: 768px) {
+	.ts-btn {
+		min-height: 44px;
+		padding: 5px 18px;
+	}
 }
 
 .ts-btn:hover {
@@ -1972,6 +1995,13 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	border-color: color-mix(in srgb, #ff6666 50%, transparent);
 	background: color-mix(in srgb, #ff6666 8%, transparent);
 	box-shadow: 0 0 8px color-mix(in srgb, #ff6666 25%, transparent);
+}
+
+@media (max-width: 768px) {
+	.ts-copy {
+		min-height: 44px;
+		padding: 8px 16px;
+	}
 }
 
 /* Mobile ------------------------------------------------------------------ */
@@ -2458,12 +2488,13 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	}
 
 	/* Keep 16px to prevent iOS auto-zoom; reduce padding for compactness */
+	/* Modern mobile touch targets: 44px min height for controls */
 	input[type="number"],
 	input[type="text"],
 	.num-input,
 	.num-btn {
 		font-size: 16px !important;
-		min-height: 38px;
+		min-height: 44px;
 		height: auto;
 	}
 
@@ -2579,7 +2610,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	input[type="range"],
 	.num-input,
 	.num-btn {
-		min-height: 38px;
+		min-height: 44px;
 		height: auto;
 		font-size: 16px;
 	}
@@ -2767,6 +2798,13 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	cursor: pointer;
 	transition: all 0.15s ease;
 	flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+	.range-lock-btn {
+		width: 44px;
+		height: 44px;
+	}
 }
 
 .range-slider-wrap.is-unlocked .range-lock-btn {
@@ -3064,7 +3102,7 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	display: none;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
 	.pw-preset-header {
 		display: none; /* Hide shared header on mobile, use per-field labels instead */
 	}
@@ -3196,11 +3234,69 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	.layout-split {
 		grid-template-columns: 1fr;
 		gap: var(--sp-4);
+		padding-bottom: 140px;
 	}
 
-	/* Move sticky result card to the top on mobile */
+	/* Move sticky result card to a sticky bottom bar on mobile */
 	.layout-split > *:nth-child(2) {
-		order: -1;
+		order: 10;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
+		background: color-mix(in srgb, var(--color-darkblue-light) 85%, transparent);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border-top: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+		box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.4);
+		padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+		border-radius: 16px 16px 0 0;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--sp-4);
+	}
+
+	.result-card {
+		box-shadow: none;
+		border: none;
+		padding: 0;
+		background: transparent;
+		flex: 1;
+		flex-direction: row !important;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--sp-3);
+	}
+
+	.result-card-title {
+		font-size: var(--fs-xs);
+		margin-bottom: 0;
+	}
+
+	.result-card-value {
+		font-size: var(--fs-xl);
+	}
+	
+	/* Refine secondary result info on mobile sticky bar */
+	.result-card span:not(.result-card-title):not(.result-card-value) {
+		font-size: var(--fs-sm);
+		opacity: 0.7;
+	}
+
+	.result-card .result-card-footer {
+		margin-top: 0 !important;
+		padding-top: 0 !important;
+		border-top: none !important;
+		display: flex;
+		align-items: center;
+		gap: var(--sp-3);
+	}
+
+	.result-card .result-card-footer-item {
+		display: none; /* Hide label-value pairs in footer on mobile to keep it compact */
 	}
 }
 
@@ -3281,6 +3377,18 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 	background: transparent !important;
 	padding: 0 !important;
 	box-shadow: none !important;
+}
+
+.unboxed .section-head {
+	padding: 12px 0 8px 0;
+	border-bottom: 1px solid color-mix(in srgb, var(--color-gray-light) 60%, transparent);
+	margin-bottom: var(--sp-2);
+	border-radius: 0;
+}
+
+.unboxed .section-body {
+	border: none;
+	background: transparent;
 }
 
 .sys-head-toggle {
