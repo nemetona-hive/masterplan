@@ -140,7 +140,7 @@ function SheetConcrete() {
       <Stack className="page-inner" gap={5}>
 
         <div className="layout-split">
-          <Stack gap={4}>
+          <Stack className="calc-main-stack" gap={4}>
             {/* ── Area & Thickness ── */}
             <div className="section unboxed">
               <div className="section-head">
