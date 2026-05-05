@@ -3197,6 +3197,11 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 		grid-template-columns: 1fr;
 		gap: var(--sp-4);
 	}
+
+	/* Move sticky result card to the top on mobile */
+	.layout-split > *:nth-child(2) {
+		order: -1;
+	}
 }
 
 /* Sticky Utilities */
