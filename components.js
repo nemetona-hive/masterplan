@@ -209,9 +209,9 @@ function Collapsible({
   className = "",
   noToggle = false
 }) {
-  const [openLocal, setOpenLocal] = React.useState(true);
-  const open = noToggle ? true : setOpenProp ? openProp : openLocal;
-  const setOpen = setOpenProp ? setOpenProp : setOpenLocal;
+  const [openLocal, setOpenLocal] = React.useState(openProp !== undefined ? openProp : true);
+  const open = noToggle ? true : setOpenProp !== undefined ? openProp : openLocal;
+  const setOpen = setOpenProp !== undefined ? setOpenProp : setOpenLocal;
   const headStyle = {
     ...(bg ? {
       background: bg
@@ -1018,7 +1018,7 @@ function SheetTimesheet() {
     className: "result-card-footer-item"
   }, /*#__PURE__*/React.createElement("span", {
     className: "result-card-footer-lbl"
-  }, "Decimal time:"), /*#__PURE__*/React.createElement("span", {
+  }, "Decimal time: "), /*#__PURE__*/React.createElement("span", {
     className: "result-card-footer-val"
   }, fmtDecimal(calcTotalMins) || "0.00")), /*#__PURE__*/React.createElement("div", {
     style: {
