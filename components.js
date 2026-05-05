@@ -2608,7 +2608,19 @@ function AppNav({
     className: "nav-bottom",
     role: "menubar",
     "aria-orientation": "vertical"
-  })));
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "nav-btn-wrap"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "nav-btn" + (!navOpen ? " nav-btn-icon-only" : ""),
+    onClick: () => setTheme(getNextTheme(theme)),
+    title: `Theme: ${THEMES[theme]?.label}`
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "nav-btn-icon"
+  }, THEMES[theme]?.icon ?? '◇'), /*#__PURE__*/React.createElement("span", {
+    className: "nav-btn-label"
+  }, THEMES[theme]?.label), /*#__PURE__*/React.createElement("span", {
+    className: "nav-tooltip"
+  }, "Theme: ", THEMES[theme]?.label))))));
 }
 
 /**
@@ -2637,6 +2649,21 @@ const THEMES = {
       '--color-blue': '#3d7a9e',
       '--color-white': '#fff'
     }
+  },
+  hybrid: {
+    name: 'hybrid',
+    label: 'Hybrid',
+    icon: '⟐',
+    colors: {
+      '--color-darkblue': '#1c1c1e',
+      '--color-darkblue-light': '#2c2c2e',
+      '--color-gray-light': '#3a3a3c',
+      '--color-gray': '#636366',
+      '--color-gray-opa80': '#92a4ae',
+      '--color-blue': '#4a90a8',
+      '--color-primary': '#c4b48a',
+      '--color-white': '#ffffff'
+    }
   }
 };
 
@@ -2644,6 +2671,16 @@ const THEMES = {
  * Get ordered list of theme names
  */
 const getThemeOrder = () => Object.keys(THEMES);
+
+/**
+ * Get the next theme in the sequence
+ */
+const getNextTheme = currentTheme => {
+  const order = getThemeOrder();
+  const currentIndex = order.indexOf(currentTheme);
+  const nextIndex = (currentIndex + 1) % order.length;
+  return order[nextIndex];
+};
 
 /**
  * Apply theme by name
