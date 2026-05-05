@@ -10,52 +10,42 @@ const getHashPage = () => {
 
 function MainPageContent({ page, setPage, sh, setSh, sym, setSym, grItems, setGrItems, theme, setTheme }) {
   const pageMeta = PAGES.find(pg => pg.id === page);
+
   if (page === "home") {
     return <div id="page-home" className="page-main-full"><SheetHome page={page} setPage={setPage} theme={theme} setTheme={setTheme} /></div>;
   }
+
+  let content = null;
+  let wrapperClass = "page-main-full";
+
   if (page === "concrete") {
-    return (
-      <>
-        <div id="main-head" className="main-head">
-          <h2 className="title">{pageMeta?.title}</h2>
-          <p className="desc">{pageMeta?.desc}</p>
-        </div>
-        <div className="page-main-full"><SheetConcrete /></div>
-      </>
-    );
+    content = <SheetConcrete />;
+  } else if (page === "timesheet") {
+    content = <SheetTimesheet />;
+  } else if (page === "golden-ratio") {
+    content = <SheetGoldenRatio grItems={grItems} setGrItems={setGrItems} />;
+    wrapperClass = "main-data";
+  } else if (page === "pipe-wrap") {
+    content = <PipeWrapCalculator />;
+  } else if (page === "symmetric-layout") {
+    content = <SheetSymmetricLayout sym={sym} setSym={setSym} />;
+    wrapperClass = "main-data";
+  } else if (pageMeta) {
+    content = <SheetSurfaceLayout sh={sh} setSh={setSh} />;
+    wrapperClass = "main-data";
   }
-  if (page === "timesheet") {
-    return (
-      <>
-        <div id="main-head" className="main-head">
-          <h2 className="title">{pageMeta?.title}</h2>
-          <p className="desc">{pageMeta?.desc}</p>
-        </div>
-        <div className="page-main-full"><SheetTimesheet /></div>
-      </>
-    );
-  }
-  if (page === "golden-ratio") {
-    return <div id="main-data" className="main-data"><SheetGoldenRatio grItems={grItems} setGrItems={setGrItems} /></div>;
-  }
-  if (page === "pipe-wrap") {
-    return <PipeWrapCalculator />;
-  }
-  if (pageMeta) {
-    const content = page === "symmetric-layout"
-      ? <SheetSymmetricLayout sym={sym} setSym={setSym} />
-      : <SheetSurfaceLayout sh={sh} setSh={setSh} />;
-    return (
-      <>
+
+  return (
+    <>
+      {pageMeta && (
         <div id="main-head" className="main-head">
           <h2 className="title">{pageMeta.title || pageMeta.label}</h2>
           <p className="desc">{pageMeta.desc}</p>
         </div>
-        <div id="main-data" className="main-data">{content}</div>
-      </>
-    );
-  }
-  return null;
+      )}
+      <div className={wrapperClass}>{content}</div>
+    </>
+  );
 }
 
 const DEV_MODE = false;
