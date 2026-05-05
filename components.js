@@ -226,12 +226,28 @@ function Collapsible({
       className: "panel-head",
       style: headStyle,
       onClick: noToggle ? undefined : () => setOpen(!open)
-    }, !noToggle && /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", null, title), !noToggle && /*#__PURE__*/React.createElement("span", {
       className: "sys-head-toggle"
     }, /*#__PURE__*/React.createElement(Icon, {
-      name: open ? "chevron-down" : "chevron-right"
-    })), title), open && /*#__PURE__*/React.createElement("div", {
+      name: open ? "minus" : "plus"
+    }))), open && /*#__PURE__*/React.createElement("div", {
       className: "panel-data"
+    }, children));
+  }
+  if (variant === "detail") {
+    return /*#__PURE__*/React.createElement("div", {
+      id: id,
+      className: ["detail-section", className].filter(Boolean).join(" ")
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "detail-section-head",
+      style: headStyle,
+      onClick: noToggle ? undefined : () => setOpen(!open)
+    }, /*#__PURE__*/React.createElement("span", null, title), !noToggle && /*#__PURE__*/React.createElement("span", {
+      className: "sys-head-toggle"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: open ? "minus" : "plus"
+    }))), open && /*#__PURE__*/React.createElement("div", {
+      className: "detail-section-body"
     }, children));
   }
   return /*#__PURE__*/React.createElement("div", {
@@ -240,11 +256,11 @@ function Collapsible({
     className: "section-head",
     style: headStyle,
     onClick: noToggle ? undefined : () => setOpen(!open)
-  }, !noToggle && /*#__PURE__*/React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", null, title), !noToggle && /*#__PURE__*/React.createElement("span", {
     className: "sys-head-toggle"
   }, /*#__PURE__*/React.createElement(Icon, {
-    name: open ? "chevron-down" : "chevron-right"
-  })), title), open && /*#__PURE__*/React.createElement("div", {
+    name: open ? "minus" : "plus"
+  }))), open && /*#__PURE__*/React.createElement("div", {
     className: "section-body"
   }, children));
 }
@@ -253,6 +269,9 @@ function Collapsible({
 const Section = props => /*#__PURE__*/React.createElement(Collapsible, props);
 const ControlPanel = props => /*#__PURE__*/React.createElement(Collapsible, _extends({}, props, {
   variant: "panel"
+}));
+const DetailSection = props => /*#__PURE__*/React.createElement(Collapsible, _extends({}, props, {
+  variant: "detail"
 }));
 function Row({
   label,
@@ -847,11 +866,27 @@ function SheetTimesheet() {
   }, /*#__PURE__*/React.createElement(Stack, {
     className: "ts-body",
     gap: 3
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "layout-split"
   }, /*#__PURE__*/React.createElement(Stack, {
     className: "ts-section",
+    gap: 3
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section unboxed"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-head"
+  }, /*#__PURE__*/React.createElement("span", null, "Time Entries")), /*#__PURE__*/React.createElement("div", {
+    className: "section-body"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "section-pad",
+    gap: 4
+  }, /*#__PURE__*/React.createElement(Stack, {
     gap: 1
   }, /*#__PURE__*/React.createElement("div", {
-    className: "ts-grid-hd"
+    className: "ts-grid-hd",
+    style: {
+      marginTop: 'var(--sp-2)'
+    }
   }, /*#__PURE__*/React.createElement("span", {
     className: "ts-col-lbl"
   }, "Start"), /*#__PURE__*/React.createElement("span", {
@@ -925,17 +960,35 @@ function SheetTimesheet() {
       tabIndex: -1,
       onClick: () => removeCalcRow(row.id)
     }, "\xD7")));
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: '1px',
+      background: 'var(--color-gray-opa10)',
+      margin: 'var(--sp-2) 0'
+    }
   }), /*#__PURE__*/React.createElement(Stack, {
-    direction: "row",
-    gap: 1,
+    gap: 4
+  }, /*#__PURE__*/React.createElement(Stack, {
+    gap: 2,
     className: "ts-pills"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "ts-pill-lbl"
-  }, "Lunch:"), LUNCH_PRESETS.map(([label, val]) => /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "pw-preset-header",
+    style: {
+      display: 'block',
+      gridTemplateColumns: 'none'
+    }
+  }, /*#__PURE__*/React.createElement("span", null, "Lunch presets:")), /*#__PURE__*/React.createElement("div", {
+    className: "ctrl-btns",
+    style: {
+      flexWrap: 'wrap',
+      gap: '8px',
+      justifyContent: 'flex-start'
+    }
+  }, LUNCH_PRESETS.map(([label, val]) => /*#__PURE__*/React.createElement("button", {
     key: val,
     className: "pill-btn",
     onClick: () => applyLunchPreset(val)
-  }, label))), /*#__PURE__*/React.createElement(Stack, {
+  }, label)))), /*#__PURE__*/React.createElement(Stack, {
     direction: "row",
     gap: 2,
     className: "ts-controls"
@@ -945,24 +998,43 @@ function SheetTimesheet() {
   }, "+ Add row"), /*#__PURE__*/React.createElement("button", {
     className: "ts-btn ts-btn--muted",
     onClick: clearCalc
-  }, "Clear all")), /*#__PURE__*/React.createElement(Stack, {
-    direction: "row",
-    gap: 3,
-    className: "ts-footer"
+  }, "Clear all"))))))), /*#__PURE__*/React.createElement("div", {
+    className: "u-sticky u-sticky-top",
+    style: {
+      marginTop: 'var(--sticky-offset)',
+      top: '20px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "result-card"
   }, /*#__PURE__*/React.createElement("span", {
-    className: "ts-total-lbl"
-  }, "Total"), /*#__PURE__*/React.createElement(Stack, {
-    direction: "row",
-    gap: 3,
-    className: "ts-total-vals"
+    className: "result-card-title"
+  }, "Total Hours"), /*#__PURE__*/React.createElement("span", {
+    className: "result-card-value"
+  }, fmtHHMM(calcTotalMins) || "0:00", " ", /*#__PURE__*/React.createElement("span", {
+    className: "result-card-val-sub"
+  }, "h")), /*#__PURE__*/React.createElement("div", {
+    className: "result-card-footer"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "result-card-footer-item"
   }, /*#__PURE__*/React.createElement("span", {
-    className: "ts-total-val"
-  }, fmtHHMM(calcTotalMins)), /*#__PURE__*/React.createElement("span", {
-    className: "ts-total-dec"
-  }, "= ", fmtDecimal(calcTotalMins)), /*#__PURE__*/React.createElement("button", {
+    className: "result-card-footer-lbl"
+  }, "Decimal time:"), /*#__PURE__*/React.createElement("span", {
+    className: "result-card-footer-val"
+  }, fmtDecimal(calcTotalMins) || "0.00")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 'var(--sp-4)'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
     className: "ts-copy" + (copied ? " ts-copy--done" : "") + (copyError ? " ts-copy--error" : ""),
-    onClick: handleCopy
-  }, copied ? 'Copied!' : copyError ? 'Error' : 'Copy decimal'))))));
+    onClick: handleCopy,
+    style: {
+      width: '100%',
+      padding: '12px',
+      fontSize: 'var(--fs-md)',
+      borderRadius: '6px',
+      textAlign: 'center'
+    }
+  }, copied ? 'Copied!' : copyError ? 'Error' : 'Copy decimal'))))))));
 }
 
 // ── Concrete Calculator ────────────────────────────────────────────────────────
@@ -1116,9 +1188,16 @@ function SheetConcrete() {
   }, /*#__PURE__*/React.createElement(Stack, {
     className: "page-inner",
     gap: 5
-  }, /*#__PURE__*/React.createElement(Section, {
-    title: "Area & Thickness",
-    noToggle: true
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "layout-split"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    gap: 4
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section unboxed"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-head"
+  }, /*#__PURE__*/React.createElement("span", null, "Area & Thickness")), /*#__PURE__*/React.createElement("div", {
+    className: "section-body"
   }, /*#__PURE__*/React.createElement("div", {
     className: "concrete-split-wrap section-pad"
   }, /*#__PURE__*/React.createElement(Stack, {
@@ -1131,7 +1210,7 @@ function SheetConcrete() {
   }, "Enter area"), /*#__PURE__*/React.createElement("button", {
     className: "ctrl-dir" + (areaMode === "dims" ? " on" : ""),
     onClick: () => setAreaMode("dims")
-  }, "Room dimensions")), /*#__PURE__*/React.createElement("div", {
+  }, "Dimensions")), /*#__PURE__*/React.createElement("div", {
     className: "concrete-split-content"
   }, areaMode === "direct" && /*#__PURE__*/React.createElement(NumInput, {
     id: "input-slf-area",
@@ -1177,7 +1256,7 @@ function SheetConcrete() {
   }, /*#__PURE__*/React.createElement("button", {
     className: "ctrl-dir" + (thickMode === "avg" ? " on" : ""),
     onClick: () => setThickMode("avg")
-  }, "Average thickness"), /*#__PURE__*/React.createElement("button", {
+  }, "Avg thickness"), /*#__PURE__*/React.createElement("button", {
     className: "ctrl-dir" + (thickMode === "corners" ? " on" : ""),
     onClick: () => setThickMode("corners")
   }, "4 corners")), /*#__PURE__*/React.createElement("div", {
@@ -1234,10 +1313,63 @@ function SheetConcrete() {
     step: 1,
     onChange: setCd,
     req: hasAnyInput && !cd
-  }))))))), /*#__PURE__*/React.createElement(Section, {
-    title: "Product Presets"
+  })))))))), /*#__PURE__*/React.createElement("div", {
+    className: "section unboxed"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-head"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "u-flex-row",
+    style: {
+      flex: 1,
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("span", null, "Consumption & Packaging"), /*#__PURE__*/React.createElement("span", {
+    className: "pw-updated-note" + (showUpdated ? " pw-updated-note-visible" : "")
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "check"
+  }), " updated"))), /*#__PURE__*/React.createElement("div", {
+    className: "section-body"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "concrete-split-wrap section-pad"
   }, /*#__PURE__*/React.createElement(Stack, {
-    className: "section-pad",
+    gap: 3
+  }, /*#__PURE__*/React.createElement("div", {
+    className: fieldFlash ? "num-input-flash" : ""
+  }, /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-slf-rate",
+    label: "Consumption (kg/m\xB2\xB7mm)",
+    value: rate,
+    min: 0.1,
+    step: 0.1,
+    onChange: handleRateChange,
+    req: hasAnyInput && !rate
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "concrete-split-divider"
+  }), /*#__PURE__*/React.createElement(Stack, {
+    gap: 3
+  }, /*#__PURE__*/React.createElement("div", {
+    className: fieldFlash ? "num-input-flash" : ""
+  }, /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-slf-bagkg",
+    label: "Bag weight (kg)",
+    value: bagKg,
+    min: 1,
+    step: 1,
+    onChange: handleBagKgChange,
+    req: hasAnyInput && !bagKg
+  })), /*#__PURE__*/React.createElement("div", {
+    className: fieldFlash ? "num-input-flash" : ""
+  }, /*#__PURE__*/React.createElement(NumInput, {
+    id: "input-slf-bagprice",
+    label: "Bag price (\u20AC)",
+    value: bagPrice,
+    min: 0,
+    step: 0.01,
+    onChange: handleBagPriceChange
+  })))))), /*#__PURE__*/React.createElement(DetailSection, {
+    title: "Product Presets",
+    open: false
+  }, /*#__PURE__*/React.createElement(Stack, {
     gap: 4
   }, /*#__PURE__*/React.createElement(Stack, {
     gap: 3
@@ -1315,55 +1447,15 @@ function SheetConcrete() {
     style: {
       opacity: 0.7
     }
-  }, "Fill product data above and click \"Apply\" to update the calculator values."))), /*#__PURE__*/React.createElement(Section, {
-    title: /*#__PURE__*/React.createElement("div", {
-      className: "u-flex-row",
-      style: {
-        flex: 1
-      }
-    }, /*#__PURE__*/React.createElement("span", null, "Consumption & Packaging"), /*#__PURE__*/React.createElement("span", {
-      className: "pw-updated-note" + (showUpdated ? " pw-updated-note-visible" : "")
-    }, /*#__PURE__*/React.createElement(Icon, {
-      name: "check"
-    }), " updated")),
-    noToggle: true
-  }, /*#__PURE__*/React.createElement(Stack, {
-    className: "section-pad",
-    gap: 3
+  }, "Fill product data above and click \"Apply\" to update the calculator values."))), /*#__PURE__*/React.createElement("div", {
+    className: "section unboxed",
+    style: {
+      marginTop: 'var(--sp-4)'
+    }
   }, /*#__PURE__*/React.createElement("div", {
-    className: "pw-grid-2col"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: fieldFlash ? "num-input-flash" : ""
-  }, /*#__PURE__*/React.createElement(NumInput, {
-    id: "input-slf-rate",
-    label: "Consumption (kg/m\xB2\xB7mm)",
-    value: rate,
-    min: 0.1,
-    step: 0.1,
-    onChange: handleRateChange,
-    req: hasAnyInput && !rate
-  })), /*#__PURE__*/React.createElement("div", {
-    className: fieldFlash ? "num-input-flash" : ""
-  }, /*#__PURE__*/React.createElement(NumInput, {
-    id: "input-slf-bagkg",
-    label: "Bag weight (kg)",
-    value: bagKg,
-    min: 1,
-    step: 1,
-    onChange: handleBagKgChange,
-    req: hasAnyInput && !bagKg
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: fieldFlash ? "num-input-flash" : ""
-  }, /*#__PURE__*/React.createElement(NumInput, {
-    id: "input-slf-bagprice",
-    label: "Bag price (\u20AC)",
-    value: bagPrice,
-    min: 0,
-    step: 0.01,
-    onChange: handleBagPriceChange
-  })))), /*#__PURE__*/React.createElement(Section, {
-    title: "Results",
-    noToggle: true
+    className: "section-head"
+  }, /*#__PURE__*/React.createElement("span", null, "Calculation Details")), /*#__PURE__*/React.createElement("div", {
+    className: "section-body"
   }, /*#__PURE__*/React.createElement(Stack, {
     className: "section-pad",
     gap: 1
@@ -1384,56 +1476,94 @@ function SheetConcrete() {
     value: mass > 0 ? mass.toFixed(1) : "0.0",
     unit: "kg"
   }), /*#__PURE__*/React.createElement(Row, {
-    label: "Bags needed",
-    value: bagsExact > 0 ? /*#__PURE__*/React.createElement("span", {
-      style: {
-        display: 'flex',
-        gap: '0.5rem',
-        alignItems: 'center'
-      }
-    }, /*#__PURE__*/React.createElement("span", {
-      style: {
-        opacity: 0.5,
-        fontSize: '0.9em'
-      }
-    }, bagsExact.toFixed(2)), /*#__PURE__*/React.createElement("span", {
-      style: {
-        opacity: 0.3
-      }
-    }, "\u2192"), /*#__PURE__*/React.createElement("span", null, bags)) : "0",
-    unit: "pcs",
-    hi: bags > 0
-  }), /*#__PURE__*/React.createElement(Row, {
-    label: "Total price",
-    value: totalPrice !== null ? "€\u202f" + fmtEur(totalPrice) : "—",
-    hi: totalPrice !== null
+    label: "Exact bags calculated",
+    value: bagsExact > 0 ? bagsExact.toFixed(2) : "0.00",
+    unit: "pcs"
   }), /*#__PURE__*/React.createElement("div", {
-    className: "pw-formula-wrap"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "pw-formula-text"
-  }, "mass = area \xD7 avg thickness \xD7 consumption rate")), /*#__PURE__*/React.createElement(Stack, {
-    direction: "row",
-    gap: 2,
+    className: "pw-formula-wrap",
     style: {
       marginTop: "1rem"
     }
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "ctrl-dir",
-    onClick: resetAll,
-    style: {
-      width: "auto",
-      padding: "8px 16px"
-    }
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "refresh-cw"
-  }), " Global Reset")))), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "pw-formula-text"
+  }, "mass = area \xD7 avg thickness \xD7 consumption rate")), /*#__PURE__*/React.createElement("div", {
     className: "pw-formula-wrap",
     style: {
       paddingBottom: "1rem"
     }
   }, /*#__PURE__*/React.createElement("span", {
     className: "pw-formula-text"
-  }, "Results are approximate \u2014 actual consumption may vary due to substrate absorption and mixing residue."))));
+  }, "Results are approximate \u2014 actual consumption may vary due to substrate absorption and mixing residue.")))))), /*#__PURE__*/React.createElement("div", {
+    className: "u-sticky u-sticky-top",
+    style: {
+      marginTop: 'var(--sticky-offset)',
+      top: '20px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "result-card"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "result-card-title"
+  }, "Bags Needed"), /*#__PURE__*/React.createElement("span", {
+    className: "result-card-value"
+  }, bags > 0 ? bags : "0", /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 'var(--fs-md)',
+      fontWeight: 'var(--fw-reg)',
+      opacity: 0.8,
+      marginLeft: '4px'
+    }
+  }, "pcs")), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: 'var(--mono)',
+      fontSize: 'var(--fs-md)',
+      color: 'var(--color-gray-opa80)',
+      marginTop: '-2px'
+    }
+  }, "exact: ", bagsExact > 0 ? bagsExact.toFixed(2) : "0.00", " pcs"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 'var(--sp-4)',
+      paddingTop: 'var(--sp-4)',
+      borderTop: '1px solid color-mix(in srgb, var(--color-white) 15%, transparent)'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "result-card-title"
+  }, "Total Price"), /*#__PURE__*/React.createElement("span", {
+    className: "result-card-value",
+    style: {
+      fontSize: 'var(--fs-xl)',
+      display: 'flex',
+      alignItems: 'baseline',
+      gap: '6px'
+    }
+  }, totalPrice !== null ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 'var(--fs-lg)',
+      opacity: 0.8
+    }
+  }, "\u20AC"), /*#__PURE__*/React.createElement("span", null, fmtEur(totalPrice))) : "—"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 'var(--sp-4)'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: resetAll,
+    style: {
+      width: '100%',
+      padding: '12px',
+      fontSize: 'var(--fs-md)',
+      borderRadius: '6px',
+      textAlign: 'center',
+      background: 'transparent',
+      border: '1px solid color-mix(in srgb, var(--color-gray) 40%, transparent)',
+      color: 'var(--color-gray)',
+      cursor: 'pointer',
+      display: 'flex',
+      justifyContent: 'center',
+      gap: '8px',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "refresh-cw"
+  }), " Global Reset"))))));
 }
 const PRESETS = [100, 125, 160, 200];
 function PipeWrapCalculator() {
@@ -1481,15 +1611,12 @@ function PipeWrapCalculator() {
   }, /*#__PURE__*/React.createElement(Stack, {
     className: "page-inner",
     gap: 5
-  }, /*#__PURE__*/React.createElement(Stack, {
-    className: "main-head pw-head-adj",
-    gap: 1
   }, /*#__PURE__*/React.createElement("div", {
-    className: "title"
-  }, "Pipe wrap calculator"), /*#__PURE__*/React.createElement("div", {
-    className: "desc"
-  }, "Material length needed to wrap around a pipe")), /*#__PURE__*/React.createElement("div", {
-    className: "section"
+    className: "layout-split"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    gap: 4
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section unboxed"
   }, /*#__PURE__*/React.createElement("div", {
     className: "section-head"
   }, /*#__PURE__*/React.createElement("span", null, "Dimensions")), /*#__PURE__*/React.createElement("div", {
@@ -1498,7 +1625,10 @@ function PipeWrapCalculator() {
     className: "section-pad",
     gap: 3
   }, /*#__PURE__*/React.createElement("div", {
-    className: "pw-grid-2col"
+    className: "pw-grid-2col",
+    style: {
+      marginBottom: 0
+    }
   }, /*#__PURE__*/React.createElement(NumInput, {
     id: "input-pipeDiam",
     label: "Pipe outer diameter (mm)",
@@ -1524,7 +1654,8 @@ function PipeWrapCalculator() {
   }, "\xD8 ", p))))))), /*#__PURE__*/React.createElement(Section, {
     title: "Adjustments",
     open: adjOpen,
-    setOpen: setAdjOpen
+    setOpen: setAdjOpen,
+    className: "unboxed"
   }, /*#__PURE__*/React.createElement(Stack, {
     className: "section-pad",
     gap: 3
@@ -1585,11 +1716,17 @@ function PipeWrapCalculator() {
       if (v === "") setGap("");else setGap(Math.max(0, Math.min(200, parseFloat(v) || 0)));
     }
   })))), /*#__PURE__*/React.createElement("div", {
-    className: "section"
+    className: "section unboxed",
+    style: {
+      marginTop: 'var(--sp-4)'
+    }
   }, /*#__PURE__*/React.createElement("div", {
     className: "section-head"
-  }, /*#__PURE__*/React.createElement("span", null, "Result")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("span", null, "Calculation Details")), /*#__PURE__*/React.createElement("div", {
     className: "section-body"
+  }, /*#__PURE__*/React.createElement(Stack, {
+    className: "section-pad",
+    gap: 3
   }, /*#__PURE__*/React.createElement("div", {
     className: "pw-res-wrap"
   }, /*#__PURE__*/React.createElement(Row, {
@@ -1601,10 +1738,9 @@ function PipeWrapCalculator() {
     value: base.toFixed(1),
     unit: "mm"
   }), /*#__PURE__*/React.createElement(Row, {
-    label: "Final length needed",
+    label: "Calculated total",
     value: total.toFixed(1),
-    unit: "mm",
-    hi: true
+    unit: "mm"
   })), /*#__PURE__*/React.createElement("div", {
     className: "pw-diag-wrap"
   }, /*#__PURE__*/React.createElement("svg", {
@@ -1687,27 +1823,7 @@ function PipeWrapCalculator() {
       fontWeight: 700,
       fill: 'var(--color-primary)'
     }
-  }, "= ", total.toFixed(1), " mm"), /*#__PURE__*/React.createElement("g", {
-    transform: "translate(230, 155)"
-  }, /*#__PURE__*/React.createElement("rect", {
-    x: "-8",
-    y: "-22",
-    width: "120",
-    height: "30",
-    rx: "6",
-    fill: "color-mix(in srgb, var(--color-primary) 8%, transparent)",
-    stroke: "color-mix(in srgb, var(--color-primary) 20%, transparent)",
-    strokeWidth: "0.5"
-  }), /*#__PURE__*/React.createElement("text", {
-    x: "8",
-    y: "2",
-    style: {
-      fontFamily: 'var(--mono)',
-      fontSize: '22px',
-      fontWeight: 800,
-      fill: 'var(--color-primary)'
-    }
-  }, (total / 10).toFixed(1), " cm")), g > 0 && /*#__PURE__*/React.createElement("g", null, /*#__PURE__*/React.createElement("rect", {
+  }, "= ", total.toFixed(1), " mm"), g > 0 && /*#__PURE__*/React.createElement("g", null, /*#__PURE__*/React.createElement("rect", {
     x: "230",
     y: tyLegend,
     width: "9",
@@ -1745,7 +1861,25 @@ function PipeWrapCalculator() {
     className: "pw-formula-wrap"
   }, /*#__PURE__*/React.createElement("span", {
     className: "pw-formula-text"
-  }, "formula: \u03C0 \xD7 (pipe \xD8 + 2 \xD7 thickness) + overlap \u2212 gap"))))));
+  }, "formula: \u03C0 \xD7 (pipe \xD8 + 2 \xD7 thickness) + overlap \u2212 gap")))))), /*#__PURE__*/React.createElement("div", {
+    className: "u-sticky u-sticky-top",
+    style: {
+      marginTop: 'var(--sticky-offset)',
+      top: '20px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "result-card"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "result-card-title"
+  }, "Final length needed"), /*#__PURE__*/React.createElement("span", {
+    className: "result-card-value"
+  }, (total / 10).toFixed(1), " cm"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: 'var(--mono)',
+      fontSize: 'var(--fs-sm)',
+      color: 'var(--color-gray-opa80)'
+    }
+  }, total.toFixed(1), " mm"))))));
 }
 function SheetHome({
   page,
@@ -2734,63 +2868,43 @@ function MainPageContent({
       setTheme: setTheme
     }));
   }
+  let content = null;
+  let wrapperClass = "page-main-full";
   if (page === "concrete") {
-    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-      id: "main-head",
-      className: "main-head"
-    }, /*#__PURE__*/React.createElement("h2", {
-      className: "title"
-    }, pageMeta?.title), /*#__PURE__*/React.createElement("p", {
-      className: "desc"
-    }, pageMeta?.desc)), /*#__PURE__*/React.createElement("div", {
-      className: "page-main-full"
-    }, /*#__PURE__*/React.createElement(SheetConcrete, null)));
-  }
-  if (page === "timesheet") {
-    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-      id: "main-head",
-      className: "main-head"
-    }, /*#__PURE__*/React.createElement("h2", {
-      className: "title"
-    }, pageMeta?.title), /*#__PURE__*/React.createElement("p", {
-      className: "desc"
-    }, pageMeta?.desc)), /*#__PURE__*/React.createElement("div", {
-      className: "page-main-full"
-    }, /*#__PURE__*/React.createElement(SheetTimesheet, null)));
-  }
-  if (page === "golden-ratio") {
-    return /*#__PURE__*/React.createElement("div", {
-      id: "main-data",
-      className: "main-data"
-    }, /*#__PURE__*/React.createElement(SheetGoldenRatio, {
+    content = /*#__PURE__*/React.createElement(SheetConcrete, null);
+  } else if (page === "timesheet") {
+    content = /*#__PURE__*/React.createElement(SheetTimesheet, null);
+  } else if (page === "golden-ratio") {
+    content = /*#__PURE__*/React.createElement(SheetGoldenRatio, {
       grItems: grItems,
       setGrItems: setGrItems
-    }));
-  }
-  if (page === "pipe-wrap") {
-    return /*#__PURE__*/React.createElement(PipeWrapCalculator, null);
-  }
-  if (pageMeta) {
-    const content = page === "symmetric-layout" ? /*#__PURE__*/React.createElement(SheetSymmetricLayout, {
+    });
+    wrapperClass = "main-data";
+  } else if (page === "pipe-wrap") {
+    content = /*#__PURE__*/React.createElement(PipeWrapCalculator, null);
+  } else if (page === "symmetric-layout") {
+    content = /*#__PURE__*/React.createElement(SheetSymmetricLayout, {
       sym: sym,
       setSym: setSym
-    }) : /*#__PURE__*/React.createElement(SheetSurfaceLayout, {
+    });
+    wrapperClass = "main-data";
+  } else if (pageMeta) {
+    content = /*#__PURE__*/React.createElement(SheetSurfaceLayout, {
       sh: sh,
       setSh: setSh
     });
-    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-      id: "main-head",
-      className: "main-head"
-    }, /*#__PURE__*/React.createElement("h2", {
-      className: "title"
-    }, pageMeta.title || pageMeta.label), /*#__PURE__*/React.createElement("p", {
-      className: "desc"
-    }, pageMeta.desc)), /*#__PURE__*/React.createElement("div", {
-      id: "main-data",
-      className: "main-data"
-    }, content));
+    wrapperClass = "main-data";
   }
-  return null;
+  return /*#__PURE__*/React.createElement(React.Fragment, null, pageMeta && /*#__PURE__*/React.createElement("div", {
+    id: "main-head",
+    className: "main-head"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "title"
+  }, pageMeta.title || pageMeta.label), /*#__PURE__*/React.createElement("p", {
+    className: "desc"
+  }, pageMeta.desc)), /*#__PURE__*/React.createElement("div", {
+    className: wrapperClass
+  }, content));
 }
 const DEV_MODE = false;
 function App() {
