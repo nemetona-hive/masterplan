@@ -47,7 +47,7 @@ function PipeWrapCalculator() {
       <Stack className="page-inner" gap={5}>
 
         <div className="layout-split">
-          <Stack gap={4}>
+          <Stack className="calc-main-stack" gap={4}>
             {/* ── Inputs ── */}
             <div className="section unboxed">
               <div className="section-head">
@@ -93,7 +93,7 @@ function PipeWrapCalculator() {
             </div>
 
             {/* ── adjustments ── */}
-            <Section title="Adjustments" open={adjOpen} setOpen={setAdjOpen} className="unboxed">
+            <Section title="Adjustments" open={adjOpen} setOpen={setAdjOpen}>
               <Stack className="section-pad" gap={3}>
 
                 {/* overlap */}
