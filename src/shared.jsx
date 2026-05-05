@@ -186,26 +186,41 @@ function Collapsible({ id, title, bg, open: openProp, setOpen: setOpenProp, chil
     return (
       <div id={id} className={["control-panel", className].filter(Boolean).join(" ")}>
         <div className="panel-head" style={headStyle} onClick={noToggle ? undefined : () => setOpen(!open)}>
+          <span>{title}</span>
           {!noToggle && (
             <span className="sys-head-toggle">
-              <Icon name={open ? "chevron-down" : "chevron-right"} />
+              <Icon name={open ? "minus" : "plus"} />
             </span>
           )}
-          {title}
         </div>
         {open && <div className="panel-data">{children}</div>}
+      </div>
+    );
+  }
+  if (variant === "detail") {
+    return (
+      <div id={id} className={["detail-section", className].filter(Boolean).join(" ")}>
+        <div className="detail-section-head" style={headStyle} onClick={noToggle ? undefined : () => setOpen(!open)}>
+          <span>{title}</span>
+          {!noToggle && (
+            <span className="sys-head-toggle">
+              <Icon name={open ? "minus" : "plus"} />
+            </span>
+          )}
+        </div>
+        {open && <div className="detail-section-body">{children}</div>}
       </div>
     );
   }
   return (
     <div className="section">
       <div className="section-head" style={headStyle} onClick={noToggle ? undefined : () => setOpen(!open)}>
+        <span>{title}</span>
         {!noToggle && (
           <span className="sys-head-toggle">
-            <Icon name={open ? "chevron-down" : "chevron-right"} />
+            <Icon name={open ? "minus" : "plus"} />
           </span>
         )}
-        {title}
       </div>
       {open && <div className="section-body">{children}</div>}
     </div>
@@ -215,6 +230,7 @@ function Collapsible({ id, title, bg, open: openProp, setOpen: setOpenProp, chil
 // Convenience aliases for readability at call sites
 const Section = (props) => <Collapsible {...props} />;
 const ControlPanel = (props) => <Collapsible {...props} variant="panel" />;
+const DetailSection = (props) => <Collapsible {...props} variant="detail" />;
 
 function Row({ label, value, unit, hi, hoverType, hoveredType, setHoveredType }) {
   const isHovered = hoverType && hoveredType === hoverType;
