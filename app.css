@@ -3244,6 +3244,8 @@ html, .nav, .data-control, .data-preview, .page-scroll {
 		bottom: 0;
 		left: 0;
 		right: 0;
+		top: auto !important;
+		margin-top: 0 !important;
 		z-index: 100;
 		background: color-mix(in srgb, var(--color-darkblue-light) 85%, transparent);
 		backdrop-filter: blur(12px);
