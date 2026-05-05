@@ -209,9 +209,18 @@ function Collapsible({
   className = "",
   noToggle = false
 }) {
-  const [openLocal, setOpenLocal] = React.useState(openProp !== undefined ? openProp : true);
-  const open = noToggle ? true : setOpenProp !== undefined ? openProp : openLocal;
-  const setOpen = setOpenProp !== undefined ? setOpenProp : setOpenLocal;
+  const isControlled = openProp !== undefined && setOpenProp !== undefined;
+  const defaultOpen = variant === "detail" ? false : true;
+  const [openLocal, setOpenLocal] = React.useState(openProp !== undefined ? openProp : defaultOpen);
+
+  // Sync local state if openProp changes and we are not in controlled mode
+  React.useEffect(() => {
+    if (openProp !== undefined && !isControlled) {
+      setOpenLocal(openProp);
+    }
+  }, [openProp, isControlled]);
+  const open = noToggle ? true : isControlled ? openProp : openLocal;
+  const setOpen = isControlled ? setOpenProp : setOpenLocal;
   const headStyle = {
     ...(bg ? {
       background: bg
@@ -1191,6 +1200,7 @@ function SheetConcrete() {
   }, /*#__PURE__*/React.createElement("div", {
     className: "layout-split"
   }, /*#__PURE__*/React.createElement(Stack, {
+    className: "calc-main-stack",
     gap: 4
   }, /*#__PURE__*/React.createElement("div", {
     className: "section unboxed"
@@ -1614,6 +1624,7 @@ function PipeWrapCalculator() {
   }, /*#__PURE__*/React.createElement("div", {
     className: "layout-split"
   }, /*#__PURE__*/React.createElement(Stack, {
+    className: "calc-main-stack",
     gap: 4
   }, /*#__PURE__*/React.createElement("div", {
     className: "section unboxed"
@@ -1654,8 +1665,7 @@ function PipeWrapCalculator() {
   }, "\xD8 ", p))))))), /*#__PURE__*/React.createElement(Section, {
     title: "Adjustments",
     open: adjOpen,
-    setOpen: setAdjOpen,
-    className: "unboxed"
+    setOpen: setAdjOpen
   }, /*#__PURE__*/React.createElement(Stack, {
     className: "section-pad",
     gap: 3
