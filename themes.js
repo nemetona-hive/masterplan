@@ -25,12 +25,37 @@ const THEMES = {
       '--color-white':          '#fff',
     },
   },
+  hybrid: {
+    name:  'hybrid',
+    label: 'Hybrid',
+    icon:  '⟐',
+    colors: {
+      '--color-darkblue':       '#1c1c1e',
+      '--color-darkblue-light': '#2c2c2e',
+      '--color-gray-light':     '#3a3a3c',
+      '--color-gray':           '#636366',
+      '--color-gray-opa80':     '#92a4ae',
+      '--color-blue':           '#4a90a8',
+      '--color-primary':        '#c4b48a',
+      '--color-white':          '#ffffff',
+    }
+  },
 };
 
 /**
  * Get ordered list of theme names
  */
 const getThemeOrder = () => Object.keys(THEMES);
+
+/**
+ * Get the next theme in the sequence
+ */
+const getNextTheme = (currentTheme) => {
+  const order = getThemeOrder();
+  const currentIndex = order.indexOf(currentTheme);
+  const nextIndex = (currentIndex + 1) % order.length;
+  return order[nextIndex];
+};
 
 /**
  * Apply theme by name
