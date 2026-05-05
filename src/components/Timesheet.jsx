@@ -240,7 +240,7 @@ function SheetTimesheet() {
               
               <div className="result-card-footer">
                 <div className="result-card-footer-item">
-                  <span className="result-card-footer-lbl">Decimal time:</span>
+                  <span className="result-card-footer-lbl">Decimal time: </span>
                   <span className="result-card-footer-val">{fmtDecimal(calcTotalMins) || "0.00"}</span>
                 </div>
                 
